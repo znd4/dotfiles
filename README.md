@@ -14,6 +14,7 @@ Clone
 
 ```sh
 git clone --bare https://github.com/zdog234/dotfiles $HOME/.cfg
+config checkout main
 ```
 
 ## Install pre-commit hooks
