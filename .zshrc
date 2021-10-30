@@ -34,6 +34,9 @@ unimp() {
     echo "Stopped impersonating"
 }
 
+# Editor config
+export EDITOR="code --wait --new-window"
+
 # gcloud setup
 
 . ~/.dotfiles/gcloud.sh
