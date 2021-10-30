@@ -35,7 +35,7 @@ unimp() {
 }
 
 # Editor config
-export EDITOR="code --wait --new-window"
+export EDITOR="micro"
 
 # gcloud setup
 
