@@ -47,10 +47,10 @@ fi
 
 if [ -z ${HTTP_PROXY+x} ]; then
     unset PIP_INDEX_URL
-    git config --global --unset http.proxy
+    export GIT_CONFIG=$HOME/.ford.gitconfig
     unalias git
 else
-    alias git="git -c http.proxy=http://internet.ford.com:83"
+    export GIT_CONFIG=$HOME/.ford.proxy.gitconfig
     export PIP_INDEX_URL=https://www.nexus.ford.com/repository/Ford_ML_public/simple
     export NO_PROXY=$NO_PROXY,192.168.99.0/24,192.168.39.0/24,192.168.49.0/24,10.96.0.0/12
 fi

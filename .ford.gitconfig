@@ -1,6 +1,9 @@
 [credential "https://github.com"]
 helper =
 helper = !/usr/bin/env gh auth git-credential
+[credential "https://github.ford.com"]
+helper =
+helper = !/usr/bin/env gh auth git-credential
 [alias]
 a = add
 pl = pull
@@ -12,6 +15,6 @@ new-branch = checkout -b
 defaultBranch = main
 [user]
 name = Zane Dufour
-email = zane@znd4.me
+email = zdufour@ford.com
 [pull]
 rebase = true
