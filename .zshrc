@@ -47,7 +47,7 @@ fi
 
 if [ -z ${HTTP_PROXY+x} ]; then
     unset PIP_INDEX_URL
-    if [ $(USER) = "zdufour" ]; then
+    if [ $USER = "zdufour" ]; then
         alias git="HOME=~/.dotfiles/git/ford git"
     else
         alias git=git
