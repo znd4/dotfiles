@@ -47,10 +47,13 @@ fi
 
 if [ -z ${HTTP_PROXY+x} ]; then
     unset PIP_INDEX_URL
-    export GIT_CONFIG=$HOME/.ford.gitconfig
-    unalias git
+    if [ $(USER) = "zdufour" ]; then
+        alias git="HOME=~/.dotfiles/git/ford git"
+    else
+        alias git=git
+    fi
 else
-    export GIT_CONFIG=$HOME/.ford.proxy.gitconfig
+    alias git="HOME=~/.dotfiles/git/ford-proxy git"
     export PIP_INDEX_URL=https://www.nexus.ford.com/repository/Ford_ML_public/simple
     export NO_PROXY=$NO_PROXY,192.168.99.0/24,192.168.39.0/24,192.168.49.0/24,10.96.0.0/12
 fi
