@@ -60,6 +60,12 @@ if [ -d "$HOME/.dr-proxy" ]; then
     . ~/.dr-proxy/auto_proxy.sh http://internet.ford.com 83
 fi
 
+if [ $USER = "zdufour" ]; then
+    export GH_HOST=github.ford.com
+else
+    export GH_HOST=github.com
+fi
+
 if [ -z ${HTTP_PROXY+x} ]; then
     unset PIP_INDEX_URL
     if [ $USER = "zdufour" ]; then
