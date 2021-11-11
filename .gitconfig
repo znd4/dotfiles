@@ -1,6 +1,6 @@
-[credential "https://github.com"]
-helper =
-helper = !/usr/bin/env gh auth git-credential
+[credential "https://github.ford.com"]
+helper = osxkeychain
+
 [alias]
 a = add
 pl = pull
@@ -15,3 +15,5 @@ name = Zane Dufour
 email = zane@znd4.me
 [pull]
 rebase = true
+[includeIf "gitdir:Ford/"]
+path = /Users/zdufour/Ford/
