@@ -40,3 +40,9 @@ add_to_path "$HOME/go/bin"
 . "$HOME/.cargo/env"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# vmrun cli
+if [ $(uname) = "Darwin" ]; then
+    add_to_path "/Applications/VMware\ Fusion.app/Contents/Library"
+else
+    echo "WARNING: Haven't implemented OS"
+fi
