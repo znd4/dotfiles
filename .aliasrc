@@ -63,13 +63,12 @@ if [[ $(uname -s) == "Darwin" ]]; then
 fi
 
 # py3x
-alias py="python3"
-alias py3="py3"
-alias py36="python3.6"
-alias py37="python3.7"
-alias py38="python3.8"
-alias py39="python3.9"
-alias py310="python3.10"
+alias py3="py -3"
+alias py36="py -3.6"
+alias py37="py -3.7"
+alias py38="py -3.8"
+alias py39="py -3.9"
+alias py310="py -3.10"
 
 # ipython
 alias ipy="python3 -m IPython"
