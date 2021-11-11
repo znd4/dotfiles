@@ -35,3 +35,4 @@ if [ -d "$HOME/go/bin" ]; then
 else
     echo "$HOME/go/bin does not exist"
 fi
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
