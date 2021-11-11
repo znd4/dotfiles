@@ -17,6 +17,22 @@ git clone --bare https://github.com/zdog234/dotfiles $HOME/.cfg
 config checkout main
 ```
 
+## Move stuff to backup
+
+You may need to
+
+```bash
+mkdir ~/.backup
+```
+
+and then move conflicting files to `.backup`
+
+## Ignore untracked files
+
+```sh
+config config --local status.showUntrackedFiles no
+```
+
 ## Install pre-commit hooks
 
 run pre-commit install
