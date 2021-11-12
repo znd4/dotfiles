@@ -26,14 +26,17 @@ if [ -d "$HOME/.local/bin" ]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-# Created by `pipx` on 2021-10-23 17:39:24
-export PATH="$PATH:$HOME/.local/bin"
+add_to_path() {
+    directory=$1
+    if [ -d "$directory" ]; then
+        export PATH="$directory:$PATH"
+    else
+        echo "$directory does not exist"
+    fi
+}
 
-# go configuration
-if [ -d "$HOME/go/bin" ]; then
-    export PATH="$HOME/go/bin:$PATH"
-else
-    echo "$HOME/go/bin does not exist"
-fi
+add_to_path "$HOME/go/bin"
+
 . "$HOME/.cargo/env"
+
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
