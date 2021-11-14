@@ -94,3 +94,14 @@ Install `shfmt`
 ```sh
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
 ```
+
+## Linuxbrew
+
+Install homebrew for linux
+
+## Terminal Setup
+
+1. Install alacritty
+2. Install [tdrop](https://github.com/noctuid/tdrop)
+3. `sudo apt install sxhkd wmctrl`
+4.

@@ -63,12 +63,16 @@ if [[ $(uname -s) == "Darwin" ]]; then
 fi
 
 # py3x
-alias py3="py -3"
-alias py36="py -3.6"
-alias py37="py -3.7"
-alias py38="py -3.8"
-alias py39="py -3.9"
-alias py310="py -3.10"
+if which py; then
+    alias py3="py -3"
+    alias py36="py -3.6"
+    alias py37="py -3.7"
+    alias py38="py -3.8"
+    alias py39="py -3.9"
+    alias py310="py -3.10"
+else
+    echo "python-launcher not installed. brew install python-launcher"
+fi
 
 # ipython
 alias ipy="python3 -m IPython"

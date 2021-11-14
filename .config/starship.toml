@@ -10,3 +10,7 @@ disabled = false
 [time]
 disabled = false
 
+[python]
+python_binary = ["py"]
+# The following isn't necessary, but convenient.
+detect_folders = [".venv"]

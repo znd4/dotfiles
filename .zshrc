@@ -6,19 +6,17 @@ if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
-lg()
-{
+lg() {
     # start lazygit and change to new directory if we change repos while in lazygit
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
 
     lazygit "$@"
 
     if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
-            cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
-            rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+        cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+        rm -f $LAZYGIT_NEW_DIR_FILE >/dev/null
     fi
 }
-
 
 imp() {
     # get the impersonable service account
@@ -48,6 +46,9 @@ unimp() {
     echo "Stopped impersonating"
 }
 
+# POETRY VIRTUALENVS IN PROJECT
+export POETRY_VIRTUALENVS_IN_PROJECT=true
+
 # Editor config
 export EDITOR="micro"
 
@@ -74,8 +75,6 @@ fi
 
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-. ~/.scripts/rc/.zshrc
-
 if [ $(uname) = "Darwin" ]; then
     export ZPLUG_HOME=$(brew --prefix)/opt/zplug
 else
@@ -95,4 +94,8 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-eval "$(register-python-argcomplete pipx)"
+# eval "$(register-python-argcomplete pipx)"
+
+eval "$(starship init zsh)"
+
+export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
