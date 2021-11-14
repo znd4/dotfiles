@@ -96,6 +96,8 @@ compinit
 
 # eval "$(register-python-argcomplete pipx)"
 
+eval "$(direnv hook zsh)"
+
 eval "$(starship init zsh)"
 
 export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
