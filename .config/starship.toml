@@ -5,6 +5,7 @@ format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
 powershell_indicator = "_"
 zsh_indicator = "🍎"
 bash_indicator = "🔨"
+fish_indicator = "🐟"
 disabled = false
 
 [time]
