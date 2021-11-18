@@ -1,21 +1,21 @@
 function main
-    interactive_setup
+    if status is-interactive
+        interactive_setup
+    end
 end
 
 function interactive_setup
-    if status is-interactive
-        setup_coreutils_for_mac
+    setup_coreutils_for_mac
 
-        # Set up general aliases
-        . ~/.aliasrc
+    # Set up general aliases
+    . ~/.aliasrc
 
-        # set up gcloud path
-        . ~/.config/fish/gcloud.fish
+    # set up gcloud path
+    . ~/.config/fish/gcloud.fish
 
-        setup_starship
+    setup_starship
 
-        setup_direnv
-    end
+    setup_direnv
 end
 
 function setup_direnv
