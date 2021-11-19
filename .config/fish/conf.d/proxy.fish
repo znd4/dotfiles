@@ -20,13 +20,16 @@ function onproxy
     
     # Terminal proxies
     # NPM also uses these env vars
-    set http_proxy $proxy_url
-    set https_proxy $proxy_url
-    set HTTP_PROXY $proxy_url
-    set HTTPS_PROXY $proxy_url
-    set no_proxy ".ford.com,localhost,127.0.0.1,204.130.41.105*"
-    set NO_PROXY ".ford.com,localhost,127.0.0.1,204.130.41.105*"
-
+    set -gx http_proxy $proxy_url
+    set -gx https_proxy $proxy_url
+    set -gx HTTP_PROXY $proxy_url
+    set -gx HTTPS_PROXY $proxy_url
+    set -gx no_proxy ".ford.com,localhost,127.0.0.1,204.130.41.105*"
+    set -gx NO_PROXY ".ford.com,localhost,127.0.0.1,204.130.41.105*"
+    
+    # pip index
+    set -gx PIP_INDEX_URL https://www.nexus.ford.com/repository/Ford_ML_public/simple
+    
     # JVM proxies
     # set java_tool_options "-Dhttps.proxyHost=$proxy_host_no_protocol -Dhttps.proxyPort=$proxy_port -Dhttps.nonProxyHosts='*.ford.com|localhost' -Dhttp.proxyHost=$proxy_host_no_protocol -Dhttp.proxyHost=$proxy_port -Dhttp.nonProxyHosts='*.ford.com|localhost'"
     # set JAVA_TOOL_OPTIONS "-Dhttps.proxyHost=$proxy_host_no_protocol -Dhttps.proxyPort=$proxy_port -Dhttps.nonProxyHosts='*.ford.com|localhost' -Dhttp.proxyHost=$proxy_host_no_protocol -Dhttp.proxyHost=$proxy_port -Dhttp.nonProxyHosts='*.ford.com|localhost'"
@@ -39,6 +42,9 @@ function offproxy
     set -e HTTPS_PROXY
     set -e no_proxy
     set -e NO_PROXY
+
+    # pypi index
+    set -e PIP_INDEX_URL
 
     # JVM proxies
     # set -e java_tool_options
