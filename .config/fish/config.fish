@@ -6,9 +6,13 @@ end
 
 function interactive_setup
     setup_coreutils_for_mac
+    setup_macports
 
     # Set up general aliases
     . ~/.aliasrc
+    
+    fish_add_path ~/.local/bin
+    setup_pyenv
 
     # set up gcloud path
     . ~/.config/fish/gcloud.fish
@@ -16,6 +20,14 @@ function interactive_setup
     setup_starship
 
     setup_direnv
+end
+
+function setup_pyenv
+    if status is-login
+        set PYENV_ROOT ~/.pyenv
+        fish_add_path $PYENV_ROOT/bin
+        eval (pyenv init --path)
+    end
 end
 
 function setup_direnv
@@ -26,10 +38,13 @@ function setup_starship
     source (/usr/local/bin/starship init fish --print-full-init | psub)
 end
 
+function setup_macports
+    fish_add_path /opt/local/bin /opt/local/sbin
+end
 
 function setup_coreutils_for_mac
     if test -d "/usr/local/opt/coreutils/libexec/gnubin";
-        set PATH /usr/local/opt/coreutils/libexec/gnubin $PATH
+        fish_add_path /usr/local/opt/coreutils/libexec/gnubin
     end
 end
 
