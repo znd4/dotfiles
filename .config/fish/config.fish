@@ -14,9 +14,6 @@ function interactive_setup
     fish_add_path ~/.local/bin
     setup_pyenv
 
-    # set up gcloud path
-    . ~/.config/fish/gcloud.fish
-
     setup_starship
 
     setup_direnv
