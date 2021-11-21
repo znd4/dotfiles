@@ -17,3 +17,6 @@ email = zane@znd4.me
 rebase = true
 [includeIf "gitdir:Ford/"]
 path = /Users/zdufour/Ford/
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
