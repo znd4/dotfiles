@@ -4,6 +4,12 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ## Setup process on new machine
 
+### Set up Docker and Earthly
+
+```
+sudo apt-get install -y docker
+```
+
 Create config alias
 
 ```sh
