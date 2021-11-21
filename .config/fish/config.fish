@@ -36,7 +36,9 @@ function setup_starship
 end
 
 function setup_macports
-    fish_add_path /opt/local/bin /opt/local/sbin
+    if test -d /opt/local
+        fish_add_path /opt/local/bin /opt/local/sbin
+    end
 end
 
 function setup_coreutils_for_mac
