@@ -6,8 +6,16 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ### Set up Docker and Earthly
 
-```
+#### Install Docker
+
+```sh
 sudo apt-get install -y docker
+```
+
+#### [Install Earthly](https://earthly.dev/get-earthly)
+
+```sh
+sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete'
 ```
 
 Create config alias
