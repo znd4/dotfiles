@@ -25,6 +25,7 @@ sudo /bin/sh -c '
 #### [Install homebrew](https://brew.sh/)
 
 ```sh
+sudo apt install curl
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
