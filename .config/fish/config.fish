@@ -11,7 +11,6 @@ function interactive_setup
     # Set up general aliases
     . ~/.aliasrc
     
-    fish_add_path ~/.local/bin
     setup_pyenv
 
     setup_starship
