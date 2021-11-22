@@ -35,6 +35,12 @@ sudo apt install curl gcc
 brew install gh
 ```
 
+#### `gh` login
+
+```sh
+gh auth login
+```
+
 #### Install yadm
 
 ```sh
