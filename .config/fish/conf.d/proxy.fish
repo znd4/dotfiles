@@ -24,8 +24,8 @@ function onproxy
     set -gx https_proxy $proxy_url
     set -gx HTTP_PROXY $proxy_url
     set -gx HTTPS_PROXY $proxy_url
-    set -gx no_proxy ".ford.com,localhost,127.0.0.1,204.130.41.105*"
-    set -gx NO_PROXY ".ford.com,localhost,127.0.0.1,204.130.41.105*"
+    set -gx no_proxy ".ford.com,localhost,127.0.0.1,204.130.41.105*,192.168.*"
+    set -gx NO_PROXY ".ford.com,localhost,127.0.0.1,204.130.41.105*,192.168.*"
     
     # pip index
     set -gx PIP_INDEX_URL https://www.nexus.ford.com/repository/Ford_ML_public/simple
