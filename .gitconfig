@@ -18,5 +18,5 @@ rebase = true
 [includeIf "gitdir:Ford/"]
 path = /Users/zdufour/Ford/
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+helper =
+helper = !/usr/local/bin/gh auth git-credential
