@@ -15,7 +15,11 @@ sudo apt-get install -y docker
 #### [Install Earthly](https://earthly.dev/get-earthly)
 
 ```sh
-sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete'
+sudo /bin/sh -c '
+    wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64 \
+    -O /usr/local/bin/earthly \
+    && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete
+    '
 ```
 
 Create config alias
@@ -27,6 +31,7 @@ alias config='/usr/bin/env git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 Clone
 
 ```sh
+sudo apt-get install -y git
 git clone --bare https://github.com/zdog234/dotfiles $HOME/.cfg
 config checkout main
 ```
