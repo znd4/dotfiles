@@ -22,10 +22,21 @@ sudo /bin/sh -c '
     '
 ```
 
+#### [Install homebrew](https://brew.sh/)
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+#### `gh` install
+
+
+
 #### Install yadm
 
 ```sh
 sudo apt-get install -y yadm
+yadm clone https://github.com/zdog234/dotfiles
 ```
 
 Create config alias
