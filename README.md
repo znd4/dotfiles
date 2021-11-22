@@ -22,6 +22,12 @@ sudo /bin/sh -c '
     '
 ```
 
+#### Install yadm
+
+```sh
+sudo apt-get install -y yadm
+```
+
 Create config alias
 
 ```sh
