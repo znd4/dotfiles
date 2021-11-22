@@ -31,7 +31,9 @@ sudo apt install curl
 
 #### `gh` install
 
-
+```sh
+brew install gh
+```
 
 #### Install yadm
 
