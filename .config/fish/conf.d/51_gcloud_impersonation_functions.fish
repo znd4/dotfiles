@@ -1,4 +1,4 @@
-set -l team mlops
+set team mlops
 
 function imp
 
@@ -7,7 +7,6 @@ function imp
             --filter="name ~ $team-c" \
             --format="value(PROJECT_ID)" \
     )
-
     set service_account (
         gcloud iam service-accounts list \
             --filter="email ~ -developers@" \
@@ -20,6 +19,7 @@ function imp
     echo "Started impersonating $service_account"
 
 end
+
 function unimp
     # Undo impersonation
     gcloud config unset auth/impersonate_service_account
