@@ -77,7 +77,8 @@ fish --login
 #### Run pyinfra script
 
 ```fish
-python3.10
+python3.10 -m pip install pyinfra
+python3.10 ~/.dotfiles/install.py
 ```
 
 
