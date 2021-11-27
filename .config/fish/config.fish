@@ -16,6 +16,7 @@ function interactive_setup
     setup_starship
 
     setup_direnv
+    setup_brew
 end
 
 function setup_pyenv
@@ -32,6 +33,12 @@ end
 
 function setup_starship
     source (/usr/local/bin/starship init fish --print-full-init | psub)
+end
+
+function setup_brew
+    if test -d /home/linuxbrew/.linuxbrew/bin
+        fish_add_path /home/linuxbrew/.linuxbrew/bin 
+    end
 end
 
 function setup_macports
