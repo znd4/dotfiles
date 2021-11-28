@@ -23,8 +23,9 @@ function setup_pyenv
     if status is-login
         set PYENV_ROOT ~/.pyenv
         fish_add_path $PYENV_ROOT/bin
-        eval (pyenv init --path)
+        pyenv init --path | source
     end
+    status is-interactive; and pyenv init - | source
 end
 
 function setup_direnv
