@@ -20,6 +20,7 @@ apt.ppa(
 
 server.packages(
     packages=["appimagelauncher"],
+    sudo=True
 )
 
 # TODO - Install firacode
