@@ -80,7 +80,7 @@ fish --login
 python3.10 -m pip install pipx
 python3.10 -m pipx ensurepath
 pipx install pyinfra
-pyinfra --sudo ~/.dotfiles/install.py
+pyinfra @local ~/.dotfiles/install.py
 ```
 
 Create config alias
@@ -110,7 +110,7 @@ and then move conflicting files to `.backup`
 ## Ignore untracked files
 
 ```sh
-config config --local status.showUntrackedFiles no
+yadm config --local status.showUntrackedFiles no
 ```
 
 ## Install pre-commit hooks
