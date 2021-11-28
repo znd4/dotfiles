@@ -83,9 +83,6 @@ pipx install pyinfra
 pyinfra --sudo ~/.dotfiles/install.py
 ```
 
-
-
-
 Create config alias
 
 ```sh
