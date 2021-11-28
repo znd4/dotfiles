@@ -15,12 +15,12 @@ sudo apt install appimagelauncher
 apt.ppa(
     src="ppa:appimagelauncher-team/stable",
     name="Add appimagelauncher repo",
-    sudo=True
+    sudo=True,
 )
 
 server.packages(
     packages=["appimagelauncher"],
-    sudo=True
+    sudo=True,
 )
 
 # TODO - Install firacode
