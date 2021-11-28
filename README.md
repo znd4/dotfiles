@@ -110,7 +110,7 @@ and then move conflicting files to `.backup`
 ## Ignore untracked files
 
 ```sh
-yadm config --local status.showUntrackedFiles no
+yadm gitconfig --local status.showUntrackedFiles no
 ```
 
 ## Install pre-commit hooks
