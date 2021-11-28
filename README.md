@@ -69,8 +69,6 @@ yadm clone https://github.com/zdog234/dotfiles
 #### Install fish
 
 ```sh
-sudo apt-add-repository ppa:fish-shell/release-3
-sudo apt-get update
 sudo apt-get install -y fish
 chsh -s $(which fish)
 fish --login
@@ -79,8 +77,10 @@ fish --login
 #### Run pyinfra script
 
 ```fish
-python3.10 -m pip install pyinfra
-python3.10 ~/.dotfiles/install.py
+python3.10 -m pip install pipx
+python3.10 -m pipx ensurepath
+pipx install pyinfra
+pyinfra --sudo ~/.dotfiles/install.py
 ```
 
 
