@@ -23,6 +23,13 @@ def configure_repos():
         src="https://updates.signal.org/desktop/apt/keys.asc",
         sudo=True
     )
+    apt.repo(
+        "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main",
+        present=True,
+        filename="signal-xenial",
+        sudo=True,
+    )
+    # deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main
 
 def brew_installs():
     brew.packages(
@@ -45,8 +52,9 @@ def script_installs():
     )
 
 def install_packages():
+    apt.update(sudo=True)
     server.packages(
-        packages=["appimagelauncher"],
+        packages=["appimagelauncher", "direnv", "signal-desktop"],
         sudo=True,
     )
 
