@@ -60,8 +60,8 @@ def install_packages():
 
 # TODO - Install firacode nerd font
 # TODO - Install vscode
-# TODO - Install direnv
-# TODO - Install 
+# TODO - Install alacritty
+# TODO - Install + configure alacritty overlay keyboard shortcut
 
 main()
 
