@@ -54,7 +54,7 @@ def script_installs():
 def install_packages():
     apt.update(sudo=True)
     server.packages(
-        packages=["appimagelauncher", "direnv", "signal-desktop"],
+        packages=["appimagelauncher", "direnv", "signal-desktop", "podman"],
         sudo=True,
     )
 
