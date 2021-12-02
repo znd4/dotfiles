@@ -102,7 +102,7 @@ function fisher --argument-names cmd --description "A plugin manager for Fish"
             end
 
             wait $pid_list 2>/dev/null
-
+            echo "made it to 105"
             for plugin in $fetch_plugins
                 if set --local source $source_plugins[(contains --index -- "$plugin" $fetch_plugins)] && test ! -e $source
                     if set --local index (contains --index -- "$plugin" $install_plugins)
