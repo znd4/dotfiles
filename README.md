@@ -6,10 +6,19 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ### Set up Docker and Earthly
 
-#### Install Docker
+#### Install docker and ssh-server
 
 ```sh
-sudo apt-get install -y docker
+sudo apt-get update -y
+sudo apt-get install -y docker openssh-server
+```
+
+#### Start ssh service
+
+<- TODO - Might not need this ->
+<- TODO - might need to add localhost to /etc/hosts.allow ->
+```sh
+sudo service ssh start
 ```
 
 #### [Install Earthly](https://earthly.dev/get-earthly)
