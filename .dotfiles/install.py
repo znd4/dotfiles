@@ -58,6 +58,24 @@ def script_installs():
 
     install_vim_plug()
     install_delta()
+    install_vscode()
+
+def install_vscode():
+    if host.get_fact(facts.server.Which, "code"):
+        print("vscode already installed")
+        return
+
+    download_path="/tmp/vscode.deb"
+    files.download(
+        "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
+        download_path,
+        name="Downloading vscode.deb"
+    )
+    server.shell(
+        name="Installing vscode",
+        commands=[f"dpkg -i {download_path}"],
+        sudo=True,
+    )
 
 def install_vim_plug():
     if not host.get_fact(facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"):
@@ -158,11 +176,10 @@ def install_nerd_fonts():
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
 # TODO - Install firacode nerd font
-# TODO - Install vscode
 # TODO - Install alacritty
 # TODO - Install + configure alacritty overlay keyboard shortcut
 # TODO - Install libevdev
-# TODO - Set up local ssh
+# TODO - configure local ssh setup to only listen to localhost
 # TODO - Install earthly
 
 
