@@ -1,6 +1,23 @@
 set nocompatible              " required
 filetype off                  " required
 
+" Plugins will be downloaded under the specified directory.
+" vim-plug stuff
+call plug#begin()
+
+Plug 'earthly/earthly.vim', { 'branch': 'main' }
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Declare the list of plugins.
+Plug 'tpope/vim-sensible'
+Plug 'junegunn/seoul256.vim'
+
+" List ends here. Plugins become visible to Vim after this call.
+call plug#end()
+
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
