@@ -5,6 +5,8 @@ filetype off                  " required
 " vim-plug stuff
 call plug#begin()
 
+Plug 'flazz/vim-colorschemes'
+
 Plug 'earthly/earthly.vim', { 'branch': 'main' }
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
