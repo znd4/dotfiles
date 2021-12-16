@@ -14,7 +14,7 @@ defaultBranch = main
 name = Zane Dufour
 email = zane@znd4.me
 [pull]
-rebase = true
+rebase = false
 [includeIf "gitdir:Ford/"]
 path = /Users/zdufour/Ford/
 [credential "https://github.com"]
