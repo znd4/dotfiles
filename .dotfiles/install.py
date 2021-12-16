@@ -60,6 +60,12 @@ def script_installs():
     install_delta()
     install_vscode()
 
+def install_kinto():
+    if host.get_fact(facts.files.Directory, _get_home() / ".config" / "kinto"):
+        return
+    server.download("https://raw.githubusercontent.com/rbreaves/kinto/HEAD/install/linux.sh", "/tmp/kinto-install.sh")
+    server.script("/tmp/kinto-install.sh", sudo=True)
+
 def install_vscode():
     if host.get_fact(facts.server.Which, "code"):
         print("vscode already installed")
@@ -115,6 +121,10 @@ def _get_home() -> Path:
     return PurePosixPath(host.get_fact(Home))
 
 def install_packages():
+    """
+    Install packages with system's package manager
+    (e.g. apt, pacman)
+    """
     apt.update(sudo=True)
     server.packages(
         packages=[
@@ -124,6 +134,9 @@ def install_packages():
             "podman",
             "virtualbox",
             "bat",
+            "unzip",
+            "python3-pip",
+            "golang-go",
         ],
         sudo=True,
     )
@@ -153,25 +166,18 @@ def install_vundle():
     )
 
 def install_nerd_fonts(): 
-    return
-    raise NotImplementedError()
+    if host.get_fact(facts.server.Command, "fc-list | grep -i nerd").strip():
+        return
+    tmp_firacode = "/tmp/firacode.zip"
+    files.download(
+        "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip",
+        tmp_firacode
+    )
+    fonts_dir = str(_get_home() / ".local" / "share" / "fonts") 
+    files.directory(fonts_dir, name="Create ~/.local/share/fonts")
     server.shell(
-        name="install nerd fonts",
-        commands=[
-            shlex.join(
-                [
-                    "git",
-                    "clone",
-                    "https://github.com/ryanoasis/nerd-fonts",
-                    "/tmp/nerd-fonts",
-                ]
-            ),
-            shlex.join(
-                [
-                    ""
-                ]
-            ),
-        ]
+        name="Install fira code",
+        commands=[f"unzip {tmp_firacode} -d {fonts_dir}"]
     )
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
