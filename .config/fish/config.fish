@@ -16,6 +16,8 @@ function interactive_setup
     setup_starship
 
     setup_direnv
+    # https://fishshell.com/docs/current/interactive.html#command-line-editor
+    fish_vi_key_bindings
 end
 
 function setup_pyenv
