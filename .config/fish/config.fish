@@ -18,14 +18,16 @@ function interactive_setup
     setup_direnv
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
+    setup_brew
 end
 
 function setup_pyenv
     if status is-login
         set PYENV_ROOT ~/.pyenv
         fish_add_path $PYENV_ROOT/bin
-        eval (pyenv init --path)
+        pyenv init --path | source
     end
+    status is-interactive; and pyenv init - | source
 end
 
 function setup_direnv
@@ -34,6 +36,12 @@ end
 
 function setup_starship
     source (/usr/local/bin/starship init fish --print-full-init | psub)
+end
+
+function setup_brew
+    if test -d /home/linuxbrew/.linuxbrew/bin
+        fish_add_path /home/linuxbrew/.linuxbrew/bin 
+    end
 end
 
 function setup_macports
