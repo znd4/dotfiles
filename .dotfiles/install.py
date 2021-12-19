@@ -41,6 +41,13 @@ def brew_installs():
         name="Install lazygit",
         packages=["jesseduffield/lazygit/lazygit"],
     )
+    if not host.get_fact(facts.server.Which, "fzf"):
+        brew.packages(
+            name="Install fzf",
+            packages=["fzf"],
+        )
+        # --all is needed. Otherwise, `install` will have an interactive prompt
+        server.shell(commands=["$(brew --prefix)/opt/fzf/install --all"])
 
 def script_installs():
     server.shell(
