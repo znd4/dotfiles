@@ -60,11 +60,6 @@ def script_installs():
     install_delta()
     install_vscode()
 
-def install_kinto():
-    if host.get_fact(facts.files.Directory, _get_home() / ".config" / "kinto"):
-        return
-    server.download("https://raw.githubusercontent.com/rbreaves/kinto/HEAD/install/linux.sh", "/tmp/kinto-install.sh")
-    server.script("/tmp/kinto-install.sh", sudo=True)
 
 def install_vscode():
     if host.get_fact(facts.server.Which, "code"):
@@ -84,7 +79,9 @@ def install_vscode():
     )
 
 def install_vim_plug():
-    if not host.get_fact(facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"):
+    if not host.get_fact(
+            facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"
+        ):
         print("installing vim-plug")
         server.shell(
             name="Install [vim plug](https://github.com/junegunn/vim-plug)",
@@ -93,11 +90,26 @@ def install_vim_plug():
                 "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
             ]
         )
+    nvim_path = _get_home() / ".local" / "share" / "nvim" / "site" / "autoload" / "plug.vim"
+    if not host.get_fact(
+            facts.files.File,
+            str(nvim_path),
+        ):
+        print("installing vim-plug for neovim")
+        files.directory(nvim_path.parent)
+        files.download(
+            "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
+            nvim_path,
+        )
+
+    print("installing plugins with vim-plug")
     server.shell(
         name="Install vim plugins with vim plug",
         commands=[
             "vim -E -s +PlugInstall +visual +qall",
             "vim -E -s +PlugUpdate +visual +qall",
+            "nvim +'PlugInstall --sync' +qa",
+            "nvim +'PlugUpdate --sync' +qa",
         ],
     )
 
@@ -137,6 +149,7 @@ def install_packages():
             "unzip",
             "python3-pip",
             "golang-go",
+            "neovim",
         ],
         sudo=True,
     )
@@ -155,13 +168,10 @@ def install_vundle():
                     vundle_dir,
                 ],
             ),
-            shlex.join(
-                [ 
-                    "vim",
-                    "+PluginInstall",
-                    "+qall",
-                ]
-            )
+            "vim +PluginInstall +qall",
+            "vim +PluginUpdate +qall",
+            "nvim +PluginInstall +qall",
+            "nvim +PluginUpdate +qall",
         ]
     )
 
