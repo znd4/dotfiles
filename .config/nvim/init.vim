@@ -2,6 +2,9 @@
 set nocompatible              " required
 filetype off                  " required
 
+set tabstop=4
+set shiftwidth=4
+
 set number
 
 " Plugins will be downloaded under the specified directory.
