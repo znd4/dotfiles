@@ -67,25 +67,25 @@ font:
   # The normal (roman) font face to use.
   # Style can be specified to pick a specific face.
   normal:
-    family: FiraMono
+    family: FiraCode NF
     style: Light
-    # family: "Fira Code"
+    # family: "FiraCode NF"
     # family: "Source Code Pro"
     # style: Retina
 
   # The bold font face
   bold:
-    family: FiraMono
+    family: FiraCode NF
     style: Medium
-    # family: "Fira Code"
+    # family: "FiraCode NF"
     # family: "Source Code Pro"
 
   # The italic font face
   italic:
-    family: FiraMono
+    family: FiraCode NF
     style: "Light Italic"
     # style: "Light Oblique"
-    # family: "Fira Code"
+    # family: "FiraCode NF"
     # family: "Source Code Pro"
     # style: "Medium Italic"
 
@@ -228,7 +228,7 @@ bell:
   duration: 0
 
 # Background opacity
-background_opacity: 0.9
+console.opacity: 0.9
 
 # Key bindings
 #
