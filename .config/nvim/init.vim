@@ -2,7 +2,15 @@
 set nocompatible              " required
 filetype off                  " required
 
+" Show line numbers
 set number
+
+" keep terminals open even when changing buffers
+set hidden
+
+" Set default tab width to 4
+set tabstop=4
+set shiftwidth=4
 
 " Plugins will be downloaded under the specified directory.
 " vim-plug stuff
