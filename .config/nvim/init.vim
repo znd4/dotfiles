@@ -2,7 +2,7 @@
 set nocompatible              " required
 filetype off                  " required
 
-" Show line numbers
+" Add line numbers
 set number
 
 " keep terminals open even when changing buffers
