@@ -1,1 +1,1 @@
-alias ddgr="BROWSER=firefox ddgr"
+alias ddgr="BROWSER=firefox command ddgr"
