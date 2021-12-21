@@ -16,6 +16,8 @@ set shiftwidth=4
 " vim-plug stuff
 call plug#begin()
 
+Plug 'tmsvg/pear-tree'
+
 Plug 'flazz/vim-colorschemes'
 
 Plug 'earthly/earthly.vim', { 'branch': 'main' }
