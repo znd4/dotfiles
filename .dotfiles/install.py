@@ -66,6 +66,7 @@ def script_installs():
     install_vim_plug()
     install_delta()
     install_vscode()
+    install_nerd_fonts()
 
 
 def install_vscode():
@@ -184,7 +185,12 @@ def install_vundle():
     )
 
 def install_nerd_fonts(): 
-    if host.get_fact(facts.server.Command, "fc-list | grep -i nerd").strip():
+    fc_list_result = host.get_fact(
+        facts.server.Command,
+        # exit 0 so pyinfra doesn't error out
+        "fc-list | grep -i nerd; exit 0", 
+    )
+    if fc_list_result and fc_list_result.strip():
         return
     tmp_firacode = "/tmp/firacode.zip"
     files.download(
@@ -199,12 +205,10 @@ def install_nerd_fonts():
     )
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
-# TODO - Install firacode nerd font
 # TODO - Install alacritty
 # TODO - Install + configure alacritty overlay keyboard shortcut
 # TODO - Install libevdev
 # TODO - configure local ssh setup to only listen to localhost
-# TODO - Install earthly
 
 
 main()
