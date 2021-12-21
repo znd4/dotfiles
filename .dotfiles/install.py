@@ -148,15 +148,16 @@ def install_packages():
     server.packages(
         packages=[
             "appimagelauncher",
-            "direnv",
-            "signal-desktop",
-            "podman",
-            "virtualbox",
             "bat",
-            "unzip",
-            "python3-pip",
+            "direnv",
             "golang-go",
             "neovim",
+            "podman",
+            "python3-pip",
+            "signal-desktop",
+            "unzip",
+            "virtualbox",
+            "xclip",
         ],
         sudo=True,
     )
