@@ -19,6 +19,7 @@ function interactive_setup
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
     setup_brew
+	set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 end
 
 function setup_pyenv
