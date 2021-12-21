@@ -292,7 +292,6 @@ def install_alacritty():
     )
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
-# TODO - Install alacritty
 # TODO - Install + configure alacritty overlay keyboard shortcut
 # TODO - Install libevdev
 # TODO - configure local ssh setup to only listen to localhost
