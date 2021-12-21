@@ -150,6 +150,7 @@ def install_packages():
         packages=[
             "appimagelauncher",
             "bat",
+            "ddgr",
             "direnv",
             "golang-go",
             "neovim",
