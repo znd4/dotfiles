@@ -10,7 +10,7 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ```sh
 sudo apt-get update -y
-sudo apt-get install -y docker openssh-server
+sudo apt-get install -y docker.io docker openssh-server
 ```
 
 #### Start ssh service
@@ -19,6 +19,8 @@ sudo apt-get install -y docker openssh-server
 <- TODO - might need to add localhost to /etc/hosts.allow ->
 ```sh
 sudo service ssh start
+sudo echo "ListenAddress 127.0.0.1" >> /etc/ssh/sshd_config
+sudo systemctl restart ssh
 ```
 
 #### [Install Earthly](https://earthly.dev/get-earthly)
@@ -29,6 +31,32 @@ sudo /bin/sh -c '
     -O /usr/local/bin/earthly \
     && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete
     '
+```
+
+#### Install Docker
+
+
+
+#### [Configure Earthly]()
+
+```sh
+# earthly config global.container_frontend podman-shell
+# podman pull docker.io/earthly/buildkitd:v0.5.24
+# sudo bash -c \
+#	'echo "unqualified-search-registries=[\"docker.io\"]" \
+#	>> /etc/containers/registries.conf'
+```
+
+#### [Run Earthly] ()
+
+```sh
+set IP (hostname -I | grep -Po '172(\.\d+){3}')
+cd ~/.dotfiles
+sudo earthly +install \
+	--IP=$IP \
+	--USER=(whoami) \
+	--KNOWN_HOSTS=(ssh-keyscan -H $IP) \
+	--PASSWORD=(read -s -P "ssh Password: ")
 ```
 
 #### [Install homebrew](https://brew.sh/)
