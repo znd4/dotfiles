@@ -67,6 +67,16 @@ def script_installs():
     install_delta()
     install_vscode()
     install_nerd_fonts()
+    install_rust()
+
+    install_alacritty()
+
+
+def install_rust():
+    server.shell(
+        name="Install rust",
+        commands=["curl https://sh.rustup.rs -sSf | sh -s -- -y"],
+    )
 
 
 def install_vscode():
@@ -157,6 +167,7 @@ def install_packages():
             "podman",
             "python3-pip",
             "signal-desktop",
+            "tmux",
             "unzip",
             "virtualbox",
             "xclip",
@@ -203,6 +214,81 @@ def install_nerd_fonts():
     server.shell(
         name="Install fira code",
         commands=[f"unzip {tmp_firacode} -d {fonts_dir}"]
+    )
+
+
+def install_alacritty():
+    if host.get_fact(facts.server.Which, "alacritty"):
+        return
+    alacritty_dir = "/tmp/alacritty"
+    files.directory(alacritty_dir, present=False)
+
+    server.shell(
+        name="cloning alacritty",
+        commands=[
+            shlex.join(
+                [
+                    "git",
+                    "clone",
+                    "https://github.com/alacritty/alacritty.git",
+                    alacritty_dir,
+                ]
+            )
+        ],
+    )
+
+    server.shell(
+        name="Check rust compiler version",
+        commands=[
+            "rustup override set stable",
+            "rustup update stable",
+        ],
+    )
+    server.packages(
+        name="Install other alacritty dependencies",
+        sudo=True,
+        packages=[
+            "cmake",
+            "pkg-config",
+	    "libfreetype6-dev",
+	    "libfontconfig1-dev",
+	    "libxcb-xfixes0-dev",
+	    "libxkbcommon-dev",
+	    "python3",
+        ],
+    )
+    server.shell(
+        name="cargo build alacritty",
+        commands=[
+            f"cd {alacritty_dir}; cargo build --release",
+        ]
+    )
+
+    output = host.get_fact(
+        facts.server.Command,
+        "infocmp alacritty >/dev/null; echo $?",
+    )
+    if output != "0":
+        print(f"infocmp alacritty {output=}")
+        server.shell(
+            name="running tic -xe alacritty",
+            commands=[
+                "tic -xe alacritty,alacritty-direct extra/alacritty.info"
+            ],
+            sudo=True,
+        )
+    server.shell(
+        name="Install Alacritty Desktop Entry",
+        sudo=True,
+        commands=[
+            " && ".join([
+                f"cd {alacritty_dir}",
+                "cp target/release/alacritty /usr/local/bin",
+                "cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg",
+                "desktop-file-install extra/linux/Alacritty.desktop",
+                "update-desktop-database",
+            ])
+        ]
     )
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
