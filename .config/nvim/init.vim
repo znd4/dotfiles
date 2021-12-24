@@ -5,6 +5,11 @@ filetype off                  " required
 " Add line numbers
 set number
 
+" prompt when closing buffer with unsaved changes
+" https://vi.stackexchange.com/a/5879
+set confirm
+
+
 " keep terminals open even when changing buffers
 set hidden
 

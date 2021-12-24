@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=sxhkd
 Comment=Simple X hotkey daemon
-Exec=/usr/bin/sxhkd
+Exec=/usr/bin/sxhkd -c ~/.dotfiles/sxhkdrc
 Terminal=false
 Type=Application
 

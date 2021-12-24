@@ -1,6 +1,6 @@
-from pyinfra.operations import apt, brew, server, files
+from pyinfra.operations import apt, brew, server, files, git
 from pathlib import Path
-from pyinfra import host 
+from pyinfra import host
 from pyinfra.facts.server import Home
 from pyinfra import facts as facts
 from pathlib import PurePosixPath
@@ -8,12 +8,14 @@ import shlex
 
 # Install firacode nerd fonts
 
+
 def main():
     configure_repos()
     install_packages()
     brew_installs()
     script_installs()
     install_vundle()
+
 
 def configure_repos():
     """
@@ -27,7 +29,7 @@ def configure_repos():
     apt.key(
         name="Add signal desktop key",
         src="https://updates.signal.org/desktop/apt/keys.asc",
-        sudo=True
+        sudo=True,
     )
     apt.repo(
         "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main",
@@ -35,6 +37,7 @@ def configure_repos():
         filename="signal-xenial",
         sudo=True,
     )
+
 
 def brew_installs():
     brew.packages(
@@ -49,6 +52,7 @@ def brew_installs():
         # --all is needed. Otherwise, `install` will have an interactive prompt
         server.shell(commands=["$(brew --prefix)/opt/fzf/install --all"])
 
+
 def script_installs():
     server.shell(
         name="Install starship",
@@ -57,10 +61,12 @@ def script_installs():
         ],
         sudo=True,
     )
-    
+
     server.shell(
         name="install joplin",
-        commands=["wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash"],
+        commands=[
+            "wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash"
+        ],
     )
 
     install_vim_plug()
@@ -70,6 +76,21 @@ def script_installs():
     install_rust()
 
     install_alacritty()
+    install_kitty()
+    install_tdrop()
+
+
+def install_tdrop():
+    if host.get_fact(facts.server.Which, "tdrop"):
+        return
+    tmpdir = "/tmp/tdrop"
+    git.repo("https://github.com/noctuid/tdrop", tmpdir)
+    server.shell(
+        name="installing tdrop",
+        commands=["make install"],
+        sudo=True,
+        chdir=tmpdir,
+    )
 
 
 def install_rust():
@@ -84,11 +105,11 @@ def install_vscode():
         print("vscode already installed")
         return
 
-    download_path="/tmp/vscode.deb"
+    download_path = "/tmp/vscode.deb"
     files.download(
         "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
         download_path,
-        name="Downloading vscode.deb"
+        name="Downloading vscode.deb",
     )
     server.shell(
         name="Installing vscode",
@@ -96,23 +117,26 @@ def install_vscode():
         sudo=True,
     )
 
+
 def install_vim_plug():
     if not host.get_fact(
-            facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"
-        ):
+        facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"
+    ):
         print("installing vim-plug")
         server.shell(
             name="Install [vim plug](https://github.com/junegunn/vim-plug)",
             commands=[
                 "curl -fLo ~/.vim/autoload/plug.vim --create-dirs "
                 "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-            ]
+            ],
         )
-    nvim_path = _get_home() / ".local" / "share" / "nvim" / "site" / "autoload" / "plug.vim"
+    nvim_path = (
+        _get_home() / ".local" / "share" / "nvim" / "site" / "autoload" / "plug.vim"
+    )
     if not host.get_fact(
-            facts.files.File,
-            str(nvim_path),
-        ):
+        facts.files.File,
+        str(nvim_path),
+    ):
         print("installing vim-plug for neovim")
         files.directory(nvim_path.parent)
         files.download(
@@ -131,6 +155,7 @@ def install_vim_plug():
         ],
     )
 
+
 def install_delta():
     if host.get_fact(facts.server.Which, "delta"):
         return
@@ -143,12 +168,13 @@ def install_delta():
     server.shell(
         name="install [git-delta](https://github.com/dandavison/delta)",
         commands=[f"dpkg -i {download_path}"],
-        sudo=True
+        sudo=True,
     )
 
 
 def _get_home() -> Path:
     return PurePosixPath(host.get_fact(Home))
+
 
 def install_packages():
     """
@@ -167,16 +193,21 @@ def install_packages():
             "podman",
             "python3-pip",
             "signal-desktop",
+            "sxhkd",
             "tmux",
             "unzip",
             "virtualbox",
             "xclip",
+            "xdotool",
         ],
         sudo=True,
     )
 
+
 def install_vundle():
-    vundle_dir = str(PurePosixPath(host.get_fact(Home)) / ".vim" / "bundle" / "Vundle.vim")
+    vundle_dir = str(
+        PurePosixPath(host.get_fact(Home)) / ".vim" / "bundle" / "Vundle.vim"
+    )
     if host.get_fact(facts.files.Directory, vundle_dir):
         return
     server.shell(
@@ -196,24 +227,24 @@ def install_vundle():
         ]
     )
 
-def install_nerd_fonts(): 
+
+def install_nerd_fonts():
     fc_list_result = host.get_fact(
         facts.server.Command,
         # exit 0 so pyinfra doesn't error out
-        "fc-list | grep -i nerd; exit 0", 
+        "fc-list | grep -i nerd; exit 0",
     )
     if fc_list_result and fc_list_result.strip():
         return
     tmp_firacode = "/tmp/firacode.zip"
     files.download(
         "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip",
-        tmp_firacode
+        tmp_firacode,
     )
-    fonts_dir = str(_get_home() / ".local" / "share" / "fonts") 
+    fonts_dir = str(_get_home() / ".local" / "share" / "fonts")
     files.directory(fonts_dir, name="Create ~/.local/share/fonts")
     server.shell(
-        name="Install fira code",
-        commands=[f"unzip {tmp_firacode} -d {fonts_dir}"]
+        name="Install fira code", commands=[f"unzip {tmp_firacode} -d {fonts_dir}"]
     )
 
 
@@ -250,18 +281,18 @@ def install_alacritty():
         packages=[
             "cmake",
             "pkg-config",
-	    "libfreetype6-dev",
-	    "libfontconfig1-dev",
-	    "libxcb-xfixes0-dev",
-	    "libxkbcommon-dev",
-	    "python3",
+            "libfreetype6-dev",
+            "libfontconfig1-dev",
+            "libxcb-xfixes0-dev",
+            "libxkbcommon-dev",
+            "python3",
         ],
     )
     server.shell(
         name="cargo build alacritty",
         commands=[
             f"cd {alacritty_dir}; cargo build --release",
-        ]
+        ],
     )
 
     output = host.get_fact(
@@ -272,24 +303,74 @@ def install_alacritty():
         print(f"infocmp alacritty {output=}")
         server.shell(
             name="running tic -xe alacritty",
-            commands=[
-                "tic -xe alacritty,alacritty-direct extra/alacritty.info"
-            ],
+            commands=["tic -xe alacritty,alacritty-direct extra/alacritty.info"],
             sudo=True,
         )
     server.shell(
         name="Install Alacritty Desktop Entry",
         sudo=True,
         commands=[
-            " && ".join([
-                f"cd {alacritty_dir}",
-                "cp target/release/alacritty /usr/local/bin",
-                "cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg",
-                "desktop-file-install extra/linux/Alacritty.desktop",
-                "update-desktop-database",
-            ])
-        ]
+            " && ".join(
+                [
+                    f"cd {alacritty_dir}",
+                    "cp target/release/alacritty /usr/local/bin",
+                    "cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg",
+                    "desktop-file-install extra/linux/Alacritty.desktop",
+                    "update-desktop-database",
+                ]
+            )
+        ],
     )
+
+
+def install_kitty():
+    server.shell(
+        name="Install Kitty",
+        commands=[
+            "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin",
+        ],
+    )
+
+    # Create a symbolic link to add kitty to PATH (assuming ~/.local/bin is in
+    # your PATH)
+    files.link(
+        path=str(_get_home() / ".local" / "bin" / "kitty"),
+        target=str(_get_home() / ".local" / "kitty.app" / "bin" / "kitty"),
+    )
+    # ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
+    # Place the kitty.desktop file somewhere it can be found by the OS
+    kitty_desktop_src = (
+        _get_home()
+        / ".local"
+        / "kitty.app"
+        / "share"
+        / "applications"
+        / "kitty.desktop"
+    )
+    kitty_desktop_dst = (
+        _get_home() / ".local" / "share" / "applications" / "kitty.desktop"
+    )
+    server.shell(commands=[f"cp {kitty_desktop_src} {kitty_desktop_dst}"])
+    # Update the path to the kitty icon in the kitty.desktop file
+
+    kitty_icon = (
+        _get_home()
+        / ".local"
+        / "kitty.app"
+        / "share"
+        / "icons"
+        / "hicolor"
+        / "256x256"
+        / "apps"
+        / "kitty.png"
+    )
+    sed_string = f"s|Icon=kitty|Icon={kitty_icon}|g"
+    server.shell(
+        name="Remapping kitty icon with sed",
+        commands=[f'sed -i "{sed_string}" {kitty_desktop_dst}'],
+    )
+    # sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
+
 
 # TODO - Install yadm and make sure that yadm has been pulled / updated
 # TODO - Install + configure alacritty overlay keyboard shortcut
@@ -298,5 +379,3 @@ def install_alacritty():
 
 
 main()
-
-
