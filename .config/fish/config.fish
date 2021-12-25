@@ -8,9 +8,6 @@ function interactive_setup
     setup_coreutils_for_mac
     setup_macports
 
-    # Set up general aliases
-    . ~/.aliasrc
-    
     setup_pyenv
 
     setup_starship
@@ -19,8 +16,15 @@ function interactive_setup
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
     setup_brew
+
+	# Needed for bash aliases to show up in vim etc.
+	# https://stackoverflow.com/a/19819036/5071232
+	set -gx BASH_ENV ~/.aliasrc
+
+	# needed for rust
 	set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 end
+
 
 function setup_pyenv
     if status is-login
