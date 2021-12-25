@@ -392,7 +392,7 @@ key_bindings:
   - { key: F, mods: Command, chars: "\x01/" } # search (upwards) (see tmux.conf)
 
 mouse:
-  # Click settings
+  #bind-key -n C-T Click settings
   #
   # The `double_click` and `triple_click` settings control the time
   # alacritty should wait for accepting multiple clicks as one double
