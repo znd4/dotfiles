@@ -480,7 +480,7 @@ debug:
   #   - INFO
   #   - DEBUG
   #   - TRACE
-  log_level: OFF
+  log_level: WARN
 
   # Print all received window events.
   print_events: false
