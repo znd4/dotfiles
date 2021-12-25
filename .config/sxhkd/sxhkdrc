@@ -1,2 +1,0 @@
-f12
-    tdrop -ma -s dropdown -P ‘wmctrl -i -r $1 -b add,above’ alacritty 
