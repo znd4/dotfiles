@@ -17,6 +17,8 @@ function interactive_setup
     fish_vi_key_bindings
     setup_brew
 
+	set -gx EDITOR nvim
+
 	# Needed for bash aliases to show up in vim etc.
 	# https://stackoverflow.com/a/19819036/5071232
 	set -gx BASH_ENV ~/.aliasrc
