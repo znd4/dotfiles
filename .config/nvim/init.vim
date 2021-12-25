@@ -2,6 +2,9 @@
 set nocompatible              " required
 filetype off                  " required
 
+
+
+
 " Add line numbers
 set number
 
@@ -21,6 +24,9 @@ set shiftwidth=4
 " vim-plug stuff
 call plug#begin()
 
+" git plugin
+Plug 'tpope/vim-fugitive'
+
 Plug 'tmsvg/pear-tree'
 
 Plug 'flazz/vim-colorschemes'
@@ -34,8 +40,26 @@ Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/seoul256.vim'
 
+" Fish support
+Plug 'dag/vim-fish'
+
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
+
+" From https://github.com/dag/vim-fish
+" Set up :make to use fish for syntax checking.
+syntax enable
+filetype plugin indent on
+if &shell =~# 'fish$'
+    set shell=bash
+endif
+" compiler fish
+
+" Set this to have long lines wrap inside comments.
+setlocal textwidth=79
+
+" Enable folding of block structures in fish.
+setlocal foldmethod=expr
 
 
 " set the runtime path to include Vundle and initialize
