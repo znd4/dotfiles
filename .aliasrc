@@ -1,4 +1,6 @@
+shopt -s expand_aliases
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
+alias g=git
 
 alias bat=batcat
 
@@ -49,25 +51,7 @@ alias gsshmount='gcloud alpha cloud-shell get-mount-command'
 alias prettier="npx prettier"
 alias pr=prettier
 
-# Signal Desktop App
-if test (uname -s) = "Darwin";
-    alias signal="/Applications/Signal.app/Contents/MacOS/Signal"
-end
 
-# if [[ $(uname -s) == "Darwin" ]]; then
-# fi
-
-# py3x
-if which py > /dev/null;
-    alias py3="py -3"
-    alias py36="py -3.6"
-    alias py37="py -3.7"
-    alias py38="py -3.8"
-    alias py39="py -3.9"
-    alias py310="py -3.10"
-else;
-    echo "python-launcher not installed. brew install python-launcher"
-end
 
 # ipython
 alias ipy="python3 -m IPython"
