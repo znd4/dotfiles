@@ -107,7 +107,7 @@ if [ -d $HOME/.pyenv ]; then
     eval "$(pyenv init --path)"
     eval "$(pyenv virtualenv-init -)"
 else
-    echo "pyenv isn't installed"
+    echo "pyenv isn't installed" >>/dev/stderr
 fi
 
 # Created by `pipx` on 2021-10-23 17:39:24

@@ -3,13 +3,13 @@
 function proxy_main
     offproxy
     if curl --output /dev/null --silent --head --fail "https://google.com";
-        echo "Off corporate network"
-        echo "Proxy settings disabled"
+        echo "Off corporate network" >>/dev/stderr
+        echo "Proxy settings disabled" >>/dev/stderr
     else
-        echo "On corporate network"
-        echo "Enabling proxy settings..."
+        echo "On corporate network" >>/dev/stderr
+        echo "Enabling proxy settings..." >>/dev/stderr
         onproxy
-        echo "Done"
+        echo "Done" >>/dev/stderr
     end
 end
 

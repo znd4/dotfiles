@@ -87,7 +87,7 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 if [ $(uname) = "Darwin" ]; then
     export ZPLUG_HOME=$(brew --prefix)/opt/zplug
 else
-    echo "WARNING: Haven't implemented OS"
+    echo "WARNING: Haven't implemented OS" >>/dev/stderr
 fi
 
 export ZPLUG_LOADFILE=$HOME/.zplug_packages.zsh

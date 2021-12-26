@@ -41,7 +41,7 @@ add_to_path() {
     if [ -d "$directory" ]; then
         export PATH="$directory:$PATH"
     else
-        echo "$directory does not exist"
+        echo "$directory does not exist" >>/dev/stderr
     fi
 }
 
@@ -54,7 +54,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 if [ $(uname) = "Darwin" ]; then
     add_to_path /Applications/VMware\ Fusion.app/Contents/Library
 else
-    echo "WARNING: Haven't implemented OS"
+    echo "WARNING: Haven't implemented OS" >>/dev/stderr
 fi
 
 #### FIG ENV VARIABLES ####
