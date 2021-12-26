@@ -12,7 +12,6 @@ set number
 " https://vi.stackexchange.com/a/5879
 set confirm
 
-
 " keep terminals open even when changing buffers
 set hidden
 
