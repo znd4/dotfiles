@@ -1,8 +1,9 @@
 set nocompatible              " required
 filetype off                  " required
 
-
-
+" Add Copy and cut from select mode
+vmap <C-c> "+y
+vmap <C-x> "+c
 
 " Add line numbers
 set number
