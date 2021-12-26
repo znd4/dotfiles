@@ -60,12 +60,7 @@ def script_installs():
         sudo=True,
     )
 
-    server.shell(
-        name="install joplin",
-        commands=[
-            "wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash"
-        ],
-    )
+    install_joplin()
 
     install_vim_plug()
     install_delta()
@@ -76,6 +71,74 @@ def script_installs():
     install_alacritty()
     install_kitty()
     install_tdrop()
+
+    install_pyenv()
+    install_neovim_python()
+
+
+def install_neovim_python():
+    server.shell(
+        commands=[
+            # exit 0 so that we don't throw an error if there isn't
+            # an activated pyenv environment
+            "pyenv deactivate 2>/dev/null; exit 0",
+            "python3.6 -m pip install neovim",
+        ]
+    )
+
+
+def install_pyenv():
+    existing_versions = set(
+        host.get_fact(
+            facts.server.Command,
+            "pyenv versions --bare",
+        ).split()
+    )
+    _py36_ver = "3.6.13"
+    if _py36_ver not in existing_versions:
+        server.shell(
+            name="Install python3.6",
+            commands=[f"CC=clang pyenv install {_py36_ver}"],
+        )
+    _versions = [
+        "3.7.12",
+        "3.8.12",
+        "3.9.9",
+        "3.10.0",
+    ]
+    for _version in _versions:
+        if _version in existing_versions:
+            continue
+        server.shell(
+            name=f"Install python=={_version}",
+            commands=[f"pyenv install {_version}"],
+        )
+
+    server.shell(
+        name="pyenv global",
+        commands=[f"pyenv global {_py36_ver} {' '.join(_versions)}"],
+    )
+    install_black(versions=_versions)
+
+
+def install_black(*, versions):
+    for version in versions:
+        server.shell(
+            name="install black",
+            commands=[f"PYENV_VERSION={version} python -m pip install black"],
+        )
+
+
+def install_joplin():
+    if host.get_fact(facts.files.File, _get_home() / ".joplin" / "VERSION"):
+        return
+    server.shell(
+        name="install joplin",
+        commands=[
+            "wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh "
+            "| TERM=linux bash --login -s -- --silent"
+        ],
+    )
 
 
 def install_tdrop():
@@ -180,26 +243,59 @@ def install_packages():
     (e.g. apt, pacman)
     """
     apt.update(sudo=True)
+    packages = [
+        "appimagelauncher",
+        "bat",
+        "ddgr",
+        "direnv",
+        "golang-go",
+        "neovim",
+        "podman",
+        "python3-pip",
+        "signal-desktop",
+        "sxhkd",
+        "tmux",
+        "unzip",
+        "virtualbox",
+        "xclip",
+        "xdotool",
+    ]
+    packages = packages + python_build_dependencies()
     server.packages(
-        packages=[
-            "appimagelauncher",
-            "bat",
-            "ddgr",
-            "direnv",
-            "golang-go",
-            "neovim",
-            "podman",
-            "python3-pip",
-            "signal-desktop",
-            "sxhkd",
-            "tmux",
-            "unzip",
-            "virtualbox",
-            "xclip",
-            "xdotool",
-        ],
+        packages=packages,
         sudo=True,
     )
+
+
+def python_build_dependencies():
+    return [
+        "libbz2-dev",
+        "libc6-dev",
+        "libgdbm-dev",
+        "libncursesw5-dev",
+        "libsqlite3-dev",
+        "libssl-dev",
+        "tk-dev",
+        "build-essential",
+        "clang",
+        "curl",
+        "git",
+        "libbz2-dev",
+        "libffi-dev",
+        "liblzma-dev",
+        "libncurses5-dev",
+        "libncursesw5-dev",
+        "libreadline-dev",
+        "libsqlite3-dev",
+        "libssl-dev",
+        "llvm",
+        "make",
+        "python3-openssl",
+        "tk-dev",
+        "wget",
+        "xz-utils",
+        "zlib1g-dev",
+    ]
 
 
 def install_vundle():
@@ -325,7 +421,7 @@ def install_kitty():
     server.shell(
         name="Install Kitty",
         commands=[
-            "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin",
+            "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n",
         ],
     )
 
@@ -367,13 +463,12 @@ def install_kitty():
         name="Remapping kitty icon with sed",
         commands=[f'sed -i "{sed_string}" {kitty_desktop_dst}'],
     )
-    # sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty.desktop
 
 
-# TODO - Install yadm and make sure that yadm has been pulled / updated
-# TODO - Install + configure alacritty overlay keyboard shortcut
+# TODO - Clean up readme + use just python to bootstrap
+# TODO - Install docker, podman, and earthly
+# TODO - Look into another dotfile CLI tool
 # TODO - Install libevdev key mapping
-# TODO - configure local ssh setup to only listen to localhost
 
 
 main()
