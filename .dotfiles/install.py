@@ -259,6 +259,7 @@ def install_packages():
         "virtualbox",
         "xclip",
         "xdotool",
+        "zoxide",
     ]
     packages = packages + python_build_dependencies()
     server.packages(
@@ -466,6 +467,7 @@ def install_kitty():
 
 
 # TODO - Clean up readme + use just python to bootstrap
+# TODO - .tmux - https://github.com/gpakosz/.tmux
 # TODO - Install docker, podman, and earthly
 # TODO - Look into another dotfile CLI tool
 # TODO - Install libevdev key mapping

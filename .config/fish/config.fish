@@ -16,6 +16,7 @@ function interactive_setup
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
     setup_brew
+	setup_zoxide
 
 	set -gx EDITOR nvim
 
@@ -27,6 +28,9 @@ function interactive_setup
 	set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 end
 
+function setup_zoxide
+	zoxide init fish | source
+end
 
 function setup_pyenv
     if status is-login
