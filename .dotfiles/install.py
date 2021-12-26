@@ -6,8 +6,6 @@ from pyinfra import facts as facts
 from pathlib import PurePosixPath
 import shlex
 
-# Install firacode nerd fonts
-
 
 def main():
     configure_repos()
