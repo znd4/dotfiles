@@ -23,6 +23,13 @@ set shiftwidth=4
 " vim-plug stuff
 call plug#begin()
 
+" python black plugin
+" https://black.readthedocs.io/en/stable/integrations/editors.html#vim
+Plug 'psf/black', { 'branch': 'stable' }
+
+" async autocheck syntax
+Plug 'dense-analysis/ale'
+
 " git plugin
 Plug 'tpope/vim-fugitive'
 
@@ -45,6 +52,25 @@ Plug 'dag/vim-fish'
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"    ALE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ale_fixers = {}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"    PYTHON
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:python_host_prog = "/home/zane/.pyenv/versions/neovim3/bin/python"
+
+" black autoformat on save
+autocmd BufWritePre *.py execute ':ALEFix'
+
+" black ale
+let g:ale_fixers.python = ['black']
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"    FISH
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " From https://github.com/dag/vim-fish
 " Set up :make to use fish for syntax checking.
 syntax enable
