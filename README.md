@@ -4,6 +4,13 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ## Setup process on new machine
 
+### Install python + pyinfra
+
+```
+sudo apt-get update && sudo apt-get install -y \
+	python3-pyinfra
+```
+
 ### Set up Docker and Earthly
 
 #### Install docker and ssh-server
@@ -32,10 +39,6 @@ sudo /bin/sh -c '
     && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete
     '
 ```
-
-#### Install Docker
-
-
 
 #### [Configure Earthly]()
 
