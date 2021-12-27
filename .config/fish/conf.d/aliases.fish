@@ -5,11 +5,6 @@ alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
 alias bat=batcat
 
-alias config='/usr/bin/env git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-
-alias wdotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.work-dotfiles"
-alias wconfig='/usr/bin/env git --git-dir=$HOME/.work-dotfiles/ --work-tree=$HOME'
-
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
