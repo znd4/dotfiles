@@ -86,6 +86,8 @@ setlocal textwidth=79
 " Enable folding of block structures in fish.
 setlocal foldmethod=expr
 
+" color scheme
+colorscheme darkglass
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
