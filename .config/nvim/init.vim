@@ -42,6 +42,9 @@ Plug 'earthly/earthly.vim', { 'branch': 'main' }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" vim-go
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
 " Declare the list of plugins.
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/seoul256.vim'
