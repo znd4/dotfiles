@@ -19,6 +19,9 @@ set hidden
 set tabstop=4
 set shiftwidth=4
 
+" show whitespace
+set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
+
 " Plugins will be downloaded under the specified directory.
 " vim-plug stuff
 call plug#begin()
