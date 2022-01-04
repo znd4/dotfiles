@@ -19,7 +19,7 @@ brew install \
 ### Pull down dotfiles
 
 ```sh
-yadm clone github.com/zdog234/dotfiles
+yadm clone https://github.com/zdog234/dotfiles
 ```
 
 ### Install python + pyinfra
