@@ -16,7 +16,22 @@ brew install \
     yadm
 ```
 
+### Pull down dotfiles
+
+```sh
+yadm clone github.com/zdog234/dotfiles
+```
+
 ### Install python + pyinfra
+
+OSX
+
+```sh
+python3 -m pip inxtall pipx
+python3 -m pipx install pyinfra
+```
+
+Linux
 
 ```
 sudo apt-get update && sudo apt-get install -y \
