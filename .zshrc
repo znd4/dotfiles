@@ -120,3 +120,9 @@ export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
 # Please make sure this block is at the end of this file.
 [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
 #### END FIG ENV VARIABLES ####
+
+# Created by `pipx` on 2022-01-04 23:54:39
+export PATH="$PATH:/Users/zdufour/Library/Python/3.8/bin"
+
+# Created by `pipx` on 2022-01-04 23:54:41
+export PATH="$PATH:/Users/zdufour/.local/bin"
