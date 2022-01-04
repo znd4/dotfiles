@@ -4,6 +4,18 @@ This is all fully ripped off from [this awesome article](https://www.atlassian.c
 
 ## Setup process on new machine
 
+### Install brew
+
+https://docs.brew.sh/Installation
+
+### brew installations
+
+```sh
+brew install \
+    pyenv \
+    yadm
+```
+
 ### Install python + pyinfra
 
 ```
