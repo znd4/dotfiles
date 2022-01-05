@@ -124,7 +124,7 @@ def install_neovim_python():
             # exit 0 so that we don't throw an error if there isn't
             # an activated pyenv environment
             "pyenv deactivate 2>/dev/null; exit 0",
-            "python3.6 -m pip install neovim",
+            "python3.8 -m pip install neovim",
         ]
     )
 
