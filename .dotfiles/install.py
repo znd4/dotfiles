@@ -130,18 +130,16 @@ def install_neovim_python():
 
 
 def install_pyenv():
-    existing_versions = set(
-        host.get_fact(
-            facts.server.Command,
-            "pyenv versions --bare",
-        ).split()
+    version_output: Optional[str] = host.get_fact(
+        facts.server.Command,
+        "pyenv versions --bare",
     )
-    _py36_ver = "3.6.13"
-    if _py36_ver not in existing_versions:
-        server.shell(
-            name="Install python3.6",
-            commands=[f"CC=clang pyenv install {_py36_ver}"],
-        )
+
+    if version_output:
+        existing_versions = set(version_output.strip().split())
+    else:
+        existing_versions = set()
+
     _versions = [
         "3.7.12",
         "3.8.12",
@@ -158,7 +156,7 @@ def install_pyenv():
 
     server.shell(
         name="pyenv global",
-        commands=[f"pyenv global {_py36_ver} {' '.join(_versions)}"],
+        commands=[f"pyenv global {' '.join(_versions)}"],
     )
     install_black(versions=_versions)
 
