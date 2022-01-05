@@ -59,7 +59,7 @@ unimp() {
 export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
-export EDITOR="micro"
+export EDITOR="vim"
 
 # gcloud setup
 
