@@ -1,3 +1,4 @@
+from functools import wraps
 from pyinfra.operations import apt, brew, server, files, git
 from pathlib import Path
 from pyinfra import host
@@ -15,6 +16,25 @@ def main():
     install_vundle()
 
 
+def skipif(condition: bool):
+    """
+    Skip install function if `condition` is truthy
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapped_func(*args, **kwargs):
+            if condition:
+                return
+
+            return func(*args, **kwargs)
+
+        return wrapped_func
+
+    return decorator
+
+
+@skipif(get_os_platform() == "darwin")
 def configure_repos():
     """
     Configure OS repos (apt, pacman, yum etc.)
@@ -50,8 +70,16 @@ def brew_installs():
         # --all is needed. Otherwise, `install` will have an interactive prompt
         server.shell(commands=["$(brew --prefix)/opt/fzf/install --all"])
 
+    if get_os_platform() == "darwin":
+        brew.casks(
+            name="Install brew casks",
+            casks=["signal"],
+            upgrade=True,
+        )
+
 
 def script_installs():
+    install_macports()
     server.shell(
         name="Install starship",
         commands=[
@@ -74,6 +102,20 @@ def script_installs():
 
     install_pyenv()
     install_neovim_python()
+
+@skipif(get_os_platform() != "darwin")
+@skipif(host.get_fact(facts.server.Which, "port")
+def install_macports():
+    pkg_path = "/tmp/macports.pkg"
+    files.download(
+        "https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1-12-Monterey.pkg",
+        pkg_path,
+        name="Download macports installer",
+    )
+    server.shell(
+        commands=[f"installer -pkg {pkg_path} -target /"],
+        sudo=True,
+    )
 
 
 def install_neovim_python():
