@@ -415,6 +415,11 @@ def install_vundle():
 
 
 def install_nerd_fonts():
+    if get_os_platform() == "darwin":
+        brew.tap("homebrew/cask-fonts")
+        brew.casks(casks=["font-fira-code-nerd-font", "font-fira-mono-nerd-font"])
+        return
+
     fc_list_result = host.get_fact(
         facts.server.Command,
         # exit 0 so pyinfra doesn't error out
@@ -437,6 +442,10 @@ def install_nerd_fonts():
 def install_alacritty():
     if host.get_fact(facts.server.Which, "alacritty"):
         return
+    if get_os_platform() == "darwin":
+        brew.casks(name="install Alacritty with brew", casks=["alacritty"])
+        return
+
     alacritty_dir = "/tmp/alacritty"
     files.directory(alacritty_dir, present=False)
 
@@ -461,19 +470,18 @@ def install_alacritty():
             "rustup update stable",
         ],
     )
-    server.packages(
-        name="Install other alacritty dependencies",
-        sudo=True,
-        packages=[
-            "cmake",
-            "pkg-config",
-            "libfreetype6-dev",
-            "libfontconfig1-dev",
-            "libxcb-xfixes0-dev",
-            "libxkbcommon-dev",
-            "python3",
-        ],
-    )
+    if get_os_platform() == "darwin":
+        server.shell(
+            name="build alacritty and copy to Applications",
+            commands=[
+                "rustup target add x86_64-apple-darwin aarch64-apple-darwin",
+                "make app-universal",
+                "cp -r target/release/osx/Alacritty.app /Applications/",
+            ],
+            chdir=alacritty_dir,
+        )
+
+    install_alacritty_dependencies()
     server.shell(
         name="cargo build alacritty",
         commands=[
@@ -509,7 +517,30 @@ def install_alacritty():
     )
 
 
+def install_alacritty_dependencies():
+    server.packages(
+        name="Install other alacritty dependencies",
+        sudo=True,
+        packages=[
+            "cmake",
+            "pkg-config",
+            "libfreetype6-dev",
+            "libfontconfig1-dev",
+            "libxcb-xfixes0-dev",
+            "libxkbcommon-dev",
+            "python3",
+        ],
+    )
+
+
 def install_kitty():
+    if get_os_platform() == "darwin":
+        # if "kitty" in host.get_fact(facts.brew.BrewCasks):
+        #     return
+
+        brew.casks(["kitty"])
+        return
+
     server.shell(
         name="Install Kitty",
         commands=[
@@ -562,6 +593,7 @@ def install_kitty():
 # TODO - Install docker, podman, and earthly
 # TODO - Look into another dotfile CLI tool
 # TODO - Install libevdev key mapping
+# TODO - refactor into package
 
 
 main()
