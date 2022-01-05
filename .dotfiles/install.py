@@ -398,21 +398,19 @@ def install_vundle():
     )
     if host.get_fact(facts.files.Directory, vundle_dir):
         return
+
+    git.repo(
+        "https://github.com/gmarik/Vundle.vim.git",
+        vundle_dir,
+    )
     server.shell(
+        name="Install vundle and install vundle plugins",
         commands=[
-            shlex.join(
-                [
-                    "git",
-                    "clone",
-                    "https://github.com/gmarik/Vundle.vim.git",
-                    vundle_dir,
-                ],
-            ),
             "vim +PluginInstall +qall",
             "vim +PluginUpdate +qall",
             "nvim +PluginInstall +qall",
             "nvim +PluginUpdate +qall",
-        ]
+        ],
     )
 
 
