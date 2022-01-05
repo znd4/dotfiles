@@ -140,6 +140,7 @@ def install_pyenv():
     else:
         existing_versions = set()
 
+
     _versions = [
         "3.7.12",
         "3.8.12",
@@ -301,24 +302,48 @@ def install_packages():
     Install packages with system's package manager
     (e.g. apt, pacman)
     """
-    apt.update(sudo=True)
-    packages = [
-        "appimagelauncher",
+    common_packages = [
         "bat",
         "ddgr",
         "direnv",
-        "golang-go",
         "neovim",
         "podman",
-        "python3-pip",
-        "signal-desktop",
-        "sxhkd",
         "tmux",
         "unzip",
-        "virtualbox",
         "xclip",
         "xdotool",
         "zoxide",
+    ]
+    if get_os_platform() == "linux":
+        install_apt_packages(common_packages)
+    elif get_os_platform() == "darwin":
+        install_macos_brew_packages(common_packages)
+    else:
+        raise NotImplementedError(get_os_platform())
+
+
+def install_macos_brew_packages(common_packages):
+    packages = common_packages + [
+        "golang",
+        "skhd",
+    ]
+    packages = common_packages + python_build_dependencies()
+    brew.packages(
+        name="install common packages with brew for macos",
+        packages=packages,
+    )
+
+
+def install_apt_packages(common_packages):
+    apt.update(sudo=True)
+
+    packages = common_packages + [
+        "appimagelauncher",
+        "golang-go",
+        "python3-pip",
+        "signal-desktop",
+        "sxhkd",
+        "virtualbox",
     ]
     packages = packages + python_build_dependencies()
     server.packages(
@@ -328,34 +353,43 @@ def install_packages():
 
 
 def python_build_dependencies():
-    return [
-        "libbz2-dev",
-        "libc6-dev",
-        "libgdbm-dev",
-        "libncursesw5-dev",
-        "libsqlite3-dev",
-        "libssl-dev",
-        "tk-dev",
-        "build-essential",
-        "clang",
-        "curl",
-        "git",
-        "libbz2-dev",
-        "libffi-dev",
-        "liblzma-dev",
-        "libncurses5-dev",
-        "libncursesw5-dev",
-        "libreadline-dev",
-        "libsqlite3-dev",
-        "libssl-dev",
-        "llvm",
-        "make",
-        "python3-openssl",
-        "tk-dev",
-        "wget",
-        "xz-utils",
-        "zlib1g-dev",
-    ]
+    if get_os_platform() == "darwin":
+        return [
+            "openssl",
+            "readline",
+            "sqlite3",
+            "xz",
+            "zlib",
+        ]
+    elif get_os_platform() == "linux":
+        return [
+            "libbz2-dev",
+            "libc6-dev",
+            "libgdbm-dev",
+            "libncursesw5-dev",
+            "libsqlite3-dev",
+            "libssl-dev",
+            "tk-dev",
+            "build-essential",
+            "clang",
+            "curl",
+            "git",
+            "libbz2-dev",
+            "libffi-dev",
+            "liblzma-dev",
+            "libncurses5-dev",
+            "libncursesw5-dev",
+            "libreadline-dev",
+            "libsqlite3-dev",
+            "libssl-dev",
+            "llvm",
+            "make",
+            "python3-openssl",
+            "tk-dev",
+            "wget",
+            "xz-utils",
+            "zlib1g-dev",
+        ]
 
 
 def install_vundle():
