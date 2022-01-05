@@ -169,6 +169,17 @@ def install_black(*, versions):
         )
 
 
+def get_os_platform() -> str:
+    """
+    Returns `uname` result, `strip`ped and `lower`ed.
+
+    e.g.
+        "darwin"
+    """
+    return host.get_fact(facts.server.Command, "uname").lower().strip()
+
+
+@skipif(get_os_platform() == "darwin")
 def install_joplin():
     if host.get_fact(facts.files.File, _get_home() / ".joplin" / "VERSION"):
         return
@@ -181,9 +192,9 @@ def install_joplin():
     )
 
 
+@skipif(get_os_platform() == "darwin")
+@skipif(host.get_fact(facts.server.Which, "tdrop"))
 def install_tdrop():
-    if host.get_fact(facts.server.Which, "tdrop"):
-        return
     tmpdir = "/tmp/tdrop"
     git.repo("https://github.com/noctuid/tdrop", tmpdir)
     server.shell(
@@ -204,6 +215,10 @@ def install_rust():
 def install_vscode():
     if host.get_fact(facts.server.Which, "code"):
         print("vscode already installed")
+        return
+
+    if get_os_platform() == "darwin":
+        brew.casks(name="install vscode with brew", casks=["visual-studio-code"])
         return
 
     download_path = "/tmp/vscode.deb"
@@ -259,6 +274,10 @@ def install_vim_plug():
 
 def install_delta():
     if host.get_fact(facts.server.Which, "delta"):
+        return
+
+    if get_os_platform() == "darwin":
+        brew.packages(name="brew install git-delta", packages=["git-delta"])
         return
 
     download_path = "/tmp/git-delta.deb"
