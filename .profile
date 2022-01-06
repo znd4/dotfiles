@@ -39,5 +39,7 @@ add_to_path "$HOME/go/bin"
 
 . "$HOME/.cargo/env"
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
+# add linuxbrew directory to PATH
+if [ `uname` = "Linux" ]; then
+	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
