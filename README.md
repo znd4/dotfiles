@@ -28,7 +28,9 @@ OSX
 
 ```sh
 python3 -m pip inxtall pipx
-python3 -m pipx install pyinfra
+python3 -m pipx ensurepath
+exec $SHELL
+pipx install pyinfra
 ```
 
 Linux
