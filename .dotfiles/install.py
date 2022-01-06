@@ -34,6 +34,16 @@ def skipif(condition: bool):
     return decorator
 
 
+def get_os_platform() -> str:
+    """
+    Returns `uname` result, `strip`ped and `lower`ed.
+
+    e.g.
+        "darwin"
+    """
+    return host.get_fact(facts.server.Command, "uname").lower().strip()
+
+
 @skipif(get_os_platform() == "darwin")
 def configure_repos():
     """
@@ -103,8 +113,9 @@ def script_installs():
     install_pyenv()
     install_neovim_python()
 
+
 @skipif(get_os_platform() != "darwin")
-@skipif(host.get_fact(facts.server.Which, "port")
+@skipif(host.get_fact(facts.server.Which, "port"))
 def install_macports():
     pkg_path = "/tmp/macports.pkg"
     files.download(
@@ -140,7 +151,6 @@ def install_pyenv():
     else:
         existing_versions = set()
 
-
     _versions = [
         "3.7.12",
         "3.8.12",
@@ -168,16 +178,6 @@ def install_black(*, versions):
             name="install black",
             commands=[f"PYENV_VERSION={version} python -m pip install black"],
         )
-
-
-def get_os_platform() -> str:
-    """
-    Returns `uname` result, `strip`ped and `lower`ed.
-
-    e.g.
-        "darwin"
-    """
-    return host.get_fact(facts.server.Command, "uname").lower().strip()
 
 
 @skipif(get_os_platform() == "darwin")
