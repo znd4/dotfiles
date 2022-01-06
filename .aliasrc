@@ -1,4 +1,3 @@
-shopt -s expand_aliases
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 alias g=git
 
