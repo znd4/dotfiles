@@ -23,6 +23,7 @@ export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
 export EDITOR="nvim"
+export PAGER="nvim"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -31,6 +32,7 @@ export EDITOR="nvim"
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=243,underline"
 
 # Created by `pipx` on 2022-01-04 23:54:41
 export PATH="$PATH:/Users/zdufour/.local/bin"
