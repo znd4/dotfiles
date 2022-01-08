@@ -70,7 +70,7 @@ def configure_repos():
 def brew_installs():
     brew.packages(
         name="Install lazygit",
-        packages=["jesseduffield/lazygit/lazygit"],
+        packages=["jesseduffield/lazygit/lazygit", "diceware"],
     )
     if not host.get_fact(facts.server.Which, "fzf"):
         brew.packages(
