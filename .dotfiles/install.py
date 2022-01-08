@@ -326,6 +326,7 @@ def install_macos_brew_packages(common_packages):
     packages = common_packages + [
         "golang",
         "skhd",
+        "hammerspoon",
     ]
     packages = common_packages + python_build_dependencies()
     brew.packages(
