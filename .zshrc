@@ -113,6 +113,9 @@ plugins=(
 	git
 	zsh-autosuggestions
 	zsh-navigation-tools
+	zoxide
+	zsh-interactive-cd
+	thefuck
 )
 
 source $ZSH/oh-my-zsh.sh
