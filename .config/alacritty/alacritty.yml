@@ -67,23 +67,23 @@ font:
   # The normal (roman) font face to use.
   # Style can be specified to pick a specific face.
   normal:
-    family: FiraCode NF
-    style: Light
+    family: "FiraCode Nerd Font Mono"
+    style: Retina
     # family: "FiraCode NF"
     # family: "Source Code Pro"
     # style: Retina
 
   # The bold font face
   bold:
-    family: FiraCode NF
-    style: Medium
+    family: "FiraCode Nerd Font Mono"
+    style: Bold
     # family: "FiraCode NF"
     # family: "Source Code Pro"
 
   # The italic font face
   italic:
-    family: FiraCode NF
-    style: "Light Italic"
+    family: "FiraMono Nerd Font"
+    style: "Medium"
     # style: "Light Oblique"
     # family: "FiraCode NF"
     # family: "Source Code Pro"
@@ -1897,9 +1897,7 @@ debug:
 # You can set shell.program to the path of your favorite shell, e.g. /bin/fish.
 # Entries in shell.args are passed unmodified as arguments to the shell.
 shell:
-  program: /usr/bin/tmux
+  program: /opt/homebrew/bin/tmux
   args:
-    - -f
-    - ~/.tmux.conf
     - new
 # vim: nospell
