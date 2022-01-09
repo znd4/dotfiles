@@ -1632,7 +1632,7 @@ bell:
   duration: 0
 
 # Background opacity
-console.opacity: 0.9
+background_opacity: 0.9
 
 # Key bindings
 #
