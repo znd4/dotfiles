@@ -83,7 +83,7 @@ def brew_installs():
     if get_os_platform() == "darwin":
         brew.casks(
             name="Install brew casks",
-            casks=["signal"],
+            casks=["signal", "phoenix"],
             upgrade=True,
         )
 
@@ -327,6 +327,7 @@ def install_macos_brew_packages(common_packages):
         "golang",
         "skhd",
         "hammerspoon",
+        "nativefier",
     ]
     packages = common_packages + python_build_dependencies()
     brew.packages(
