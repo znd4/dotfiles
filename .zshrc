@@ -32,7 +32,7 @@ export PAGER="nvim"
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=243,underline"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
 
 # Created by `pipx` on 2022-01-04 23:54:41
 export PATH="$PATH:/Users/zdufour/.local/bin"
