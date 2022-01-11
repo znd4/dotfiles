@@ -26,6 +26,9 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
+" direnv plugin
+Plug 'direnv/direnv.vim'
+
 " python black plugin
 " https://black.readthedocs.io/en/stable/integrations/editors.html#vim
 Plug 'psf/black', { 'branch': 'stable' }
