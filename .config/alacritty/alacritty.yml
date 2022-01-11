@@ -20,7 +20,7 @@ window:
   # setting is ignored.
   dimensions:
     columns: 100
-    lines: 90
+    lines: 100
 
   # Window padding (changes require restart)
   #
