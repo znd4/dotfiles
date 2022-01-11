@@ -1,6 +1,3 @@
-[credential "https://github.ford.com"]
-helper = osxkeychain
-
 [alias]
 a = add
 pl = pull
@@ -8,12 +5,17 @@ cedit = config --global --edit
 undo-last-commit = reset HEAD~1
 config-edit = config --global --edit
 new-branch = checkout -b
+
 [init]
 defaultBranch = main
+
 [user]
 name = Zane Dufour
 email = zane@znd4.me
+
 [pull]
 rebase = false
-[includeIf "gitdir:Ford/"]
-path = /Users/zdufour/Ford/
+
+[includeIf "gitdir:Work/"]
+path = /Users/zdufour/Work/.gitconfig
+
