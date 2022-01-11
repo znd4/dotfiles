@@ -23,7 +23,7 @@ export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
 export EDITOR="nvim"
-export PAGER="nvim"
+export MANPAGER="nvim +Man!"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
