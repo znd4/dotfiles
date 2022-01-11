@@ -44,6 +44,10 @@ def get_os_platform() -> str:
     return host.get_fact(facts.server.Command, "uname").lower().strip()
 
 
+def _get_home() -> Path:
+    return PurePosixPath(host.get_fact(Home))
+
+
 @skipif(get_os_platform() == "darwin")
 def configure_repos():
     """
@@ -112,6 +116,39 @@ def script_installs():
 
     install_pyenv()
     install_neovim_python()
+
+    install_pretty_tmux()
+
+
+@skipif(host.get_fact(facts.files.File, _get_home() / ".tmux.conf"))
+def install_pretty_tmux():
+    """
+    Follows these instructions:
+    https://github.com/gpakosz/.tmux#installation
+    $ git clone https://github.com/gpakosz/.tmux.git /path/to/oh-my-tmux
+    $ ln -s -f /path/to/oh-my-tmux/.tmux.conf ~/.tmux.conf
+    $ cp /path/to/oh-my-tmux/.tmux.conf.local ~/.tmux.conf.local
+    """
+
+    tmux_repo_dir = _get_home() / ".local" / "share" / ".tmux"
+
+    server.shell(
+        name="clone .tmux.git",
+        commands=[
+            shlex.join(
+                [
+                    "git",
+                    "clone",
+                    "https://github.com/gpakosz/.tmux.git",
+                    str(tmux_repo_dir),
+                ]
+            )
+        ],
+    )
+    files.link(
+        _get_home() / ".tmux.conf",
+        tmux_repo_dir / ".tmux.conf",
+    )
 
 
 @skipif(get_os_platform() != "darwin")
@@ -291,10 +328,6 @@ def install_delta():
         commands=[f"dpkg -i {download_path}"],
         sudo=True,
     )
-
-
-def _get_home() -> Path:
-    return PurePosixPath(host.get_fact(Home))
 
 
 def install_packages():
