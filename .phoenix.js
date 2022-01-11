@@ -216,14 +216,14 @@ function setAppPosition(app, relativeFrame, space) {
     if (mainWindow.isFullScreen()) {
       mainWindow.setFullScreen(false);
     }
-    mainWindow.setTopLeft({
-      x: left,
-      y: top,
-    });
-    mainWindow.setSize({
-      width: right - left,
-      height: bottom - top,
-    });
+    // mainWindow.setTopLeft({
+    //   x: left,
+    //   y: top,
+    // });
+    // mainWindow.setSize({
+    //   width: right - left,
+    //   height: bottom - top,
+    // });
   }
 }
 
