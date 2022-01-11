@@ -1790,8 +1790,8 @@ key_bindings:
   - { key: W, mods: Command, chars: "\x01&" } # close tab (kill)
   - { key: W, mods: Control|Shift, chars: "\x01&" } # close tab (non-macos)
   - { key: T, mods: Control|Shift, chars: "\x01c" } # new tab
-  - { key: Tab, mods: Control, chars: "\x01n" } # select next tab
-  - { key: Tab, mods: Control|Shift, chars: "\x01p" } # select previous tab
+  - { key: Tab, mods: Control, chars: "\x01p" } # select next tab
+  - { key: Tab, mods: Control|Shift, chars: "\x01n" } # select previous tab
   - { key: RBracket, mods: Command, chars: "\x01o" } # select next pane
   - { key: LBracket, mods: Command, chars: "\x01;" } # select last (previously used) pane
   - { key: F, mods: Command, chars: "\x01/" } # search (upwards) (see tmux.conf)
