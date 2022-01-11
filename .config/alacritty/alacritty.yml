@@ -1788,7 +1788,7 @@ key_bindings:
 
     # shortcuts for tmux. the leader key is control-a (0x01)
   - { key: W, mods: Command, chars: "\x01&" } # close tab (kill)
-  - { key: W, mods: Control, chars: "\x01&" } # close tab (non-macos)
+  - { key: W, mods: Control|Shift, chars: "\x01&" } # close tab (non-macos)
   - { key: T, mods: Control|Shift, chars: "\x01c" } # new tab
   - { key: Tab, mods: Control, chars: "\x01n" } # select next tab
   - { key: Tab, mods: Control|Shift, chars: "\x01p" } # select previous tab
