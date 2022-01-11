@@ -47,6 +47,7 @@ tmux_conf_24b_colour=false
 
 # default theme
 tmux_conf_theme_colour_1="#080808"    # dark gray
+slightly_dark_gray="#151515"
 tmux_conf_theme_colour_2="#303030"    # gray
 tmux_conf_theme_colour_3="#8a8a8a"    # light gray
 tmux_conf_theme_colour_4="#00afff"    # light blue
@@ -186,7 +187,7 @@ tmux_conf_theme_window_status_bell_attr="blink,bold"
 
 # window last status style
 tmux_conf_theme_window_status_last_fg="$tmux_conf_theme_colour_4"
-tmux_conf_theme_window_status_last_bg="$tmux_conf_theme_colour_2"
+tmux_conf_theme_window_status_last_bg="$slightly_dark_gray"
 tmux_conf_theme_window_status_last_attr="none"
 
 # status left/right sections separators
@@ -194,8 +195,8 @@ tmux_conf_theme_window_status_last_attr="none"
 #tmux_conf_theme_left_separator_sub="|"
 #tmux_conf_theme_right_separator_main=""
 #tmux_conf_theme_right_separator_sub="|"
-tmux_conf_theme_left_separator_main='\uE0C6'  # /!\ you don't need to install Powerline
-tmux_conf_theme_left_separator_sub='\uE0C1'   #   you only need fonts patched with
+tmux_conf_theme_left_separator_main='\uE0BC'  # /!\ you don't need to install Powerline
+tmux_conf_theme_left_separator_sub='\uE0BD'   #   you only need fonts patched with
 tmux_conf_theme_right_separator_main='\uE0C2' #   Powerline symbols or the standalone
 tmux_conf_theme_right_separator_sub='\uE0C3'  #   PowerlineSymbols.otf font, see README.md
 
