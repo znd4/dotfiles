@@ -18,6 +18,20 @@ lg() {
     fi
 }
 
+#####################
+### antigen
+#####################
+source $(brew --prefix)/share/antigen/antigen.zsh
+
+antigen bundle jeffreytse/zsh-vi-mode
+
+antigen apply
+
+
+#####################
+### End antigen
+#####################
+
 # POETRY VIRTUALENVS IN PROJECT
 export POETRY_VIRTUALENVS_IN_PROJECT=true
 
