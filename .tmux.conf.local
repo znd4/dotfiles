@@ -359,6 +359,14 @@ unbind -Tcopy-mode MouseDrag1Pane
 # increase history size
 set -g history-limit 10000
 
+## Use vim keybindings in copy mode
+setw -g mode-keys vi
+bind P paste-buffer
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+unbind -T copy-mode-vi Enter
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel 'pbcopy'
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'pbcopy'
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'pbcopy'
 # move status line to top
 #set -g status-position top
 
