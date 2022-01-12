@@ -73,7 +73,7 @@ def configure_repos():
 
 def brew_installs():
     brew.packages(
-        name="Install lazygit",
+        name="Install os-agnostic brew packages",
         packages=["jesseduffield/lazygit/lazygit", "diceware", "zoxide", "thefuck"],
     )
     if not host.get_fact(facts.server.Which, "fzf"):
@@ -359,15 +359,19 @@ def install_packages():
 
 def install_macos_brew_packages(common_packages):
     packages = common_packages + [
+        "antigen",
+        "dbmate",
         "golang",
-        "skhd",
         "hammerspoon",
         "nativefier",
     ]
-    packages = common_packages + python_build_dependencies()
+    packages = packages + python_build_dependencies()
+    print(f"{packages=}")
     brew.packages(
         name="install common packages with brew for macos",
         packages=packages,
+        latest=True,
+        update=True,
     )
 
 
