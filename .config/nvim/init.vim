@@ -8,6 +8,8 @@ vmap <C-x> "+c
 " Add line numbers
 set number
 
+set mouse=n
+
 " prompt when closing buffer with unsaved changes
 " https://vi.stackexchange.com/a/5879
 set confirm
