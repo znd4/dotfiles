@@ -85,9 +85,11 @@ def brew_installs():
         server.shell(commands=["$(brew --prefix)/opt/fzf/install --all"])
 
     if get_os_platform() == "darwin":
+        brew.tap("microsoft/git")
+
         brew.casks(
             name="Install brew casks",
-            casks=["signal", "phoenix"],
+            casks=["signal", "phoenix", "git-credential-manager-core"],
             upgrade=True,
         )
 
@@ -120,7 +122,7 @@ def script_installs():
     install_pretty_tmux()
 
 
-@skipif(host.get_fact(facts.files.File, _get_home() / ".tmux.conf"))
+@skipif(host.get_fact(facts.files.Link, _get_home() / ".tmux.conf"))
 def install_pretty_tmux():
     """
     Follows these instructions:
