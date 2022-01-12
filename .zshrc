@@ -18,19 +18,6 @@ lg() {
     fi
 }
 
-#####################
-### antigen
-#####################
-source $(brew --prefix)/share/antigen/antigen.zsh
-
-antigen bundle jeffreytse/zsh-vi-mode
-
-antigen apply
-
-
-#####################
-### End antigen
-#####################
 
 # POETRY VIRTUALENVS IN PROJECT
 export POETRY_VIRTUALENVS_IN_PROJECT=true
@@ -57,6 +44,33 @@ eval "$(starship init zsh)"
 if [ -d /home/linuxbrew ]; then
     export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
 fi
+
+
+#####################
+### antigen
+#####################
+
+source $(brew --prefix)/share/antigen/antigen.zsh
+
+antigen bundle jeffreytse/zsh-vi-mode
+antigen bundle zsh-users/zsh-autosuggestions
+
+antigen use oh-my-zsh
+
+antigen bundle git
+antigen bundle zsh-navigation-tools
+antigen bundle zoxide
+antigen bundle zsh-interactive-cd
+antigen bundle thefuck
+
+# antigen theme robbyrussel
+
+antigen apply
+
+
+#####################
+### End antigen
+#####################
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -125,16 +139,16 @@ fi
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(
-	git
-	zsh-autosuggestions
-	zsh-navigation-tools
-	zoxide
-	zsh-interactive-cd
-	thefuck
-)
-
-source $ZSH/oh-my-zsh.sh
+# plugins=(
+# 	git
+# 	zsh-autosuggestions
+# 	zsh-navigation-tools
+# 	zoxide
+# 	zsh-interactive-cd
+# 	thefuck
+# )
+# 
+# source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
