@@ -364,6 +364,7 @@ def install_macos_brew_packages(common_packages):
         "golang",
         "hammerspoon",
         "nativefier",
+        "zplug",
     ]
     packages = packages + python_build_dependencies()
     print(f"{packages=}")
