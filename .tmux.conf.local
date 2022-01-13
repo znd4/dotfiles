@@ -351,6 +351,9 @@ set -g prefix C-a
 unbind C-b
 bind C-a send-prefix
 
+# Let me kill panes with ctrl+d
+set -g remain-on-exit off
+
 # Turn the mouse on, but without copy mode dragging
 set -g mouse on
 unbind -n MouseDrag1Pane
