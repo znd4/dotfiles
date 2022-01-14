@@ -28,6 +28,9 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
+" open line in github
+Plug 'ruanyl/vim-gh-line'
+
 " direnv plugin
 Plug 'direnv/direnv.vim'
 
@@ -62,6 +65,13 @@ Plug 'dag/vim-fish'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" https://github.com/ruanyl/vim-gh-line
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:gh_use_canonical = 1 " open permalink, not branch
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 "    ALE
