@@ -28,15 +28,21 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
+
 " open line in github
 Plug 'ruanyl/vim-gh-line'
 
 " direnv plugin
 Plug 'direnv/direnv.vim'
+"
+"""""""""""""""
+" Python plugins
+"""""""""""""""
 
 " python black plugin
 " https://black.readthedocs.io/en/stable/integrations/editors.html#vim
 Plug 'psf/black', { 'branch': 'stable' }
+Plug 'vim-scripts/indentpython.vim'
 
 " async autocheck syntax
 Plug 'dense-analysis/ale'
@@ -65,6 +71,7 @@ Plug 'junegunn/seoul256.vim'
 
 " Fish support
 Plug 'dag/vim-fish'
+
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
@@ -102,6 +109,16 @@ autocmd BufWritePre *.py execute ':ALEFix'
 
 " black ale
 let g:ale_fixers.python = ['black']
+
+" python syntax highlighting
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set textwidth=89
+    \ set expandtab
+    \ set autoindent
+    \ set fileformat=unix
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 "    FISH
