@@ -1,5 +1,5 @@
 from functools import wraps
-from pyinfra.operations import apt, brew, server, files, git
+from pyinfra.operations import apt, brew, server, files, git, pip
 from pathlib import Path
 from pyinfra import host
 from pyinfra.facts.server import Home
@@ -116,10 +116,47 @@ def script_installs():
     install_kitty()
     install_tdrop()
 
-    install_pyenv()
-    install_neovim_python()
+    python_setup()
 
     install_pretty_tmux()
+
+
+def python_setup():
+    versions = install_pyenv()
+    install_neovim_python()
+    pipx_installs()
+    register_jupyter_kernels(versions)
+
+
+def pipx_installs():
+    packages = ["black", "jupyterlab", "virtualenv"]
+    server.shell(
+        name="Install pipx packages",
+        commands=[f"pipx install {package}" for package in packages],
+    )
+
+
+def register_jupyter_kernels(versions: list[str]):
+    server.shell(
+        name="Install ipython into jupyterlab venv",
+        commands=["pipx inject jupyterlab ipython"],
+    )
+    for version in versions:
+        pip.packages(
+            name=f"Install ipykernel into {version}",
+            packages=["ipykernel", "ipython"],
+            pip=f"~/.pyenv/versions/{version}/bin/pip",
+        )
+    server.shell(
+        name=f"ipython kernel installs: {', '.join(versions)}",
+        commands=[
+            f"PYENV_VERSION={version} pyenv exec ipython kernel install --name={version} --user"
+            for version in versions
+        ],
+    )
+
+
+#        server.shell(name=f"Registering {version} with ipython kernel install")
 
 
 @skipif(host.get_fact(facts.files.Link, _get_home() / ".tmux.conf"))
@@ -209,6 +246,7 @@ def install_pyenv():
         commands=[f"pyenv global {' '.join(_versions)}"],
     )
     install_black(versions=_versions)
+    return _versions
 
 
 def install_black(*, versions):
@@ -369,6 +407,7 @@ def install_macos_brew_packages(common_packages):
         "hammerspoon",
         "nativefier",
         "nodejs",
+        "pipx",
         "python",
         "zplug",
     ]
@@ -465,9 +504,7 @@ def install_vundle():
 
 def build_you_complete_me():
     plugin_dir = _get_home() / ".vim" / "bundle" / "YouCompleteMe"
-    print(
-        f"run `cd {plugin_dir} && $(brew --prefix)/bin/python3 install.py --all`"
-    )
+    print(f"run `cd {plugin_dir} && $(brew --prefix)/bin/python3 install.py --all`")
     # server.shell(
     #     name="Build YouCompleteMe",
     #     chdir=str(plugin_dir),
