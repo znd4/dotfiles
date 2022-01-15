@@ -212,11 +212,13 @@ def install_pyenv():
 
 
 def install_black(*, versions):
-    for version in versions:
-        server.shell(
-            name="install black",
-            commands=[f"PYENV_VERSION={version} python -m pip install black"],
-        )
+    server.shell(
+        name="install black",
+        commands=[
+            f"PYENV_VERSION={version} python -m pip install black"
+            for version in versions
+        ],
+    )
 
 
 @skipif(get_os_platform() == "darwin")
