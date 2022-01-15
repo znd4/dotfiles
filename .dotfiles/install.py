@@ -360,10 +360,14 @@ def install_packages():
 def install_macos_brew_packages(common_packages):
     packages = common_packages + [
         "antigen",
+        "cmake",
         "dbmate",
+        "go",
         "golang",
         "hammerspoon",
         "nativefier",
+        "nodejs",
+        "python",
         "zplug",
     ]
     packages = packages + python_build_dependencies()
@@ -438,13 +442,12 @@ def install_vundle():
     vundle_dir = str(
         PurePosixPath(host.get_fact(Home)) / ".vim" / "bundle" / "Vundle.vim"
     )
-    if host.get_fact(facts.files.Directory, vundle_dir):
-        return
+    if not host.get_fact(facts.files.Directory, vundle_dir):
+        git.repo(
+            "https://github.com/gmarik/Vundle.vim.git",
+            vundle_dir,
+        )
 
-    git.repo(
-        "https://github.com/gmarik/Vundle.vim.git",
-        vundle_dir,
-    )
     server.shell(
         name="Install vundle and install vundle plugins",
         commands=[
@@ -454,6 +457,25 @@ def install_vundle():
             "nvim +PluginUpdate +qall",
         ],
     )
+
+    build_you_complete_me()
+
+
+def build_you_complete_me():
+    plugin_dir = _get_home() / ".vim" / "bundle" / "YouCompleteMe"
+    print(
+        f"run `cd {plugin_dir} && $(brew --prefix)/bin/python3 install.py --all`"
+    )
+    # server.shell(
+    #     name="Build YouCompleteMe",
+    #     chdir=str(plugin_dir),
+    #     shell_executable="zsh",
+    #     get_pty=True,
+    #     commands=[
+    #         "git submodule update --init --recursive",
+    #         "zsh --login -c '$(brew --prefix)/bin/python3 install.py --all'",
+    #     ],
+    # )
 
 
 def install_nerd_fonts():
