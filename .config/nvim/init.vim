@@ -103,6 +103,8 @@ let g:ale_fixers = {}
 "    PYTHON
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:python_host_prog = "/home/zane/.pyenv/versions/neovim3/bin/python"
+let python_highlight_all=1
+
 
 " black autoformat on save
 autocmd BufWritePre *.py execute ':ALEFix'
