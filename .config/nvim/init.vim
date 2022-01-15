@@ -56,6 +56,9 @@ Plug 'junegunn/fzf.vim'
 " vim-go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
+" ctrlp (used for vim-go motion)
+Plug 'ctrlpvim/ctrlp.vim'
+
 " Declare the list of plugins.
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/seoul256.vim'
@@ -66,6 +69,17 @@ Plug 'dag/vim-fish'
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-go
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 0
+
+let g:go_auto_type_info = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " https://github.com/ruanyl/vim-gh-line
@@ -116,6 +130,9 @@ call vundle#begin()
 
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
+
+" code completion
+Plugin 'ycm-core/YouCompleteMe'
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
