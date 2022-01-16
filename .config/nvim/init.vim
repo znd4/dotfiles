@@ -28,6 +28,7 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
+Plug 'preservim/nerdtree'
 
 " open line in github
 Plug 'ruanyl/vim-gh-line'
