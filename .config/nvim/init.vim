@@ -155,6 +155,28 @@ setlocal foldmethod=expr
 " color scheme
 colorscheme darkglass
 
+" YouCompleteMe
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf=0
+
+" Point YCM to the Pipenv created virtualenv, if possible
+" At first, get the output of 'pipenv --venv' command.
+let pipenv_venv_path = system('pipenv --venv')
+" The above system() call produces a non zero exit code whenever
+" a proper virtual environment has not been found.
+" So, second, we only point YCM to the virtual environment when
+" the call to 'pipenv --venv' was successful.
+" Remember, that 'pipenv --venv' only points to the root directory
+" of the virtual environment, so we have to append a full path to
+" the python executable.
+if v:shell_error == 0
+  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+  let g:ycm_python_binary_path = venv_path . '/bin/python'
+else
+  let g:ycm_python_binary_path = 'python3'
+endif
+
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
