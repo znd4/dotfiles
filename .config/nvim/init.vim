@@ -156,6 +156,9 @@ setlocal foldmethod=expr
 colorscheme darkglass
 
 " YouCompleteMe
+let g:ycm_filetype_blacklist = {
+	  \ 'python': 1,
+      \}
 let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf=0
 
@@ -183,6 +186,9 @@ call vundle#begin()
 
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
+
+" jedi (for python)
+Plugin 'davidhalter/jedi-vim'
 
 " code completion
 Plugin 'ycm-core/YouCompleteMe'
