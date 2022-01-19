@@ -5,6 +5,10 @@ filetype off                  " required
 vmap <C-c> "+y
 vmap <C-x> "+c
 
+" nmaps
+nmap H 0
+nmap L $
+
 " Add line numbers
 set number
 
