@@ -77,6 +77,8 @@ Plug 'junegunn/seoul256.vim'
 " Fish support
 Plug 'dag/vim-fish'
 
+" editorconfig
+Plug 'editorconfig/editorconfig-vim'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
