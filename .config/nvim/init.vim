@@ -84,7 +84,7 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " markdown
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh']
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " vim-go
