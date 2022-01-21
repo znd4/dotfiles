@@ -9,7 +9,8 @@ vmap <C-x> "+c
 nmap H 0
 nmap L $
 
-syntax sync minlines=10000
+autocmd BufEnter *.go syntax sync fromstart
+
 
 " Add line numbers
 set number
