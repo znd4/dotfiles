@@ -409,6 +409,8 @@ def install_macos_brew_packages(common_packages):
         "nodejs",
         "pipx",
         "python",
+        "ripgrep",  # rg
+        "the_silver_searcher",  # ag
         "zplug",
     ]
     packages = packages + python_build_dependencies()
