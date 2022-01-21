@@ -9,9 +9,10 @@ vmap <C-x> "+c
 nmap H 0
 nmap L $
 
+syntax sync minlines=10000
+
 " Add line numbers
 set number
-
 set mouse=n
 
 " prompt when closing buffer with unsaved changes
