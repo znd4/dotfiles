@@ -101,6 +101,7 @@ let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 0
 
 let g:go_auto_type_info = 1
+let g:go_fmt_command = "goimports"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " https://github.com/ruanyl/vim-gh-line
