@@ -7,7 +7,6 @@ from pyinfra import facts as facts
 from pathlib import PurePosixPath
 import shlex
 
-
 def main():
     configure_repos()
     install_packages()
