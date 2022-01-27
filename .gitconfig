@@ -10,8 +10,8 @@ new-branch = checkout -b
 defaultBranch = main
 
 [user]
-name = Zane Dufour
-email = zdufour@aspiration.com
+	name = Zane Dufour
+	email = zdufour@aspiration.com
 
 [pull]
 rebase = false
@@ -23,3 +23,13 @@ rebase = false
 	useHttpPath = true
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+[core]
+	excludesfile = /Users/zdufour/.gitignore_global
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[commit]
+	template = /Users/zdufour/.stCommitMsg
