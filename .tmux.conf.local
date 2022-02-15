@@ -346,10 +346,15 @@ bind n previous-window # select previous window
 bind p next-window     # select next window
 bind Tab last-window        # move to last active window
 
+
 # Change the prefix key to C-a
 set -g prefix C-a
 unbind C-b
 bind C-a send-prefix
+
+bind '"' split-window -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
 
 # Let me kill panes with ctrl+d
 set -g remain-on-exit off
