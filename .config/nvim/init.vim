@@ -103,10 +103,7 @@ let g:go_highlight_extra_types = 0
 let g:go_auto_type_info = 1
 let g:go_fmt_command = "goimports"
 
-let g:go_fmt_options = {
-
-	'goimports': '-local github.com/AspirationPartners',
-	}
+let g:go_fmt_options = '-local github.com/AspirationPartners'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " https://github.com/ruanyl/vim-gh-line
