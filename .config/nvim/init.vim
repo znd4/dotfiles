@@ -57,6 +57,9 @@ Plug 'dense-analysis/ale'
 " git plugin
 Plug 'tpope/vim-fugitive'
 
+" vim merge conflict resolution
+Plug 'christoomey/vim-conflicted'
+
 Plug 'tmsvg/pear-tree'
 
 Plug 'flazz/vim-colorschemes'

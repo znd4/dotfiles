@@ -5,6 +5,7 @@ cedit = config --global --edit
 undo-last-commit = reset HEAD~1
 config-edit = config --global --edit
 new-branch = checkout -b
+	conflicted = !nvim +Conflicted
 
 [init]
 defaultBranch = main
