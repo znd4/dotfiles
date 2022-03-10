@@ -85,6 +85,12 @@ Plug 'dag/vim-fish'
 " editorconfig
 Plug 'editorconfig/editorconfig-vim'
 
+" prettier
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install --frozen-lockfile --production',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+
+
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
