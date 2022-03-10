@@ -95,3 +95,5 @@ if [ -d /home/linuxbrew ]; then
     export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
 fi
 
+
+[[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
