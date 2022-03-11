@@ -11,6 +11,8 @@ nmap L $
 
 autocmd BufEnter *.go syntax sync fromstart
 
+" case-insensitive search
+set ignorecase
 
 " Add line numbers
 set number
