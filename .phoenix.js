@@ -216,14 +216,14 @@ function setAppPosition(app, relativeFrame, space) {
     if (mainWindow.isFullScreen()) {
       mainWindow.setFullScreen(false);
     }
-    // mainWindow.setTopLeft({
-    //   x: left,
-    //   y: top,
-    // });
-    // mainWindow.setSize({
-    //   width: right - left,
-    //   height: bottom - top,
-    // });
+    mainWindow.setTopLeft({
+      x: left,
+      y: top,
+    });
+    mainWindow.setSize({
+      width: right - left,
+      height: bottom - top,
+    });
   }
 }
 
@@ -249,11 +249,8 @@ function moveAppToActiveSpace(app, followsMouse) {
     );
     if (moved) {
       // otherwise remove the main window from the spaces it is in
-      mainWindow.spaces().forEach((space) => {
-        space.removeWindows([mainWindow]);
-      });
       // add window to active space
-      activeSpace.addWindows([mainWindow]);
+      activeSpace.moveWindows([mainWindow]);
     }
   }
   return { moved, space: activeSpace };
