@@ -18,6 +18,14 @@ set ignorecase
 set number
 set mouse=n
 
+" open current file in github
+function! GHOpen()
+	let cmd = "gh browse " . expand("%") . ":" . line(".")
+	echo system(cmd)
+endfunction
+
+command! GHOpen :call GHOpen()
+
 " prompt when closing buffer with unsaved changes
 " https://vi.stackexchange.com/a/5879
 set confirm
