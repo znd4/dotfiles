@@ -24,8 +24,11 @@ rebase = false
 	useHttpPath = true
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+[url "git@github-zdog234:zdog234"]
+    insteadOf = git@github.com:zdog234
 [core]
 	excludesfile = /Users/zdufour/.gitignore_global
+	sshCommand = ssh -o StrictHostKeyChecking=no
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
@@ -34,3 +37,8 @@ rebase = false
 	trustExitCode = true
 [commit]
 	template = /Users/zdufour/.stCommitMsg
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
