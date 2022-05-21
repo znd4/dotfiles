@@ -30,16 +30,6 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ]; then
-    PATH="$HOME/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ]; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
 add_to_path() {
     directory=$1
     if [ -d "$directory" ]; then
@@ -49,9 +39,17 @@ add_to_path() {
     fi
 }
 
+# set PATH so it includes user's private bin if it exists
+add_to_path "$HOME/bin"
+
+# set PATH so it includes user's private bin if it exists
+add_to_path "$HOME/.local/bin"
+
 add_to_path "$HOME/go/bin"
 
-. "$HOME/.cargo/env"
+if [ -d "$HOME/bin" ]; then
+	. "$HOME/.cargo/env"
+fi
 
 # add linuxbrew directory to PATH
 if [ `uname` = "Linux" ]; then
