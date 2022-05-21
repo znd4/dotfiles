@@ -25,7 +25,7 @@ rebase = false
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 [core]
-	excludesfile = /Users/zdufour/.gitignore_global
+	excludesfile = ~/.gitignore_global
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
@@ -33,4 +33,4 @@ rebase = false
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [commit]
-	template = /Users/zdufour/.stCommitMsg
+	template = ~/.stCommitMsg
