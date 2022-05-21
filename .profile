@@ -52,6 +52,6 @@ if [ -d "$HOME/bin" ]; then
 fi
 
 # add linuxbrew directory to PATH
-if [ `uname` = "Linux" ]; then
+if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
