@@ -73,7 +73,13 @@ def configure_repos():
 def brew_installs():
     brew.packages(
         name="Install os-agnostic brew packages",
-        packages=["jesseduffield/lazygit/lazygit", "diceware", "zoxide", "thefuck"],
+        packages=[
+            "diceware",
+            "glow",
+            "jesseduffield/lazygit/lazygit",
+            "thefuck",
+            "zoxide",
+            ],
     )
     if not host.get_fact(facts.server.Which, "fzf"):
         brew.packages(
