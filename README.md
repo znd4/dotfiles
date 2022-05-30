@@ -1,6 +1,6 @@
-# Zane's Dotfile
+# Zane's Dotfiles
 
-This is all fully ripped off from [this awesome article](https://www.atlassian.com/git/tutorials/dotfiles)
+I found out about dotfiles from [this awesome article](https://www.atlassian.com/git/tutorials/dotfiles)
 
 ## Setup process on new machine
 
@@ -27,18 +27,23 @@ yadm clone https://github.com/zdog234/dotfiles
 OSX
 
 ```sh
-python3 -m pip inxtall pipx
-python3 -m pipx ensurepath
+python3 -m pip install pipx
+python3 -m pipx install ensurepath
 exec $SHELL
 pipx install pyinfra
 ```
 
-Linux
+#### Linux
 
 ```
-sudo apt-get update && sudo apt-get install -y \
-	python3-pyinfra
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt install python3.7 python3.8 python3.9 python3.10 python3.11
+sudo pip3 install pyinfra pipx
 ```
+
+[Install python
+3.11](https://realpython.com/installing-python/#how-to-install-python-on-linux)
 
 ### Set up Docker and Earthly
 
