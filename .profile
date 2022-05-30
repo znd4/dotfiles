@@ -32,6 +32,9 @@ fi
 
 add_to_path() {
     directory=$1
+	# todo: if not -d $directory; then mkdir --parents $directory
+	# fi
+	# export PATH=$...
     if [ -d "$directory" ]; then
         export PATH="$directory:$PATH"
     else
