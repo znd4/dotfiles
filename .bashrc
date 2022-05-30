@@ -134,6 +134,12 @@ else
     echo "pyenv isn't installed" >>/dev/stderr
 fi
 
+# bat, but just for linux
+if ! which bat; then
+	alias bat=batcat
+fi
+
+
 # Created by `pipx` on 2021-10-23 17:39:24
 export PATH="$PATH:$HOME/.local/bin"
 eval "$(register-python-argcomplete pipx)"
