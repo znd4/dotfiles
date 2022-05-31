@@ -14,13 +14,11 @@
 
 export LANG=en_US.UTF-8
 
+# make capslock behave like ctrl when held
+setxkbmap -option 'caps:ctrl_modifier'
 
-# make CapsLock behave like Ctrl:
-setxkbmap -option ctrl:nocaps
-
-# make short-pressed Ctrl behave like Escape:
-xcape -e 'Control_L=Escape'
-
+# make capslock behave like esc when tapped
+xcape -e 'Caps_Lock=Escape' -t 100
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
