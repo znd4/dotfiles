@@ -63,7 +63,7 @@ def configure_repos():
         sudo=True,
     )
     apt.repo(
-        "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main",
+        "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main",
         present=True,
         filename="signal-xenial",
         sudo=True,
