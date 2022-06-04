@@ -349,8 +349,8 @@ def install_vim_plug():
     server.shell(
         name="Install vim plugins with vim plug",
         commands=[
-            "vim -E -s +PlugInstall +visual +qall",
-            "vim -E -s +PlugUpdate +visual +qall",
+            # "vim -E -s +PlugInstall +visual +qall",
+            # "vim -E -s +PlugUpdate +visual +qall",
             "nvim +'PlugInstall --sync' +qa",
             "nvim +'PlugUpdate --sync' +qa",
         ],
