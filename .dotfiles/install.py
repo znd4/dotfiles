@@ -595,7 +595,7 @@ def install_alacritty():
     server.shell(
         name="cargo build alacritty",
         commands=[
-            f"cd {alacritty_dir}; cargo build --release",
+            f". ~/.cargo/env; cd {alacritty_dir}; cargo build --release",
         ],
     )
 
