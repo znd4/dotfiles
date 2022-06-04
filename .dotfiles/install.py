@@ -342,7 +342,7 @@ def install_vim_plug():
         files.directory(nvim_path.parent)
         files.download(
             "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
-            nvim_path,
+            str(nvim_path),
         )
 
     print("installing plugins with vim-plug")
