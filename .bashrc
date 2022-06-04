@@ -139,6 +139,8 @@ if ! which bat; then
 	alias bat=batcat
 fi
 
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+
 
 # Created by `pipx` on 2021-10-23 17:39:24
 export PATH="$PATH:$HOME/.local/bin"
