@@ -35,15 +35,16 @@ pipx install pyinfra
 
 #### Linux
 
-```
+```sh
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
-sudo apt install python3.7 python3.8 python3.9 python3.10 python3.11
-sudo pip3 install pyinfra pipx
+echo -n 3.7 3.8 3.9 3.10 3.11 | \
+	xargs -d $' ' sh -c \
+	'for arg do sudo apt-get install -y python"$arg" python"$arg"-distutils \
+	; curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python"$arg" \
+	; done'
+python3.10 -m pip install pyinfra pipx
 ```
-
-[Install python
-3.11](https://realpython.com/installing-python/#how-to-install-python-on-linux)
 
 ### Set up Docker and Earthly
 
