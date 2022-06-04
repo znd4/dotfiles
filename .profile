@@ -52,6 +52,13 @@ if [ -d "$HOME/bin" ]; then
 	. "$HOME/.cargo/env"
 fi
 
+# OnePassword
+if which 1password; then
+	1password --silent >/dev/null 2>&1 &
+else
+	echo "1password is not installed" >>/dev/stderr
+fi
+
 # add linuxbrew directory to PATH
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
