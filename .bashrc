@@ -127,11 +127,15 @@ fi
 
 # pyenv configuration
 if [ -d $HOME/.pyenv ]; then
-    export PATH="$HOME/.pyenv/bin:$PATH"
-    eval "$(pyenv init --path)"
-    eval "$(pyenv virtualenv-init -)"
-else
+    export PYENV_ROOT=$HOME/.pyenv
+elif [ -d /home/linuxbrew/bin/.pyenv ]; then
+    export PYENV_ROOT=/home/linuxbrew/bin/.pyenv
+fi
+if [ -z $PYENV_ROOT ]; then
     echo "pyenv isn't installed" >>/dev/stderr
+else
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
 fi
 
 # bat, but just for linux
