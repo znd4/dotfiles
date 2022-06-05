@@ -20,6 +20,9 @@ setxkbmap -option 'caps:ctrl_modifier'
 # make capslock behave like esc when tapped
 xcape -e 'Caps_Lock=Escape' -t 100
 
+# use 1password for ssh
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
