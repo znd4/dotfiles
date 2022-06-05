@@ -40,7 +40,11 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
 echo -n 3.7 3.8 3.9 3.10 3.11 | \
 	xargs -d $' ' sh -c \
-	'for arg do sudo apt-get install -y python"$arg" python"$arg"-distutils \
+	'for arg do \
+    sudo apt-get install -y \
+        python"$arg" \
+        python"$arg"-distutils \
+        python"$arg"-venv \
 	; curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python"$arg" \
 	; done'
 python3.10 -m pip install pyinfra pipx
