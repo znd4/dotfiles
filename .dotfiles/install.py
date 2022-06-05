@@ -354,6 +354,7 @@ def install_vim_plug():
             "nvim +'PlugInstall --sync' +qa",
             # "nvim +'PlugUpdate --sync' +qa",
         ],
+        _shell_executable="bash",
     )
 
 
@@ -571,6 +572,7 @@ def install_alacritty():
                 ]
             )
         ],
+        _shell_executable="bash",
     )
 
     server.shell(
@@ -597,6 +599,7 @@ def install_alacritty():
         commands=[
             f". ~/.cargo/env; cd {alacritty_dir}; cargo build --release",
         ],
+        _shell_executable="bash",
     )
 
     output = host.get_fact(
@@ -636,6 +639,7 @@ def install_alacritty_dependencies():
             "pkg-config",
             "libfreetype6-dev",
             "libfontconfig1-dev",
+            "libfontconfig-dev",
             "libxcb-xfixes0-dev",
             "libxkbcommon-dev",
             "python3",
