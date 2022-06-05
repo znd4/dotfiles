@@ -1,0 +1,20 @@
+[credential "https://github.com"]
+helper =
+helper = !/usr/bin/env gh auth git-credential
+[credential "https://github.ford.com"]
+helper =
+helper = !/usr/bin/env gh auth git-credential
+[alias]
+a = add
+pl = pull
+cedit = config --global --edit
+undo-last-commit = reset HEAD~1
+config-edit = config --global --edit
+new-branch = checkout -b
+[init]
+defaultBranch = main
+[user]
+name = Zane Dufour
+email = zdufour@ford.com
+[pull]
+rebase = true

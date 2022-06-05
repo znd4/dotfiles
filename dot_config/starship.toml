@@ -1,0 +1,17 @@
+[gcloud]
+format = 'on [$symbol$account(@$domain)(\($project\))]($style) '
+
+[shell]
+powershell_indicator = "_"
+zsh_indicator = "🍎"
+bash_indicator = "🔨"
+fish_indicator = "🐟"
+disabled = false
+
+[time]
+disabled = false
+
+[python]
+python_binary = ["py"]
+# The following isn't necessary, but convenient.
+detect_folders = [".venv"]
