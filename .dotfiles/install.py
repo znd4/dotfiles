@@ -352,7 +352,7 @@ def install_vim_plug():
             # "vim -E -s +PlugInstall +visual +qall",
             # "vim -E -s +PlugUpdate +visual +qall",
             "nvim +'PlugInstall --sync' +qa",
-            "nvim +'PlugUpdate --sync' +qa",
+            # "nvim +'PlugUpdate --sync' +qa",
         ],
     )
 
