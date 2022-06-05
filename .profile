@@ -52,6 +52,11 @@ if [ -d "$HOME/bin" ]; then
 	. "$HOME/.cargo/env"
 fi
 
+x86_64_pkgconfig=/usr/lib/x86_64-linux-gnu/pkgconfig
+if [ -d $x86_64_pkgconfig ]; then
+    export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
+fi
+
 # OnePassword
 if which 1password; then
 	1password --silent >/dev/null 2>&1 &
