@@ -68,6 +68,9 @@ fi
 autoload -Uz compinit
 compinit
 
+# 1password autocompletion
+eval "$(op completion zsh)"; compdef _op op
+
 
 # POETRY VIRTUALENVS IN PROJECT
 export POETRY_VIRTUALENVS_IN_PROJECT=true
