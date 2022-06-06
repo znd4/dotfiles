@@ -77,6 +77,7 @@ export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
 export EDITOR="nvim"
+export ZVM_VI_EDITOR=$EDITOR
 export MANPAGER="nvim +Man!"
 
 # If you come from bash you might have to change your $PATH.
