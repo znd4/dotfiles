@@ -87,6 +87,8 @@ export MANPAGER="nvim +Man!"
 # Path to your oh-my-zsh installation.
 # export ZSH="$HOME/.oh-my-zsh"
 
+export GOPRIVATE=github.com/AspirationPartners
+
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
 
 # Created by `pipx` on 2022-01-04 23:54:41
