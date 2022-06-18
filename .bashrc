@@ -17,6 +17,8 @@ eval "$(starship init bash)"
 # These are the environment variables we set the same everywhere (e.g. EDITOR=nvim)
 . ~/.dotfiles/global_environment_variables.sh
 
+eval `thefuck --alias`
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
