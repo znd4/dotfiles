@@ -1,0 +1,11 @@
+[Unit]
+Description=gnome polkit authentication agent
+After=network.target
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+[Install]
+WantedBy=graphical.target

@@ -1,5 +1,5 @@
 from functools import wraps
-from pyinfra.operations import apt, brew, server, files, git, pip
+from pyinfra.operations import apt, brew, server, files, git, pip, systemd
 from pathlib import Path
 from pyinfra import host
 from pyinfra.facts.server import Home
@@ -8,12 +8,20 @@ from pathlib import PurePosixPath
 import shlex
 
 def main():
+    enable_services()
     configure_repos()
     install_packages()
     brew_installs()
     script_installs()
     install_vundle()
 
+def enable_services():
+    systemd.service(
+        name="Restart and enable gnome pollkit",
+        service="auth-agent.service",
+        running=True,
+        enabled=True,
+    )
 
 def skipif(condition: bool):
     """
