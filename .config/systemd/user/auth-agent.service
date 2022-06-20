@@ -4,7 +4,8 @@ After=network.target
 Type=simple
 Restart=always
 RestartSec=1
-User=root
+
+[Service]
 ExecStart=/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 [Install]
