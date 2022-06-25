@@ -1,19 +1,147 @@
 from functools import wraps
-from pyinfra.operations import apt, brew, server, files, git, pip, systemd
+from pyinfra.operations import apt, brew, server, files, git, pip, systemd, pacman
 from pathlib import Path
 from pyinfra import host
 from pyinfra.facts.server import Home
 from pyinfra import facts as facts
 from pathlib import PurePosixPath
+from typing import Literal
 import shlex
+from dataclasses import dataclass
 
 def main():
     enable_services()
+    npm_global_nosudo()
     configure_repos()
     install_packages()
-    brew_installs()
+    pipx_installs()
+    # brew_installs()
     script_installs()
-    install_vundle()
+
+PACMAN: list[str] = [
+    "polkit-gnome",
+    "libvirt",
+    "rust",
+]
+YAY: list[str] = [
+    "tzupdate",
+    "discord_arch_electron",
+]
+APT: list[str] = []
+BREW: list[str]  = []
+
+
+def get_os_platform() -> str:
+    """
+    Returns `uname` result, `strip`ped and `lower`ed.
+
+    e.g.
+        "darwin"
+    """
+    return host.get_fact(facts.server.Command, "uname").lower().strip()
+
+
+@dataclass
+class Package:
+    name: str
+    arch: Literal[YAY, PACMAN] = None
+    debian: Literal[APT, BREW] = None
+
+
+PACKAGES = (
+    Package("glow", arch=PACMAN, debian=BREW),
+    Package("starship", arch=PACMAN, debian=BREW),
+    Package("git-delta", arch=PACMAN, debian=BREW),
+)
+
+
+def get_default_package_manager() -> Literal[PACMAN, YAY, BREW, APT]:
+    os_platform = get_os_platform()
+    if os_platform == "darwin":
+        return BREW
+
+    if os_platform != "linux":
+        raise NotImplementedError(os_platform)
+
+def wrap_str_packages(packages: tuple[Package | str]) -> tuple[Package]:
+    distribution_alias, package_manager = get_distribution_and_default_package_manager()
+    default_map = {distribution_alias: package_manager} if distribution_alias else {}
+
+    return tuple((
+        Package(package, **default_map) if isinstance(package, str) else package
+        for package in packages
+    ))
+
+def get_distribution_and_default_package_manager() -> (str, list[Package | str]):
+    os_platform = get_os_platform()
+
+    if os_platform == "darwin":
+        return "macos", BREW
+
+    if os_platform != "linux":
+        raise NotImplementedError(os_platform)
+
+    distro_name = host.get_fact(facts.server.LinuxName).lower()
+    if distro_name in {"ubuntu", "debian"}:
+        return "debian", APT
+    elif distro_name in {"arch linux"}:
+        return "arch", PACMAN
+    else:
+        raise NotImplementedError(f"Haven't implemented {distro_name=}")
+
+
+def setup_libvirtd():
+    YAY.extend([
+        "qemu",
+        "virt-manager",
+        "ebtables",
+    ])
+    PACMAN.append("libvirt")
+
+    systemd.service(
+        name="Enable libvirtd for virtualization",
+        service="libvirtd",
+        running=True,
+        enabled=True,
+        _sudo=True,
+    )
+
+    user = host.get_fact(facts.server.User)
+    server.user(
+        user,
+        groups=[
+            *_get_existing_groups(user),
+        ],
+    )
+
+
+def _get_existing_groups(username: str) -> list[str]:
+    return host.get_fact(facts.server.Users)[username]["groups"]
+
+
+def update_package_lists(packages: tuple[Package | str]):
+    """Update the global package lists based on what's set for each package in packages."""
+    os_platform = get_os_platform()
+    distrib_alias, default_package_manager = get_distribution_and_default_package_manager()
+    packages = wrap_str_packages(packages)
+    if os_platform == "darwin":
+        BREW.extend(packages)
+        return
+
+    if os_platform != "linux":
+        raise NotImplementedError(os_platform)
+
+    distro_name = host.get_fact(facts.server.LinuxName).lower()
+    if distro_name in {"ubuntu", "debian"}:
+        for package in packages:
+            package.debian.append(package.name)
+    elif distro_name in {"arch linux"}:
+        for package in packages:
+            package.arch.append(package.name)
+    else:
+        raise NotImplementedError(f"Haven't implemented {distro_name=}")
+
+
 
 def enable_services():
     systemd.service(
@@ -21,7 +149,13 @@ def enable_services():
         service="auth-agent.service",
         running=True,
         enabled=True,
+        user_mode=True,
     )
+
+def npm_global_nosudo():
+    npm_packages = str(_get_home() / ".npm-packages")
+    files.directory(npm_packages)
+
 
 def skipif(condition: bool):
     """
@@ -41,18 +175,13 @@ def skipif(condition: bool):
     return decorator
 
 
-def get_os_platform() -> str:
-    """
-    Returns `uname` result, `strip`ped and `lower`ed.
-
-    e.g.
-        "darwin"
-    """
-    return host.get_fact(facts.server.Command, "uname").lower().strip()
 
 
 def _get_home() -> Path:
     return PurePosixPath(host.get_fact(Home))
+
+def has_apt() -> bool:
+    return host.get_fact(facts.server.Which, "apt")
 
 
 @skipif(get_os_platform() == "darwin")
@@ -60,29 +189,77 @@ def configure_repos():
     """
     Configure OS repos (apt, pacman, yum etc.)
     """
+    if not has_apt():
+        return
     apt.ppa(
         src="ppa:appimagelauncher-team/stable",
         name="Add appimagelauncher repo",
-        sudo=True,
+        _sudo=True,
     )
     apt.key(
         name="Add signal desktop key",
         src="https://updates.signal.org/desktop/apt/keys.asc",
-        sudo=True,
+        _sudo=True,
     )
     apt.repo(
         "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main",
         present=True,
         filename="signal-xenial",
-        sudo=True,
+        _sudo=True,
     )
+
+PIPX_PACKAGES = (
+    "diceware",
+)
+
+def pipx_installs():
+    server.shell(
+        name="install packages with pipx",
+        commands=[
+            shlex.join(
+                [
+                    "pipx",
+                    "install",
+                    *PIPX_PACKAGES,
+                ],
+            ),
+        ],
+    )
+
+def yay_install(packages: list[str | Package]):
+    if not host.get_fact(facts.server.Which, "yay"):
+        raise NotImplementedError("need to write script that installs yay")
+
+    server.shell(
+        name="install packages with yay",
+        commands=[
+            shlex.join(
+                [
+                    "echo",
+                    "y",
+                    "|",
+                    "yay",
+                    "--removemake",
+                    "--norebuild",
+                    "--noredownload",
+                    "--nocleanmenu",
+                    "--nodiffmenu",
+                    "-S",
+                    *packages,
+                ],
+            ),
+        ],
+    )
+
+
 
 
 def brew_installs():
     brew.packages(
         name="Install os-agnostic brew packages",
         packages=[
-            "diceware",
+            # "diceware", # Now that I'm using onepassword for this, I don't think I
+            # really need this
             "glow",
             "jesseduffield/lazygit/lazygit",
             "thefuck",
@@ -108,20 +285,15 @@ def brew_installs():
 
 
 def script_installs():
+    python_setup()
+
     install_macports()
-    server.shell(
-        name="Install starship",
-        commands=[
-            'sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes',
-        ],
-        sudo=True,
-    )
 
     install_joplin()
 
     install_vim_plug()
-    install_delta()
-    install_vscode()
+    install_vundle()
+
     install_nerd_fonts()
     install_rust()
 
@@ -129,13 +301,19 @@ def script_installs():
     install_kitty()
     install_tdrop()
 
-    python_setup()
 
     install_pretty_tmux()
 
 
 def python_setup():
-    versions = install_pyenv()
+    versions = [
+        "3.7.12",
+        "3.8.13",
+        "3.9.13",
+        "3.10.4",
+        "3.11-dev",
+    ]
+    install_pyenv(versions)
     install_neovim_python()
     pipx_installs()
     register_jupyter_kernels(versions)
@@ -214,7 +392,7 @@ def install_macports():
     )
     server.shell(
         commands=[f"installer -pkg {pkg_path} -target /"],
-        sudo=True,
+        _sudo=True,
     )
 
 
@@ -229,10 +407,10 @@ def install_neovim_python():
     )
 
 
-def install_pyenv():
+def install_pyenv(versions: list[str]):
     version_output: Optional[str] = host.get_fact(
         facts.server.Command,
-        "pyenv versions --bare",
+        "pyenv versions --bare; exit 0",
     )
 
     if version_output:
@@ -240,26 +418,20 @@ def install_pyenv():
     else:
         existing_versions = set()
 
-    _versions = [
-        "3.7.12",
-        "3.8.12",
-        "3.9.9",
-        "3.10.0",
-    ]
-    for _version in _versions:
-        if _version in existing_versions:
+    for version in versions:
+        if version in existing_versions:
             continue
         server.shell(
-            name=f"Install python=={_version}",
-            commands=[f"pyenv install {_version}"],
+            name=f"Install python=={version}",
+            commands=[f"pyenv install {version}"],
         )
 
     server.shell(
         name="pyenv global",
-        commands=[f"pyenv global {' '.join(_versions)}"],
+        commands=[f"pyenv global {' '.join(versions)}"],
     )
-    install_black(versions=_versions)
-    return _versions
+    install_black(versions=versions)
+    return versions
 
 
 def install_black(*, versions):
@@ -274,7 +446,10 @@ def install_black(*, versions):
 
 @skipif(get_os_platform() == "darwin")
 def install_joplin():
-    if host.get_fact(facts.files.File, _get_home() / ".joplin" / "VERSION"):
+    if (
+        host.get_fact(facts.files.File, _get_home() / ".joplin" / "VERSION")
+        or host.get_fact(facts.server.Which, "joplin-desktop")
+    ):
         return
     server.shell(
         name="install joplin",
@@ -293,37 +468,21 @@ def install_tdrop():
     server.shell(
         name="installing tdrop",
         commands=["make install"],
-        sudo=True,
+        _sudo=True,
         chdir=tmpdir,
     )
 
+def which(command: str) -> bool:
+    """Return True iff command is on PATH"""
+    return host.get_fact(facts.server.Which, command)
 
 def install_rust():
+    if which("rust"):
+        return
+
     server.shell(
         name="Install rust",
         commands=["curl https://sh.rustup.rs -sSf | sh -s -- -y"],
-    )
-
-
-def install_vscode():
-    if host.get_fact(facts.server.Which, "code"):
-        print("vscode already installed")
-        return
-
-    if get_os_platform() == "darwin":
-        brew.casks(name="install vscode with brew", casks=["visual-studio-code"])
-        return
-
-    download_path = "/tmp/vscode.deb"
-    files.download(
-        "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
-        download_path,
-        name="Downloading vscode.deb",
-    )
-    server.shell(
-        name="Installing vscode",
-        commands=[f"dpkg -i {download_path}"],
-        sudo=True,
     )
 
 
@@ -366,34 +525,32 @@ def install_vim_plug():
     )
 
 
-def install_delta():
-    if host.get_fact(facts.server.Which, "delta"):
-        return
-
-    if get_os_platform() == "darwin":
-        brew.packages(name="brew install git-delta", packages=["git-delta"])
-        return
-
-    download_path = "/tmp/git-delta.deb"
-    files.download(
-        "https://github.com/dandavison/delta/releases/download/0.10.3/git-delta_0.10.3_amd64.deb",
-        download_path,
-    )
-    server.shell(
-        name="install [git-delta](https://github.com/dandavison/delta)",
-        commands=[f"dpkg -i {download_path}"],
-        sudo=True,
-    )
-
-
 def install_packages():
     """
     Install packages with system's package manager
     (e.g. apt, pacman)
     """
+    update_package_lists(PACKAGES)
+    if APT:
+        apt.packages(
+            name="Installing packages with apt",
+            packages=APT,
+        )
+    if BREW:
+        brew.packages(
+            name="Installing packages with brew",
+            packages=BREW,
+        )
+    if PACMAN:
+        install_pacman_packages()
+    if YAY:
+        yay_install(YAY)
+
+    return
+
     common_packages = [
         "bat",
-        "ddgr",
+        # "ddgr", # needs to be installed with yay on arch
         "direnv",
         "neovim",
         "podman",
@@ -403,12 +560,42 @@ def install_packages():
         "xdotool",
         "zoxide",
     ]
-    if get_os_platform() == "linux":
-        install_apt_packages(common_packages)
-    elif get_os_platform() == "darwin":
-        install_macos_brew_packages(common_packages)
-    else:
-        raise NotImplementedError(get_os_platform())
+#     if get_os_platform() == "linux":
+#         distro_name = host.get_fact(facts.server.LinuxName).lower()
+#         if distro_name in {"ubuntu", "debian"}:
+#             install_apt_packages(common_packages)
+#         elif distro_name in {"arch linux"}:
+#             install_pacman_packages(common_packages)
+#         else:
+#             raise NotImplementedError(f"Haven't implemented {distro_name=}")
+#     elif get_os_platform() == "darwin":
+#         install_macos_brew_packages(common_packages)
+#     else:
+#         raise NotImplementedError(get_os_platform())
+
+def install_pacman_packages():
+    pyenv_arch_build_deps = [
+        "base-devel",
+        "openssl",
+        "zlib",
+        "xz",
+        "tk",
+    ]
+
+    packages = [
+        *pyenv_arch_build_deps,
+        "pyenv",
+    ]
+
+    print("installing packages with pacman!!!")
+
+    pacman.packages(
+        name="Install packages with pacman",
+        packages=packages,
+        present=True,
+        update=True,
+        _sudo=True,
+    )
 
 
 def install_macos_brew_packages(common_packages):
@@ -451,7 +638,7 @@ def install_apt_packages(common_packages):
     packages = packages + python_build_dependencies()
     server.packages(
         packages=packages,
-        sudo=True,
+        _sudo=True,
     )
 
 
@@ -508,8 +695,8 @@ def install_vundle():
     server.shell(
         name="Install vundle and install vundle plugins",
         commands=[
-            "vim +PluginInstall +qall",
-            "vim +PluginUpdate +qall",
+            "vim +'PluginInstall --sync' +qall",
+            "vim +PluginInstall  +qall",
             "nvim +PluginInstall +qall",
             "nvim +PluginUpdate +qall",
         ],
@@ -619,11 +806,11 @@ def install_alacritty():
         server.shell(
             name="running tic -xe alacritty",
             commands=["tic -xe alacritty,alacritty-direct extra/alacritty.info"],
-            sudo=True,
+            _sudo=True,
         )
     server.shell(
         name="Install Alacritty Desktop Entry",
-        sudo=True,
+        _sudo=True,
         commands=[
             " && ".join(
                 [
@@ -641,7 +828,7 @@ def install_alacritty():
 def install_alacritty_dependencies():
     server.packages(
         name="Install other alacritty dependencies",
-        sudo=True,
+        _sudo=True,
         packages=[
             "cmake",
             "pkg-config",
