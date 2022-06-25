@@ -9,6 +9,7 @@ from typing import Literal
 import shlex
 from dataclasses import dataclass
 
+
 def main():
     enable_services()
     npm_global_nosudo()
@@ -18,6 +19,7 @@ def main():
     # brew_installs()
     script_installs()
 
+
 PACMAN: list[str] = [
     "polkit-gnome",
     "libvirt",
@@ -26,9 +28,10 @@ PACMAN: list[str] = [
 YAY: list[str] = [
     "tzupdate",
     "discord_arch_electron",
+    "nerd-fonts-fira-code",
 ]
 APT: list[str] = []
-BREW: list[str]  = []
+BREW: list[str] = []
 
 
 def get_os_platform() -> str:
@@ -52,6 +55,10 @@ PACKAGES = (
     Package("glow", arch=PACMAN, debian=BREW),
     Package("starship", arch=PACMAN, debian=BREW),
     Package("git-delta", arch=PACMAN, debian=BREW),
+    Package("fzf", arch=PACMAN, debian=BREW),
+    Package("kitty", arch=PACMAN, debian=BREW),
+    Package("bashtop", arch=PACMAN, debian=APT),
+    Package("the_silver_searcher", arch=PACMAN, debian=BREW),
 )
 
 
@@ -63,14 +70,18 @@ def get_default_package_manager() -> Literal[PACMAN, YAY, BREW, APT]:
     if os_platform != "linux":
         raise NotImplementedError(os_platform)
 
+
 def wrap_str_packages(packages: tuple[Package | str]) -> tuple[Package]:
     distribution_alias, package_manager = get_distribution_and_default_package_manager()
     default_map = {distribution_alias: package_manager} if distribution_alias else {}
 
-    return tuple((
-        Package(package, **default_map) if isinstance(package, str) else package
-        for package in packages
-    ))
+    return tuple(
+        (
+            Package(package, **default_map) if isinstance(package, str) else package
+            for package in packages
+        )
+    )
+
 
 def get_distribution_and_default_package_manager() -> (str, list[Package | str]):
     os_platform = get_os_platform()
@@ -91,11 +102,13 @@ def get_distribution_and_default_package_manager() -> (str, list[Package | str])
 
 
 def setup_libvirtd():
-    YAY.extend([
-        "qemu",
-        "virt-manager",
-        "ebtables",
-    ])
+    YAY.extend(
+        [
+            "qemu",
+            "virt-manager",
+            "ebtables",
+        ]
+    )
     PACMAN.append("libvirt")
 
     systemd.service(
@@ -122,7 +135,10 @@ def _get_existing_groups(username: str) -> list[str]:
 def update_package_lists(packages: tuple[Package | str]):
     """Update the global package lists based on what's set for each package in packages."""
     os_platform = get_os_platform()
-    distrib_alias, default_package_manager = get_distribution_and_default_package_manager()
+    (
+        distrib_alias,
+        default_package_manager,
+    ) = get_distribution_and_default_package_manager()
     packages = wrap_str_packages(packages)
     if os_platform == "darwin":
         BREW.extend(packages)
@@ -142,7 +158,6 @@ def update_package_lists(packages: tuple[Package | str]):
         raise NotImplementedError(f"Haven't implemented {distro_name=}")
 
 
-
 def enable_services():
     systemd.service(
         name="Restart and enable gnome pollkit",
@@ -151,6 +166,7 @@ def enable_services():
         enabled=True,
         user_mode=True,
     )
+
 
 def npm_global_nosudo():
     npm_packages = str(_get_home() / ".npm-packages")
@@ -175,10 +191,9 @@ def skipif(condition: bool):
     return decorator
 
 
-
-
 def _get_home() -> Path:
     return PurePosixPath(host.get_fact(Home))
+
 
 def has_apt() -> bool:
     return host.get_fact(facts.server.Which, "apt")
@@ -208,9 +223,9 @@ def configure_repos():
         _sudo=True,
     )
 
-PIPX_PACKAGES = (
-    "diceware",
-)
+
+PIPX_PACKAGES = ("diceware",)
+
 
 def pipx_installs():
     server.shell(
@@ -226,6 +241,7 @@ def pipx_installs():
         ],
     )
 
+
 def yay_install(packages: list[str | Package]):
     if not host.get_fact(facts.server.Which, "yay"):
         raise NotImplementedError("need to write script that installs yay")
@@ -233,25 +249,23 @@ def yay_install(packages: list[str | Package]):
     server.shell(
         name="install packages with yay",
         commands=[
-            shlex.join(
+            "echo y |"
+            + shlex.join(
                 [
-                    "echo",
-                    "y",
-                    "|",
                     "yay",
+                    "--noconfirm",
                     "--removemake",
                     "--norebuild",
                     "--noredownload",
                     "--nocleanmenu",
                     "--nodiffmenu",
+                    "--sudo=pkexec",
                     "-S",
                     *packages,
                 ],
             ),
         ],
     )
-
-
 
 
 def brew_installs():
@@ -264,7 +278,7 @@ def brew_installs():
             "jesseduffield/lazygit/lazygit",
             "thefuck",
             "zoxide",
-            ],
+        ],
     )
     if not host.get_fact(facts.server.Which, "fzf"):
         brew.packages(
@@ -301,17 +315,16 @@ def script_installs():
     install_kitty()
     install_tdrop()
 
-
     install_pretty_tmux()
 
 
 def python_setup():
     versions = [
-        "3.7.12",
-        "3.8.13",
-        "3.9.13",
-        "3.10.4",
         "3.11-dev",
+        "3.10.4",
+        "3.9.13",
+        "3.8.13",
+        "3.7.12",
     ]
     install_pyenv(versions)
     install_neovim_python()
@@ -398,12 +411,12 @@ def install_macports():
 
 def install_neovim_python():
     server.shell(
+        name="Install neovim into a python environment",
         commands=[
             # exit 0 so that we don't throw an error if there isn't
             # an activated pyenv environment
-            "pyenv deactivate 2>/dev/null; exit 0",
-            "python3.8 -m pip install neovim",
-        ]
+            "python3.10 -m pip install neovim",
+        ],
     )
 
 
@@ -446,10 +459,9 @@ def install_black(*, versions):
 
 @skipif(get_os_platform() == "darwin")
 def install_joplin():
-    if (
-        host.get_fact(facts.files.File, _get_home() / ".joplin" / "VERSION")
-        or host.get_fact(facts.server.Which, "joplin-desktop")
-    ):
+    if host.get_fact(
+        facts.files.File, _get_home() / ".joplin" / "VERSION"
+    ) or host.get_fact(facts.server.Which, "joplin-desktop"):
         return
     server.shell(
         name="install joplin",
@@ -472,9 +484,11 @@ def install_tdrop():
         chdir=tmpdir,
     )
 
+
 def which(command: str) -> bool:
     """Return True iff command is on PATH"""
     return host.get_fact(facts.server.Which, command)
+
 
 def install_rust():
     if which("rust"):
@@ -490,7 +504,6 @@ def install_vim_plug():
     if not host.get_fact(
         facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"
     ):
-        print("installing vim-plug")
         server.shell(
             name="Install [vim plug](https://github.com/junegunn/vim-plug)",
             commands=[
@@ -505,14 +518,12 @@ def install_vim_plug():
         facts.files.File,
         str(nvim_path),
     ):
-        print("installing vim-plug for neovim")
         files.directory(nvim_path.parent)
         files.download(
             "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
             str(nvim_path),
         )
 
-    print("installing plugins with vim-plug")
     server.shell(
         name="Install vim plugins with vim plug",
         commands=[
@@ -560,6 +571,8 @@ def install_packages():
         "xdotool",
         "zoxide",
     ]
+
+
 #     if get_os_platform() == "linux":
 #         distro_name = host.get_fact(facts.server.LinuxName).lower()
 #         if distro_name in {"ubuntu", "debian"}:
@@ -573,6 +586,7 @@ def install_packages():
 #     else:
 #         raise NotImplementedError(get_os_platform())
 
+
 def install_pacman_packages():
     pyenv_arch_build_deps = [
         "base-devel",
@@ -583,11 +597,12 @@ def install_pacman_packages():
     ]
 
     packages = [
+        *PACMAN,
         *pyenv_arch_build_deps,
         "pyenv",
     ]
 
-    print("installing packages with pacman!!!")
+    print("installing packages with pacman:", ", ".join(packages))
 
     pacman.packages(
         name="Install packages with pacman",
