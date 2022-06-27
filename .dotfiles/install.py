@@ -172,8 +172,9 @@ def update_package_lists(packages: tuple[Package | str]):
 
 def enable_services():
     systemd.service(
-        name="Restart and enable gnome pollkit",
+        name="Restart and enable gnome polkit",
         service="auth-agent.service",
+        reloaded=True,
         running=True,
         enabled=True,
         user_mode=True,
