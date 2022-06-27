@@ -1,7 +1,9 @@
 /* Copy this to /etc/polkit-1/rules.d/packagekit-restrict.rules */
 
 polkit.addRule(function(action, subject) {
-    if (/^org\.freedesktop\.packagekit\./.test(action.id)) {
+	polkit.log("action=" + action);
+    polkit.log("subject=" + subject);
+    if (action.id == "org.freedesktop.policykit.exec") {
         if subject.isInGroup("wheel") {
             return polkit.Result.AUTH_ADMIN_KEEP;
         }
