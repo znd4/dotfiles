@@ -347,7 +347,7 @@ def python_setup():
         "3.7.12",
     ]
     install_pyenv(versions)
-    install_neovim_python()
+    install_neovim_python(versions)
     pipx_installs()
     register_jupyter_kernels(versions)
 
@@ -429,15 +429,15 @@ def install_macports():
     )
 
 
-def install_neovim_python():
-    server.shell(
-        name="Install neovim into a python environment",
-        commands=[
-            # exit 0 so that we don't throw an error if there isn't
-            # an activated pyenv environment
-            "python3.10 -m pip install neovim",
-        ],
-    )
+def install_neovim_python(versions: list[str]):
+    for version in versions:
+        if version.startswith("3.11"):
+            continue
+
+        pyenv_pip_install(
+            version=version,
+            packages=["pynvim"],
+        )
 
 
 def install_pyenv(versions: list[str]):
