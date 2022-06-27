@@ -352,11 +352,6 @@ def python_setup():
     register_jupyter_kernels(versions)
 
 
-def pipx_installs():
-    packages = ["black", "jupyterlab", "virtualenv"]
-    server.shell(
-        name="Install pipx packages",
-        commands=[f"pipx install {package}" for package in packages],
     )
 
 
