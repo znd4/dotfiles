@@ -330,6 +330,9 @@ tmux_conf_copy_to_os_clipboard=false
 # Enable RGB colour if running in xterm(1)
 # set-option -sa terminal-overrides ",xterm*:Tc"
 
+# Set default shell to zsh
+set-option -g default-shell zsh
+
 # Change the default $TERM to tmux-256color
 set -g default-terminal "screen-256color"
 
