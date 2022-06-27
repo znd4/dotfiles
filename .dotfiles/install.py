@@ -16,6 +16,7 @@ def main():
     configure_repos()
     install_packages()
     pipx_installs()
+    go_installs()
     # brew_installs()
     script_installs()
 
@@ -81,6 +82,16 @@ def wrap_str_packages(packages: tuple[Package | str]) -> tuple[Package]:
             Package(package, **default_map) if isinstance(package, str) else package
             for package in packages
         )
+    )
+
+
+def go_installs():
+    packages = [
+        "github.com/cheat/cheat/cmd/cheat@latest",
+    ]
+    server.shell(
+        name="Installing packages with go: " + ", ".join(packages),
+        commands=[shlex.join(["go", "install", package]) for package in packages],
     )
 
 
