@@ -237,20 +237,26 @@ def configure_repos():
     )
 
 
-PIPX_PACKAGES = ("diceware",)
+PIPX_PACKAGES = (
+    "black",
+    "diceware",
+    "jupyterlab",
+    "virtualenv",
+)
 
 
 def pipx_installs():
     server.shell(
-        name="install packages with pipx",
+        name="install packages with pipx: " + ", ".join(PIPX_PACKAGES),
         commands=[
             shlex.join(
                 [
                     "pipx",
                     "install",
-                    *PIPX_PACKAGES,
+                    package,
                 ],
-            ),
+            )
+            for package in PIPX_PACKAGES
         ],
     )
 
