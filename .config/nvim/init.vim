@@ -44,6 +44,8 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
+Plug 'tpope/vim-surround'
+
 Plug 'preservim/nerdtree'
 
 " open line in github
