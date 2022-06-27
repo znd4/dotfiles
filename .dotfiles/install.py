@@ -24,6 +24,7 @@ PACMAN: list[str] = [
     "polkit-gnome",
     "libvirt",
     "rust",
+    "signal-desktop",
 ]
 YAY: list[str] = [
     "tzupdate",
