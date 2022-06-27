@@ -352,6 +352,18 @@ def python_setup():
     register_jupyter_kernels(versions)
 
 
+def pyenv_pip_install(version: str, packages: list[str]):
+    """pip install packages into a pyenv environment
+    Args:
+        version: A semver version (e.g. 3.11-dev, 3.10.4)
+        packages: A list of python packages to install with pip
+    """
+    pip.packages(
+        name=f"PYENV_VERSION={version} pip install {', '.join(packages)}",
+        packages=packages,
+        present=True,
+        latest=True,
+        _env=dict(PYENV_VERSION=version),
     )
 
 
