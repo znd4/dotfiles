@@ -266,19 +266,20 @@ def yay_install(packages: list[str | Package]):
         raise NotImplementedError("need to write script that installs yay")
 
     server.shell(
-        name="install packages with yay",
+        name="install packages with yay: " + ", ".join(packages),
         commands=[
             "echo y |"
             + shlex.join(
                 [
                     "yay",
                     "--noconfirm",
-                    "--removemake",
+                    # "--removemake",
                     "--norebuild",
                     "--noredownload",
                     "--nocleanmenu",
                     "--nodiffmenu",
                     "--sudo=pkexec",
+                    # TODO - get pkexec to not keep asking
                     "-S",
                     *packages,
                 ],
