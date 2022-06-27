@@ -17,7 +17,6 @@ def main():
     install_packages()
     pipx_installs()
     go_installs()
-    # brew_installs()
     script_installs()
 
 
@@ -280,6 +279,7 @@ def yay_install(packages: list[str | Package]):
                     "--nodiffmenu",
                     "--sudo=pkexec",
                     # TODO - get pkexec to not keep asking
+                    # TODO - copy the pacman rule file into place
                     "-S",
                     *packages,
                 ],
