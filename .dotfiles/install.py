@@ -173,7 +173,6 @@ def enable_services():
     systemd.service(
         name="Restart and enable gnome polkit",
         service="auth-agent.service",
-        reloaded=True,
         running=True,
         enabled=True,
         user_mode=True,
@@ -260,9 +259,25 @@ def pipx_installs():
     )
 
 
+def configure_polkit():
+    files.put(
+        src=Path.home() / ".dotfiles" / "pacman_polkit_policy.rules",
+        dest="/etc/polkit-1/rules.d/pacman_polkit_policy.rules",
+        name="Make sure that polkit is configured properly",
+        _sudo=True,
+    )
+    systemd.service(
+        "polkit.service",
+        name="Restarting polkit.service",
+        restarted=True,
+        _sudo=True,
+    )
+
+
 def yay_install(packages: list[str | Package]):
     if not host.get_fact(facts.server.Which, "yay"):
         raise NotImplementedError("need to write script that installs yay")
+    configure_polkit()
 
     server.shell(
         name="install packages with yay: " + ", ".join(packages),
@@ -278,8 +293,6 @@ def yay_install(packages: list[str | Package]):
                     "--nocleanmenu",
                     "--nodiffmenu",
                     "--sudo=pkexec",
-                    # TODO - get pkexec to not keep asking
-                    # TODO - copy the pacman rule file into place
                     "-S",
                     *packages,
                 ],
