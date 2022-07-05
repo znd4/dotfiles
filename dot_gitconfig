@@ -12,7 +12,8 @@ defaultBranch = main
 
 [user]
 	name = Zane Dufour
-	email = zdufour@aspiration.com
+    email = zane@znd4.me
+    # email = zdufour@aspiration.com
 
 [pull]
 rebase = false
@@ -24,10 +25,7 @@ rebase = false
 	useHttpPath = true
 [url "git@github.com:"]
 	insteadOf = https://github.com/
-[url "git@github-zdog234:zdog234"]
-    insteadOf = git@github.com:zdog234
 [core]
-	sshCommand = ssh -o StrictHostKeyChecking=no
 	excludesfile = ~/.gitignore_global
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
@@ -36,9 +34,4 @@ rebase = false
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [commit]
-	template = /Users/zdufour/.stCommitMsg
-[filter "lfs"]
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
+	template = ~/.stCommitMsg

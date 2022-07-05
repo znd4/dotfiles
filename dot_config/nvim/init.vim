@@ -44,8 +44,6 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
-Plug 'tpope/vim-surround'
-
 Plug 'preservim/nerdtree'
 
 " open line in github
@@ -229,21 +227,21 @@ let g:UltiSnipsEditSplit="vertical"
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-    " let Vundle manage Vundle, required
-    Plugin 'gmarik/Vundle.vim'
-    " add all your plugins here (note older versions of Vundle
-    " used Bundle instead of Plugin)
-    
-    " jedi (for python)
-    Plugin 'davidhalter/jedi-vim'
-    " code completion
-    Plugin 'ycm-core/YouCompleteMe'
-    " Track the engine.
-    "Plugin 'SirVer/ultisnips'
-    " Snippets are separated from the engine. Add this if you want them:
-    Plugin 'honza/vim-snippets'
-    
-    " All of your Plugins must be added before the following line
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+" add all your plugins here (note older versions of Vundle
+" used Bundle instead of Plugin)
+
+" jedi (for python)
+Plugin 'davidhalter/jedi-vim'
+" code completion
+Plugin 'ycm-core/YouCompleteMe'
+" Track the engine.
+Plugin 'SirVer/ultisnips'
+" Snippets are separated from the engine. Add this if you want them:
+Plugin 'honza/vim-snippets'
+
+" All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 

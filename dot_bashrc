@@ -2,7 +2,6 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -11,24 +10,12 @@ esac
 
 eval "$(starship init bash)"
 
-###environment variables
-export PAGER=bat
-
 # Aliasrc is where  we put a bunch of our aliases
 . ~/.aliasrc
 
 # Global environment variables
 # These are the environment variables we set the same everywhere (e.g. EDITOR=nvim)
 . ~/.dotfiles/global_environment_variables.sh
-
-eval `thefuck --alias`
-
-########################
-# Completions
-########################
-
-eval "`pip completion --bash`"
-
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -167,7 +154,7 @@ eval "$(register-python-argcomplete pipx)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-export NPM_PACKAGES="$HOME/.npm-packages"
+export NPM_PACKAGES="/home/zdufour/.npm-packages"
 export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
 export PATH="$NPM_PACKAGES/bin:$PATH"
 # Unset manpath so we can inherit from /etc/manpath via the `manpath`

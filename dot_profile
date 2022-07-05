@@ -14,10 +14,6 @@
 
 export LANG=en_US.UTF-8
 
-
-# Start all of my after-login systemd services
-systemctl --user start autostart.service
-
 # make capslock behave like ctrl when held
 setxkbmap -option 'caps:ctrl_modifier'
 
