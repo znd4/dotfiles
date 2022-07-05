@@ -17,6 +17,7 @@ def main():
     install_packages()
     pipx_installs()
     go_installs()
+    set_default_shell_to_zsh()
     script_installs()
 
 
@@ -81,6 +82,13 @@ def wrap_str_packages(packages: tuple[Package | str]) -> tuple[Package]:
             Package(package, **default_map) if isinstance(package, str) else package
             for package in packages
         )
+    )
+
+
+def set_default_shell_to_zsh():
+    server.shell(
+        commands=["chsh -s $(which zsh)"],
+        _sudo=True,
     )
 
 

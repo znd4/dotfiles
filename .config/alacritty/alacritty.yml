@@ -1897,11 +1897,12 @@ debug:
 # You can set shell.program to the path of your favorite shell, e.g. /bin/fish.
 # Entries in shell.args are passed unmodified as arguments to the shell.
 shell:
-  program: zsh
+  program: tmux
   args:
-    - --login
-    - -c
-    - "tmux new"
+    - new
+      #  - --login
+      #  - -c
+      #  - "tmux new"
   #  program: /opt/homebrew/bin/tmux
   #  args:
   #    - new
