@@ -1,7 +1,7 @@
 #!/bin/sh
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
-if command apt > /dev/null; then
+if command apt &>/dev/null; then
     alias bat=batcat
 fi
 
