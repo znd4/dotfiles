@@ -60,10 +60,18 @@ quakeApp({
   key: "s",
   modifiers: ["alt"],
   appName: "Slack",
-  position: leftHalf,
+  position: full,
   followsMouse: true,
   hideOnBlur: false,
 });
+quakeApp({
+	key: "e",
+	modifiers: ["cmd"],
+	appName: "Neovide",
+	position: full,
+	followsMouse: true,
+	hideOnBlur: false,
+})
 quakeApp({
   key: "m",
   modifiers: ["alt"],
@@ -96,14 +104,14 @@ quakeApp({
   followsMouse: true,
   hideOnBlur: false,
 });
-quakeApp({
-  key: "c",
-  modifiers: ["alt"],
-  appName: "Code",
-  position: rightHalf,
-  followsMouse: true,
-  hideOnBlur: false,
-});
+// quakeApp({
+//   key: "c",
+//   modifiers: ["alt"],
+//   appName: "Code",
+//   position: rightHalf,
+//   followsMouse: true,
+//   hideOnBlur: false,
+// });
 quakeApp({
   key: "u",
   modifiers: ["alt"],

@@ -18,6 +18,12 @@ lg() {
     fi
 }
 
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+
 #####################
 ### zplug
 #####################
@@ -26,18 +32,26 @@ source `brew --prefix`/opt/zplug/init.zsh
 
 zplug "jeffreytse/zsh-vi-mode"
 zplug "zsh-users/zsh-autosuggestions"
-
 zplug "plugins/git", from:oh-my-zsh
 zplug "plugins/zsh-navigation-tools", from:oh-my-zsh
 zplug "plugins/zoxide", from:oh-my-zsh
 zplug "plugins/zsh-interactive-cd", from:oh-my-zsh
 zplug "plugins/thefuck", from:oh-my-zsh
 
+
 # Set the priority when loading
 # e.g., zsh-syntax-highlighting must be loaded
 # after executing compinit command and sourcing other plugins
 # (If the defer tag is given 2 or above, run after compinit command)
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+zplug "junegunn/fzf-bin", \
+    from:gh-r, \
+    as:command, \
+    rename-to:fzf, \
+    defer:3, \
+    use:"*linux*amd64*"
+zplug "junegunn/fzf", use:"shell/*.zsh", defer:3
 
 # Can manage local plugins
 if [ -d "~/.zsh" ]; then
@@ -54,7 +68,6 @@ fi
 
 # Then, source plugins and add commands to $PATH
 zplug load
-
 
 #####################
 ### END zplug
@@ -114,3 +127,4 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 # command
 unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+

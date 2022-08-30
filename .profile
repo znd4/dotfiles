@@ -13,16 +13,57 @@
 ##########################################################################
 
 export LANG=en_US.UTF-8
+export EDITOR=nvim
+export PIPENV_VENV_IN_PROJECT=1
+
+##########################################################################
+########## Helper Functions
+##########################################################################
+
+add_to_path() {
+    directory=$1
+	# todo: if not -d $directory; then mkdir --parents $directory
+	# fi
+	# export PATH=$...
+    export PATH="$directory:$PATH"
+}
+
+##########################################################################
+########## Add to path
+##########################################################################
+
+# set PATH so it includes user's private bin if it exists
+add_to_path "$HOME/bin"
+
+# set PATH so it includes user's private bin if it exists
+add_to_path "$HOME/.local/bin"
+
+add_to_path "$HOME/go/bin"
 
 
-# Start all of my after-login systemd services
-systemctl --user start autostart.service
+if [ `uname -s` != 'Darwin' ]; then
+	# Start all of my after-login systemd services
+	systemctl --user start autostart.service
+	# make capslock behave like ctrl when held
+	setxkbmap -option 'caps:ctrl_modifier'
+	# make capslock behave like esc when tapped
+	xcape -e 'Caps_Lock=Escape' -t 100
 
-# make capslock behave like ctrl when held
-setxkbmap -option 'caps:ctrl_modifier'
+	# OnePassword
+	if which 1password; then
+		1password --silent >/dev/null 2>&1 &
+	fi
+else
+	eval `/opt/homebrew/bin/brew shellenv`
+	add_to_path /opt/local/bin
+	add_to_path /opt/local/sbin
+fi
 
-# make capslock behave like esc when tapped
-xcape -e 'Caps_Lock=Escape' -t 100
+export PYENV_ROOT="$HOME/.pyenv"
+add_to_path "$PYENV_ROOT/bin"
+
+eval `pyenv init --path`
+
 
 # use 1password for ssh
 export SSH_AUTH_SOCK=~/.1password/agent.sock
@@ -35,25 +76,6 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-add_to_path() {
-    directory=$1
-	# todo: if not -d $directory; then mkdir --parents $directory
-	# fi
-	# export PATH=$...
-    if [ -d "$directory" ]; then
-        export PATH="$directory:$PATH"
-    else
-        echo "$directory does not exist" >>/dev/stderr
-    fi
-}
-
-# set PATH so it includes user's private bin if it exists
-add_to_path "$HOME/bin"
-
-# set PATH so it includes user's private bin if it exists
-add_to_path "$HOME/.local/bin"
-
-add_to_path "$HOME/go/bin"
 
 if [ -d "$HOME/bin" ]; then
 	. "$HOME/.cargo/env"
@@ -64,14 +86,12 @@ if [ -d $x86_64_pkgconfig ]; then
     export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
 fi
 
-# OnePassword
-if which 1password; then
-	1password --silent >/dev/null 2>&1 &
-else
-	echo "1password is not installed" >>/dev/stderr
-fi
 
 # add linuxbrew directory to PATH
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+
+export PATH="/Users/zdufour/.rd/bin:$PATH"
+
+[[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"

@@ -5,7 +5,8 @@ cedit = config --global --edit
 undo-last-commit = reset HEAD~1
 config-edit = config --global --edit
 new-branch = checkout -b
-	conflicted = !nvim +Conflicted
+conflicted = !nvim +Conflicted
+cb = branch --show-current
 
 [init]
 defaultBranch = main
@@ -29,6 +30,7 @@ rebase = false
 [core]
 	sshCommand = ssh -o StrictHostKeyChecking=no
 	excludesfile = ~/.gitignore_global
+	pager = delta
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
