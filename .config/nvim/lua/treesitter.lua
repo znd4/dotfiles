@@ -1,7 +1,17 @@
 require("orgmode").setup_ts_grammar()
 
 require("nvim-treesitter.configs").setup({
-	ensure_installed = { "go", "gomod", "python", "json", "markdown", "lua", "sql", "org" },
+	ensure_installed = {
+		"bash",
+		"go",
+		"gomod",
+		"json",
+		"lua",
+		"markdown",
+		"org",
+		"python",
+		"sql",
+	},
 	auto_install = true,
 	highlight = {
 		enable = true,

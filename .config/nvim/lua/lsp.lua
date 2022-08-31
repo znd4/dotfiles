@@ -1,14 +1,15 @@
 require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
-		"pyright",
-		"sqls",
+		"bash-language-server",
 		"black",
-		"sqlfluff",
 		"lua-language-server",
-		"yaml-language-server",
-		"prettierd",
 		"luaformatter",
+		"prettierd",
+		"pyright",
+		"sqlfluff",
+		"sqls",
+		"yaml-language-server",
 	},
 	automatic_installation = true,
 })
@@ -41,8 +42,6 @@ local lsp_formatting = function(bufnr)
 	vim.lsp.buf.format({
 		filter = function(client)
 			local ft = vim.fn.getbufvar(bufnr, "&filetype")
-			print("client name=" .. client.name)
-			print("ft=" .. ft)
 			local result
 			if ft == "sql" then
 				result = client.name ~= "sqls"
@@ -50,9 +49,6 @@ local lsp_formatting = function(bufnr)
 				result = client.name ~= "sumneko_lua"
 			else
 				result = true
-			end
-			if result then
-				print("formatting")
 			end
 			return result
 			--return client.name == "null-ls"
@@ -67,7 +63,6 @@ local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 -- add to your shared on_attach callback
 local enable_formatting = function(client, bufnr)
 	if client.supports_method("textDocument/formatting") then
-		print("enabling formatting")
 		vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			group = augroup,
@@ -115,6 +110,9 @@ local lsp_flags = {
 	debounce_text_changes = 150,
 }
 local lspconfig = require("lspconfig")
+
+lspconfig.bashls.setup({})
+
 -- lspconfig["pyright"].setup({
 -- 	on_attach = on_attach,
 -- 	flags = lsp_flags,
@@ -146,8 +144,8 @@ lspconfig.sqls.setup({
 	end,
 })
 
-local nullls = require("null-ls")
-nullls.setup({
+local null_ls = require("null-ls")
+null_ls.setup({
 	-- on_init = function(client)
 	-- 	local path = client.workspace_folders[1].name
 	-- 	for source
@@ -156,30 +154,34 @@ nullls.setup({
 	on_attach = on_attach,
 	sources = {
 		-- protobuf
-		nullls.builtins.diagnostics.buf,
-		nullls.builtins.formatting.buf,
+		null_ls.builtins.diagnostics.buf,
+		null_ls.builtins.formatting.buf,
 
-		nullls.builtins.formatting.stylua,
-		nullls.builtins.diagnostics.eslint,
+		null_ls.builtins.formatting.stylua,
+		null_ls.builtins.diagnostics.eslint,
 
 		-- python
-		nullls.builtins.formatting.black,
-		nullls.builtins.formatting.isort,
+		null_ls.builtins.formatting.black,
+		null_ls.builtins.formatting.isort,
 
 		-- golang
-		nullls.builtins.formatting.goimports,
-		nullls.builtins.formatting.gofmt,
+		null_ls.builtins.formatting.goimports,
+		null_ls.builtins.formatting.gofmt,
 
 		-- Spellchecking
-		nullls.builtins.completion.spell,
+		null_ls.builtins.completion.spell,
+
+		-- shell scripts
+		null_ls.builtins.formatting.shfmt,
+		null_ls.builtins.diagnostics.shellcheck,
 
 		-- sql
-		nullls.builtins.formatting.sqlfluff,
-		nullls.builtins.diagnostics.sqlfluff,
-		-- nullls.builtins.formatting.sqlfluff.with({
+		null_ls.builtins.formatting.sqlfluff,
+		null_ls.builtins.diagnostics.sqlfluff,
+		-- null_ls.builtins.formatting.sqlfluff.with({
 		--     extra_args = { "--config=pyproject.toml" },
 		-- }),
-		-- nullls.builtins.diagnostics.sqlfluff.with({
+		-- null_ls.builtins.diagnostics.sqlfluff.with({
 		--     extra_args = { "--config=pyproject.toml" },
 		-- }),
 	},
