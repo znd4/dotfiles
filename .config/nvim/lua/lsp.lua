@@ -74,6 +74,16 @@ local enable_formatting = function(client, bufnr)
 	end
 end
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+local module_exists, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+if module_exists then
+	capabilities = cmp_nvim_lsp.update_capabilities(capabilities) --nvim-cmp
+	capabilities.textDocument.completion.completionItem.snippetSupport = true
+else
+	print("cmp_nvim_lsp not installed")
+end
+
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -83,7 +93,14 @@ local on_attach = function(client, bufnr)
 	enable_formatting(client, bufnr)
 	-- require("lsp-format").on_attach(client)
 	-- Enable completion triggered by <c-x><c-o>
-	vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+	local function buf_set_keymap(...)
+		vim.api.nvim_buf_set_keymap(bufnr, ...)
+	end
+	local function buf_set_option(...)
+		vim.api.nvim_buf_set_option(bufnr, ...)
+	end
+
+	buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
 	-- Mappings.
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -105,10 +122,6 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
 end
 
-local lsp_flags = {
-	-- This is the default in Nvim 0.7+
-	debounce_text_changes = 150,
-}
 local lspconfig = require("lspconfig")
 
 lspconfig.bashls.setup({})
@@ -118,18 +131,25 @@ lspconfig.bashls.setup({})
 -- 	flags = lsp_flags,
 -- })
 lspconfig.gopls.setup({
+	cmd = { "gopls" },
 	on_attach = on_attach,
+	capabilities = capabilities,
 	settings = {
 		gopls = {
+			experimentalPostfixCompletions = true,
 			buildFlags = { "-tags=integration" },
 			analyses = {
 				unusedparams = true,
+				shadow = true,
 			},
 			staticcheck = true,
 			codelenses = {
 				gc_details = true,
 			},
 		},
+	},
+	init_options = {
+		usePlaceholders = true,
 	},
 })
 
@@ -142,6 +162,7 @@ lspconfig.sqls.setup({
 		client.server_capabilities.documentRangeFormattingProvider = false
 		on_attach(client, bufnr)
 	end,
+	capabilities = capabilities,
 })
 
 local null_ls = require("null-ls")
@@ -152,6 +173,7 @@ null_ls.setup({
 	-- 	client.config.sources
 	-- end
 	on_attach = on_attach,
+	capabilities = capabilities,
 	sources = {
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
@@ -200,11 +222,13 @@ lspconfig.yamlls.setup({
 		},
 	},
 	on_attach = on_attach,
+	capabilities = capabilities,
 	filetypes = { "yaml", "yml", "yaml.docker-compose" },
 })
 
 lspconfig.sumneko_lua.setup({
 	on_attach = on_attach,
+	capabilities = capabilities,
 	settings = {
 		Lua = {
 			runtime = {
@@ -229,6 +253,7 @@ lspconfig.sumneko_lua.setup({
 
 lspconfig.pylsp.setup({
 	on_attach = on_attach,
+	capabilities = capabilities,
 	settings = {
 		pylsp = {
 			plugins = {

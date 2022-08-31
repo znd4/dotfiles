@@ -83,6 +83,28 @@ return require("packer").startup({
 		use({ "ckipp01/stylua-nvim" })
 
 		use({ "lukas-reineke/lsp-format.nvim" })
+
+		--auto complete
+		use({
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
+			"hrsh7th/nvim-cmp",
+			requires = {
+				"quangnguyen30192/cmp-nvim-ultisnips",
+				config = function()
+					-- optional call to setup (see customization section)
+					require("cmp_nvim_ultisnips").setup({})
+				end,
+				-- If you want to enable filetype detection based on treesitter:
+				requires = { "nvim-treesitter/nvim-treesitter" },
+			},
+			config = function()
+				require("completion").setup()
+			end,
+		})
+
 		use({
 			"kyazdani42/nvim-tree.lua",
 			requires = {
