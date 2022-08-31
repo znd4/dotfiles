@@ -20,8 +20,6 @@ lg() {
 
 source ~/.dotfiles/sandboxd/sandboxd
 
-
-
 #####################
 ### zplug
 #####################
