@@ -59,10 +59,10 @@ else
 	add_to_path /opt/local/sbin
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-add_to_path "$PYENV_ROOT/bin"
-
-eval `pyenv init --path`
+# export PYENV_ROOT="$HOME/.pyenv"
+# add_to_path "$PYENV_ROOT/bin"
+#
+# eval `pyenv init --path`
 
 
 # use 1password for ssh

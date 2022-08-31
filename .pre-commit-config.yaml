@@ -1,5 +1,9 @@
 repos:
-- repo: https://github.com/JohnnyMorganz/StyLua
-  rev: v0.14.1
-  hooks:
-    - id: stylua # or stylua-system / stylua-github
+  - repo: https://github.com/awslabs/git-secrets/
+    rev: 1.3.0
+    hooks:
+      - id: git-secrets
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v0.14.1
+    hooks:
+      - id: stylua # or stylua-system / stylua-github

@@ -18,10 +18,8 @@ lg() {
     fi
 }
 
+source ~/.dotfiles/sandboxd/sandboxd
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 
 #####################
@@ -118,8 +116,6 @@ if [ -d /home/linuxbrew ]; then
 fi
 
 
-[[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
-
 export NPM_PACKAGES="/home/zdufour/.npm-packages"
 export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
 export PATH="$NPM_PACKAGES/bin:$PATH"
@@ -127,4 +123,7 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 # command
 unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
