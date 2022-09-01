@@ -1,4 +1,5 @@
 lua require('init')
+au! BufWritePost */lua/*.lua lua require('packer').compile()
 
 set nocompatible              " required
 filetype plugin on                  " required
@@ -22,8 +23,6 @@ nmap <D-v> "+p
 cnoremap <D-v> <c-r>+
 inoremap <D-v> <c-r>+
 tnoremap <D-v> <c-\><c-n><c-r>+
-" use <c-r> to insert original character without triggering things like auto-pairs
-inoremap <c-r> <D-v>
 
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
@@ -113,7 +112,7 @@ Plug 'kdheepak/lazygit.nvim'
 " vim merge conflict resolution
 Plug 'christoomey/vim-conflicted'
 
-Plug 'tmsvg/pear-tree'
+"Plug 'tmsvg/pear-tree'
 
 Plug 'flazz/vim-colorschemes'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }

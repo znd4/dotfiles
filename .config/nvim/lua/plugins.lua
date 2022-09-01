@@ -18,7 +18,7 @@ return require("packer").startup({
 		use("norcalli/nvim_utils")
 
 		use("direnv/direnv.vim")
-
+		use({ "steelsojka/pears.nvim", config = [[require("pears").setup()]] })
 		use({
 			"nvim-telescope/telescope.nvim",
 			requires = { { "nvim-lua/plenary.nvim" } },
@@ -90,18 +90,20 @@ return require("packer").startup({
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
+			"hrsh7th/cmp-emoji",
+		})
+		use({ "SirVer/ultisnips", requires = { { "honza/vim-snippets", rtp = "." } } })
+		use({ "onsails/lspkind.nvim" })
+		use({
 			"hrsh7th/nvim-cmp",
 			requires = {
 				"quangnguyen30192/cmp-nvim-ultisnips",
-				config = function()
-					-- optional call to setup (see customization section)
-					require("cmp_nvim_ultisnips").setup({})
-				end,
-				-- If you want to enable filetype detection based on treesitter:
-				requires = { "nvim-treesitter/nvim-treesitter" },
+				requires = {
+					"nvim-treesitter/nvim-treesitter",
+				},
 			},
 			config = function()
-				require("completion").setup()
+				require("completion")
 			end,
 		})
 
@@ -160,5 +162,8 @@ return require("packer").startup({
 	end,
 	config = {
 		autoremove = true,
+		display = {
+			open_fn = require("packer.util").float,
+		},
 	},
 })

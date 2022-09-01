@@ -100,7 +100,7 @@ local on_attach = function(client, bufnr)
 		vim.api.nvim_buf_set_option(bufnr, ...)
 	end
 
-	buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+	-- buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
 	-- Mappings.
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -122,7 +122,17 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
 end
 
+local lsp_defaults = {
+	flags = {
+		debounce_text_changes = 150,
+	},
+	capabilities = capabilities,
+	on_attach = on_attach,
+}
+
 local lspconfig = require("lspconfig")
+
+lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 
 lspconfig.bashls.setup({})
 
@@ -132,8 +142,6 @@ lspconfig.bashls.setup({})
 -- })
 lspconfig.gopls.setup({
 	cmd = { "gopls" },
-	on_attach = on_attach,
-	capabilities = capabilities,
 	settings = {
 		gopls = {
 			experimentalPostfixCompletions = true,
@@ -162,7 +170,6 @@ lspconfig.sqls.setup({
 		client.server_capabilities.documentRangeFormattingProvider = false
 		on_attach(client, bufnr)
 	end,
-	capabilities = capabilities,
 })
 
 local null_ls = require("null-ls")
@@ -172,8 +179,6 @@ null_ls.setup({
 	-- 	for source
 	-- 	client.config.sources
 	-- end
-	on_attach = on_attach,
-	capabilities = capabilities,
 	sources = {
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
@@ -221,14 +226,10 @@ lspconfig.yamlls.setup({
 			enable = true,
 		},
 	},
-	on_attach = on_attach,
-	capabilities = capabilities,
 	filetypes = { "yaml", "yml", "yaml.docker-compose" },
 })
 
 lspconfig.sumneko_lua.setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
 	settings = {
 		Lua = {
 			runtime = {
@@ -252,8 +253,6 @@ lspconfig.sumneko_lua.setup({
 })
 
 lspconfig.pylsp.setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
 	settings = {
 		pylsp = {
 			plugins = {
