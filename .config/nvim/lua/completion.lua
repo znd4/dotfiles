@@ -27,7 +27,6 @@ local cmp_setup = function()
 	local mappings = { -- Preset: ^n, ^p, ^y, ^e, you know the drill..
 		["<Down>"] = { i = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }) },
 		["<Up>"] = { i = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }) },
-		-- ["<C-n>"] = cmp_map(cmp_ultisnips_mappings.compose({ "jump_forwards", "select_next_item" })),
 		["<C-n>"] = {
 			i = cmp_ultisnips_mappings.compose({ "jump_forwards", "select_next_item" }),
 			c = function(fallback)
@@ -79,6 +78,8 @@ local cmp_setup = function()
 		mapping = cmp.mapping.preset.insert(filter_mode(mappings, "i")),
 		completion = { autocomplete = true },
 	})
+
+	-- command mode completion
 	local cmdline_mappings = cmp.mapping.preset.cmdline(filter_mode(mappings, "c"))
 	local cmdline_view = { entries = "wildmenu" }
 	cmdline_view = { entries = "custom" }

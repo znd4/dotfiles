@@ -18,7 +18,6 @@ return require("packer").startup({
 		use("norcalli/nvim_utils")
 
 		use("direnv/direnv.vim")
-		use({ "steelsojka/pears.nvim", config = [[require("pears").setup()]] })
 		use({
 			"nvim-telescope/telescope.nvim",
 			requires = { { "nvim-lua/plenary.nvim" } },
@@ -107,6 +106,13 @@ return require("packer").startup({
 			end,
 		})
 
+		use({
+			"windwp/nvim-autopairs",
+			after = "nvim-cmp",
+			config = function()
+				require("config.nvim-autopairs")
+			end,
+		})
 		use({
 			"kyazdani42/nvim-tree.lua",
 			requires = {
