@@ -1,6 +1,8 @@
 #!/bin/sh
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
+alias kustomize="kubectl kustomize"
+
 if command apt &>/dev/null; then
     alias bat=batcat
 fi
@@ -10,6 +12,10 @@ alias wdotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.work-dotfiles"
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
+alias snowsql='\
+    SNOWSQL_PWD=`op item get aspiration.snowflakecomputing.com --fields password` \
+    snowsql \
+'
 
 
 # colored GCC warnings and errors

@@ -9,6 +9,3 @@ sandbox_init_pyenv() {
 
 sandbox_hook_shims pyenv
 
-sandbox_init_gvm() {
-    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
-}

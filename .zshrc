@@ -18,36 +18,52 @@ lg() {
     fi
 }
 
-source ~/.dotfiles/sandboxd/sandboxd
+fdf() {
+    find . -type d -print | fzf
+}
+
+#####################
+### znap
+#####################
+
+[[ -f ~/Git/zsh-snap/znap.zsh ]] ||
+    git clone --depth 1 -- \
+        https://github.com/marlonrichert/zsh-snap.git ~/Git/zsh-snap
+
+source ~/Git/zsh-snap/znap.zsh  # Start Znap
+
+# `znap prompt` makes your prompt visible in just 15-40ms!
+znap eval starship "starship init zsh --print-full-init"
+znap prompt
+
+znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
+
+
+znap source jeffreytse/zsh-vi-mode
+znap source zsh-users/zsh-autosuggestions
+znap source zsh-users/zsh-completions
+
+znap source Aloxaf/fzf-tab
+
+znap fpath _kubectl 'kubectl completion zsh'
+znap fpath _op      "op completion zsh"
+znap fpath _rustup  'rustup  completions zsh'
+znap fpath _cargo   'rustup  completions zsh cargo'
+
+# e.g., zsh-syntax-highlighting must be loaded
+# after executing compinit command and sourcing other plugins
+znap source zsh-users/zsh-syntax-highlighting
 
 #####################
 ### zplug
 #####################
 
 source `brew --prefix`/opt/zplug/init.zsh
-
-zplug "jeffreytse/zsh-vi-mode"
-zplug "zsh-users/zsh-autosuggestions"
-zplug "plugins/git", from:oh-my-zsh
-zplug "plugins/zsh-navigation-tools", from:oh-my-zsh
-zplug "plugins/zoxide", from:oh-my-zsh
-zplug "plugins/zsh-interactive-cd", from:oh-my-zsh
-zplug "plugins/thefuck", from:oh-my-zsh
-
-
 # Set the priority when loading
-# e.g., zsh-syntax-highlighting must be loaded
-# after executing compinit command and sourcing other plugins
 # (If the defer tag is given 2 or above, run after compinit command)
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
-zplug "junegunn/fzf-bin", \
-    from:gh-r, \
-    as:command, \
-    rename-to:fzf, \
-    defer:3, \
-    use:"*linux*amd64*"
-zplug "junegunn/fzf", use:"shell/*.zsh", defer:3
+zplug "changyuheng/fz", defer:1
+zplug "rupa/z", use:z.sh
 
 # Can manage local plugins
 if [ -d "~/.zsh" ]; then
@@ -77,8 +93,6 @@ fi
 autoload -Uz compinit
 compinit
 
-# 1password autocompletion
-eval "$(op completion zsh)"; compdef _op op
 
 
 # POETRY VIRTUALENVS IN PROJECT
@@ -96,6 +110,13 @@ export MANPAGER="nvim +Man!"
 # Path to your oh-my-zsh installation.
 # export ZSH="$HOME/.oh-my-zsh"
 
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
+bindkey '^ ' complete-word
+bindkey '^Y' autosuggest-accept
+
+unset CURL_CA_BUNDLE
+
 export GOPRIVATE=github.com/AspirationPartners
 
 # GO Configuration
@@ -108,7 +129,6 @@ export PATH="$PATH:/Users/zdufour/.local/bin"
 export PATH="$PATH:/Users/zdufour/Library/Python/3.8/bin"
 eval "$(direnv hook zsh)"
 
-eval "$(starship init zsh)"
 if [ -d /home/linuxbrew ]; then
     export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
 fi
@@ -122,6 +142,9 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+
+source "$HOME/.cargo/env"
 

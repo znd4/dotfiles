@@ -163,8 +163,6 @@ export SSH_AUTH_SOCK=~/.1password/agent.sock
 export PATH="$PATH:$HOME/.local/bin"
 eval "$(register-python-argcomplete pipx)"
 
-. "$HOME/.cargo/env"
-
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export NPM_PACKAGES="$HOME/.npm-packages"

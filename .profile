@@ -16,6 +16,11 @@ export LANG=en_US.UTF-8
 export EDITOR=nvim
 export PIPENV_VENV_IN_PROJECT=1
 
+unset CURL_CA_BUNDLE
+
+# fzf
+export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
+
 ##########################################################################
 ########## Helper Functions
 ##########################################################################
@@ -39,6 +44,8 @@ add_to_path "$HOME/bin"
 add_to_path "$HOME/.local/bin"
 
 add_to_path "$HOME/go/bin"
+add_to_path "/usr/local/go/bin"
+
 
 
 if [ `uname -s` != 'Darwin' ]; then
@@ -77,10 +84,6 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 
-if [ -d "$HOME/bin" ]; then
-	. "$HOME/.cargo/env"
-fi
-
 x86_64_pkgconfig=/usr/lib/x86_64-linux-gnu/pkgconfig
 if [ -d $x86_64_pkgconfig ]; then
     export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
@@ -95,3 +98,4 @@ fi
 export PATH="/Users/zdufour/.rd/bin:$PATH"
 
 [[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
+
