@@ -2,8 +2,10 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"bash-language-server",
+		"buf-language-server",
 		"black",
 		"lua-language-server",
+		"rust-analyzer",
 		"luaformatter",
 		"prettierd",
 		"pyright",
@@ -84,6 +86,11 @@ else
 	print("cmp_nvim_lsp not installed")
 end
 
+local vimp = require("vimp")
+if vimp == nil then
+	print("failed to import vimpeccable")
+	return
+end
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -104,22 +111,28 @@ local on_attach = function(client, bufnr)
 
 	-- Mappings.
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	local bufopts = { noremap = true, silent = true, buffer = bufnr }
-	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-	vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-	vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-	vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
-	vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, bufopts)
-	vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-	vim.keymap.set("n", "<space>wl", function()
-		print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-	end, bufopts)
-	vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
-	vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
-	vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
-	vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
-	vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
+	vimp.add_buffer_maps(bufnr, function()
+		local function map(...)
+			vimp.nnoremap({ "silent" }, ...)
+		end
+		map("gD", vim.lsp.buf.declaration)
+		map("gd", vim.lsp.buf.definition)
+		map("K", vim.lsp.buf.hover)
+		map("gi", vim.lsp.buf.implementation)
+		map("<C-k>", vim.lsp.buf.signature_help)
+		map("<space>wa", vim.lsp.buf.add_workspace_folder)
+		map("<space>wr", vim.lsp.buf.remove_workspace_folder)
+		map("<space>wl", function()
+			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+		end)
+		map("<space>D", vim.lsp.buf.type_definition)
+		map("<space>rn", vim.lsp.buf.rename)
+		map("<space>ca", vim.lsp.buf.code_action)
+		map("gr", vim.lsp.buf.references)
+		map("<space>f", function()
+			vim.lsp.buf.format({ async = true })
+		end)
+	end)
 end
 
 local lsp_defaults = {
@@ -134,18 +147,18 @@ local lspconfig = require("lspconfig")
 
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 
-lspconfig.bashls.setup({})
+lspconfig.bashls.setup({ on_attach = on_attach })
+lspconfig.kotlin_language_server.setup({ on_attach = on_attach })
+lspconfig.bufls.setup({ on_attach = on_attach })
 
--- lspconfig["pyright"].setup({
--- 	on_attach = on_attach,
--- 	flags = lsp_flags,
--- })
+lspconfig["pyright"].setup({ on_attach = on_attach })
 lspconfig.gopls.setup({
 	cmd = { "gopls" },
 	settings = {
 		gopls = {
 			experimentalPostfixCompletions = true,
 			buildFlags = { "-tags=integration" },
+			-- env = { GOFLAGS = "-tags=integration,!integration" },
 			analyses = {
 				unusedparams = true,
 				shadow = true,
@@ -213,7 +226,7 @@ null_ls.setup({
 		-- }),
 	},
 })
-
+lspconfig.rust_analyzer.setup({ on_attach = on_attach })
 lspconfig.yamlls.setup({
 	settings = {
 		yaml = {
@@ -224,6 +237,9 @@ lspconfig.yamlls.setup({
 		schemaStore = {
 			url = "https://www.schemastore.org/api/json/catalog.json",
 			enable = true,
+		},
+		schemas = {
+			["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] = "/overlays/*/*.yaml",
 		},
 	},
 	filetypes = { "yaml", "yml", "yaml.docker-compose" },
@@ -252,24 +268,28 @@ lspconfig.sumneko_lua.setup({
 	},
 })
 
-lspconfig.pylsp.setup({
-	settings = {
-		pylsp = {
-			plugins = {
-				pycodestyle = {
-					ignore = { "W391" },
-					maxLineLength = 100,
-				},
-				black = {
-					enable = true,
-				},
-				-- jedi = {
-				--     -- TODO - Add something to on_attach that finds virtual environment path
-				--     environment = environment
-				-- }
-			},
-		},
-	},
-})
+-- lspconfig.pylsp.setup({
+-- 	settings = {
+-- 		pylsp = {
+-- 			plugins = {
+-- 				pycodestyle = {
+-- 					ignore = { "W391" },
+-- 					maxLineLength = 100,
+-- 				},
+-- 				pyflakes = { enabled = false },
+-- 				flake8 = { enabled = true },
+-- 				pydocstyle = { enabled = true },
+-- 				black = {
+-- 					enable = true,
+-- 				},
+-- 				-- jedi = {
+-- 				--     -- TODO - Add something to on_attach that finds virtual environment path
+-- 				--     environment = environment
+-- 				-- }
+-- 			},
+-- 		},
+-- 	},
+-- })
+lspconfig.clangd.setup({ on_attach = on_attach })
 
 vim.opt.termguicolors = true

@@ -1,4 +1,5 @@
 local vimp = require("vimp")
+vimp.nmap("<D-q>", ":qa")
 vimp.nnoremap("<leader>xx", ":TroubleToggle<cr>")
 vimp.nnoremap("<leader>xw", ":TroubleToggle workspace_diagnostics<cr>")
 vimp.nnoremap("<leader>xd", ":TroubleToggle document_diagnostics<cr>")
