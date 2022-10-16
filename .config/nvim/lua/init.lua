@@ -1,3 +1,4 @@
+require("colorscheme")
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
 vim.opt_global.tabstop = 4
 vim.opt_global.shiftwidth = 4
@@ -25,9 +26,3 @@ end
 if vim.fn.executable("rg") ~= 1 then
 	print("please brew install ripgrep")
 end
-
--- vim.cmd.colorscheme("tokyonight")
-vim.cmd.colorscheme("onenord")
-vim.cmd.colorscheme("nightfly")
--- vim.cmd.colorscheme("material")
--- vim.g.material_style = "deep ocean"

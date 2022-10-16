@@ -291,5 +291,3 @@ lspconfig.sumneko_lua.setup({
 -- 	},
 -- })
 lspconfig.clangd.setup({ on_attach = on_attach })
-
-vim.opt.termguicolors = true
