@@ -35,7 +35,9 @@ local nnoremap = function(...)
 	vim.keymap.set("n", ...)
 end
 
-nnoremap(leader .. "ff", telescope.find_files, { desc = "Telescope find files" })
+nnoremap(leader .. "ff", function()
+	telescope.find_files({ hidden = true })
+end, { desc = "Telescope find files" })
 nnoremap(leader .. "fg", telescope.live_grep, { desc = "Telescope grep contents" })
 nnoremap(leader .. "fb", telescope.buffers, { desc = "Telescope buffers" })
 nnoremap(leader .. "fh", telescope.help_tags, { desc = "Telescope help" })
