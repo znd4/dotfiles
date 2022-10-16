@@ -3,6 +3,7 @@ require("orgmode").setup_ts_grammar()
 vim.filetype.add({
 	extension = {
 		sh = "bash",
+		yml = "yaml",
 	},
 	filename = {
 		["justfile"] = "justfile",
