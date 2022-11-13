@@ -6,6 +6,23 @@ if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
+
+aws_secret_edit() {
+    # requires `brew install jq moreutils`
+    secret_string=$(
+        aws secretsmanager get-secret-value --secret-id "$1" \
+            | jq -r ".SecretString|fromjson" \
+            | vipe --suffix=json \
+            | jq -rc .
+    )
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+    aws secretsmanager put-secret-value \
+        --secret-id="$1" \
+        --secret-string=$secret_string
+}
+
 lg() {
     # start lazygit and change to new directory if we change repos while in lazygit
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
