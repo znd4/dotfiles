@@ -1,10 +1,3 @@
-" neovide
-let g:neovide_transparency=0.0
-let g:transparency=0.95
-let g:neovide_background_color = '#0f1117'.printf('%x', float2nr(255 * g:transparency))
-
-let g:neovide_input_use_logo=v:true
-
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
@@ -51,9 +44,6 @@ vmap <C-x> "+c
 " case-insensitive search
 set ignorecase
 
-" Add line numbers
-set number
-set mouse=n
 
 " open current file in github
 function! GHOpen()
