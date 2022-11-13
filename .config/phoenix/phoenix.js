@@ -67,7 +67,8 @@ quakeApp({
 quakeApp({
 	key: "e",
 	modifiers: ["cmd"],
-	appName: "Neovide",
+	// appName: "Neovide",
+	appName: "VimR",
 	position: full,
 	followsMouse: true,
 	hideOnBlur: false,
