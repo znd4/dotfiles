@@ -50,7 +50,8 @@ const full = {
 quakeApp({
   key: "`",
   modifiers: ["cmd"],
-  appName: "Alacritty",
+  appName: "kitty",
+  // appName: "Alacritty",
   position: full,
   followsMouse: true,
   hideOnBlur: true,
@@ -59,10 +60,18 @@ quakeApp({
   key: "s",
   modifiers: ["alt"],
   appName: "Slack",
-  position: leftHalf,
+  position: full,
   followsMouse: true,
   hideOnBlur: false,
 });
+quakeApp({
+	key: "e",
+	modifiers: ["cmd"],
+	appName: "Neovide",
+	position: full,
+	followsMouse: true,
+	hideOnBlur: false,
+})
 quakeApp({
   key: "m",
   modifiers: ["alt"],
@@ -95,14 +104,14 @@ quakeApp({
   followsMouse: true,
   hideOnBlur: false,
 });
-quakeApp({
-  key: "c",
-  modifiers: ["alt"],
-  appName: "Code",
-  position: rightHalf,
-  followsMouse: true,
-  hideOnBlur: false,
-});
+// quakeApp({
+//   key: "c",
+//   modifiers: ["alt"],
+//   appName: "Code",
+//   position: rightHalf,
+//   followsMouse: true,
+//   hideOnBlur: false,
+// });
 quakeApp({
   key: "u",
   modifiers: ["alt"],
@@ -153,13 +162,17 @@ function quakeApp({
   followsMouse,
   hideOnBlur,
 }) {
+  console.log("setting up quakeApp");
   Key.on(key, modifiers, async function (_, repeat) {
+	console.log("got a request to do a thing");
     // ignore keyboard repeats
     if (repeat) {
       return;
     }
     let [app, opened] = await startApp(appName, { focus: false });
+    console.log("quakeApp running");
 
+	console.log(app);
     // if the app started
     if (app !== undefined) {
       // move the app to the currently active space
@@ -171,6 +184,7 @@ function quakeApp({
       // hide the app if it is active and wasn't just opened or moved to
       // a new space
       if (app.isActive() && !opened && !moved) {
+        console.log("hiding b.c. active");
         app.hide();
       } else {
         app.focus();
@@ -179,6 +193,7 @@ function quakeApp({
       if (hideOnBlur) {
         const identifier = Event.on("appDidActivate", (activatedApp) => {
           if (app.name() !== activatedApp.name()) {
+            console.log("hiding b.c. hideOnBlur");
             app.hide();
             Event.off(identifier);
           }
@@ -269,6 +284,8 @@ async function startApp(appName) {
   // get the app if it is open
   let app = App.get(appName);
   let opened = false;
+
+  console.log("app in startApp", app);
 
   // if app is open
   if (app !== undefined) {

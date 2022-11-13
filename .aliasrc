@@ -1,8 +1,9 @@
 #!/bin/sh
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
-alias g=git
 
-if command apt > /dev/null; then
+alias kustomize="kubectl kustomize"
+
+if command apt &>/dev/null; then
     alias bat=batcat
 fi
 
@@ -10,6 +11,11 @@ alias wdotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.work-dotfiles"
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
+
+alias snowsql='\
+    SNOWSQL_PWD=`op item get aspiration.snowflakecomputing.com --fields password` \
+    snowsql \
+'
 
 
 # colored GCC warnings and errors
@@ -22,16 +28,43 @@ alias l='ls -CF'
 
 alias tn="terminal-notifier"
 alias dc="docker-compose"
+
+####################################################################
+# GIT ALIASES
+####################################################################
+
+alias g=git
 alias ga="git add"
-alias gc="git commit"
+alias gcm="git commit"
+alias gch="git checkout"
 alias gd="git diff"
-alias gp="git push"
+alias gps="git push"
+alias gpl="git pull"
 alias gs="git status"
-alias gcl=gcloud
+
+####################################################################
+
+
+####################################################################
+# GITHUB ALIASES
+####################################################################
+
+alias checks='gh pr checks --watch && Say "Job done" || Say "job failed"'
+
+####################################################################
+
+####################################################################
+# kubectl
+####################################################################
+
+alias k=kubectl
 alias ktl="kubectl"
-alias kget="ktl get"
-alias kdel="ktl delete"
-alias klogs="ktl logs"
+alias kget="k get"
+alias kdel="k delete"
+alias klogs="k logs"
+
+####################################################################
+
 alias remimp="autoflake \
         --in-place \
         --remove-unused-variables \
@@ -43,17 +76,25 @@ alias remimp="autoflake \
 # copy to clipboard
 alias xclip="xclip -selection c"
 
+####################################################################
 # gcloud
+####################################################################
+
+alias gcl=gcloud
 alias gssh='gcloud alpha cloud-shell ssh --authorize-session'
 alias gsshmount='gcloud alpha cloud-shell get-mount-command'
+
+####################################################################
 
 # prettier
 alias prettier="npx prettier"
 alias pr=prettier
 
 
+####################################################################
+# python
+####################################################################
 
-# ipython
 alias ipy="python3 -m IPython"
 alias ipy3="python3 -m IPython"
 alias ipy36="python3.6 -m IPython"
