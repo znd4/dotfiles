@@ -1,17 +1,13 @@
 require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
-		"bash-language-server",
-		"buf-language-server",
-		"black",
-		"lua-language-server",
-		"rust-analyzer",
-		"luaformatter",
-		"prettierd",
+		"bashls",
+		"sumneko_lua",
+		"rust_analyzer",
+		"bufls",
 		"pyright",
-		"sqlfluff",
 		"sqls",
-		"yaml-language-server",
+		"yamlls",
 	},
 	automatic_installation = true,
 })
