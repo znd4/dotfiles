@@ -1,15 +1,15 @@
 require("colorscheme")
+require("neovide")
+
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
 vim.opt_global.tabstop = 4
 vim.opt_global.shiftwidth = 4
 vim.g.mapleader = " "
 
 vim.g.python3_host_prog = "python3.10"
+vim.o.number = true
 vim.o.relativenumber = true
-
-if vim.g.neovide ~= nil then
-	vim.cmd.cd()
-end
+vim.o.mouse = "a"
 
 require("plugins")
 require("fonts")
