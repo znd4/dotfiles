@@ -14,7 +14,7 @@
 
 export LANG=en_US.UTF-8
 export EDITOR=nvim
-export PIPENV_VENV_IN_PROJECT=1
+# export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
 
