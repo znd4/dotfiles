@@ -62,11 +62,11 @@ require("nvim-treesitter.configs").setup({
 			enable = true,
 			swap_next = {
 				["<leader>a"] = "@parameter.inner",
-				["<leader>o"] = "@operand",
+				["<leader>o"] = "@binary_operator",
 			},
 			swap_previous = {
 				["<leader>A"] = "@parameter.inner",
-				["<leader>O"] = "@operand",
+				["<leader>O"] = "@binary_operator",
 			},
 		},
 	},
