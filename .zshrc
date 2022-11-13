@@ -66,6 +66,7 @@ znap fpath _kubectl 'kubectl completion zsh'
 znap fpath _op      "op completion zsh"
 znap fpath _rustup  'rustup  completions zsh'
 znap fpath _cargo   'rustup  completions zsh cargo'
+complete -C `which aws_completer` aws
 
 # e.g., zsh-syntax-highlighting must be loaded
 # after executing compinit command and sourcing other plugins
