@@ -175,3 +175,7 @@ export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
 source "$HOME/.cargo/env"
 
+
+# Hishtory Config:
+export PATH="$PATH:/Users/zdufour/.hishtory"
+source /Users/zdufour/.hishtory/config.zsh
