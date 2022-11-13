@@ -9,4 +9,8 @@ vimp.nnoremap("<leader>xl", ":TroubleToggle loclist<cr>")
 vimp.nnoremap("<leader>nf", ":NvimTreeFocus<cr>")
 vimp.nnoremap("<leader>nt", ":NvimTreeToggle<cr>")
 
+vimp.nnoremap("<leader>gc", ":Git commit<cr>")
+vimp.nnoremap("<leader>gp", ":Git pull<cr>")
+vimp.nnoremap("<leader>gP", ":Git push<cr>")
+
 vimp.nnoremap("gR", ":TroubleToggle lsp_references<cr>")
