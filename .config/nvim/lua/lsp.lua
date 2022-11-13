@@ -188,6 +188,7 @@ null_ls.setup({
 	-- 	for source
 	-- 	client.config.sources
 	-- end
+	on_attach = on_attach,
 	sources = {
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
