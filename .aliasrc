@@ -3,7 +3,7 @@ alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
 alias kustomize="kubectl kustomize"
 
-if command apt &>/dev/null; then
+if command apt >/dev/null 2>&1; then
     alias bat=batcat
 fi
 
@@ -16,7 +16,6 @@ alias snowsql='\
     SNOWSQL_PWD=`op item get aspiration.snowflakecomputing.com --fields password` \
     snowsql \
 '
-
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -43,7 +42,6 @@ alias gpl="git pull"
 alias gs="git status"
 
 ####################################################################
-
 
 ####################################################################
 # GITHUB ALIASES
@@ -89,7 +87,6 @@ alias gsshmount='gcloud alpha cloud-shell get-mount-command'
 # prettier
 alias prettier="npx prettier"
 alias pr=prettier
-
 
 ####################################################################
 # python
