@@ -85,7 +85,8 @@ return require("packer").startup({
 		})
 
 		-- Color schemes
-
+		use("shaunsingh/moonlight.nvim")
+		use("bluz71/vim-moonfly-colors")
 		use("marko-cerovac/material.nvim")
 		use("rmehri01/onenord.nvim")
 		use("bluz71/vim-nightfly-guicolors")
