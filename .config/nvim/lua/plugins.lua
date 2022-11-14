@@ -36,6 +36,7 @@ return require("packer").startup({
 		-- 		"hrsh7th/nvim-cmp",
 		-- 	},
 		-- })
+		use("vito-c/jq.vim")
 		use({
 			"karb94/neoscroll.nvim",
 			config = function()
@@ -257,7 +258,8 @@ return require("packer").startup({
 			"hrsh7th/cmp-emoji",
 			"saadparwaiz1/cmp_luasnip",
 		})
-		use("honza/vim-snippets", "rafamadriz/friendly-snippets")
+		use("honza/vim-snippets")
+		use("rafamadriz/friendly-snippets")
 		use({ "L3MON4D3/LuaSnip", tag = "v1.*" })
 		use({ "SirVer/ultisnips", requires = { { "honza/vim-snippets", rtp = "." } } })
 		use({ "onsails/lspkind.nvim" })
@@ -340,6 +342,12 @@ return require("packer").startup({
 			"nvim-orgmode/orgmode",
 			config = function()
 				require("orgmode").setup({})
+			end,
+		})
+		use({
+			"akinsho/org-bullets.nvim",
+			config = function()
+				require("org-bullets").setup()
 			end,
 		})
 
