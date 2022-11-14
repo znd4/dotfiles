@@ -13,14 +13,15 @@ defaultBranch = main
 
 [user]
 	name = Zane Dufour
-	email = zdufour@aspiration.com
+	email = zane@znd4.me
+	# email = zdufour@aspiration.com
 
 [pull]
 rebase = false
 
-[credential]
-	helper = 
-	helper = /usr/local/share/gcm-core/git-credential-manager-core
+# [credential]
+# 	helper = 
+# 	helper = /usr/local/share/gcm-core/git-credential-manager-core
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [url "git@github.com:"]
