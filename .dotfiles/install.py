@@ -1,13 +1,14 @@
-from functools import wraps
-from pyinfra.operations import apt, brew, server, files, git, pip, systemd, pacman
-from pathlib import Path
-from pyinfra import host
-from pyinfra.facts.server import Home
-from pyinfra import facts as facts
-from pathlib import PurePosixPath
-from typing import Literal
 import shlex
 from dataclasses import dataclass
+from functools import wraps
+from pathlib import Path, PurePosixPath
+from typing import Literal
+
+from pyinfra import facts as facts
+from pyinfra import host
+from pyinfra.facts.server import Home
+from pyinfra.operations import (apt, brew, files, git, pacman, pip, server,
+                                systemd)
 
 
 def main():
@@ -34,6 +35,7 @@ YAY: list[str] = [
 ]
 APT: list[str] = []
 BREW: list[str] = []
+# TODO - run `znap install ohmyzsh/ohmyzsh zsh-users/zsh-completions bigH/git-fuzzy`
 
 
 def get_os_platform() -> str:
