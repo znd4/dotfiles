@@ -72,11 +72,9 @@ local enable_formatting = function(client, bufnr)
 	end
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-
 local module_exists, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if module_exists then
-	capabilities = cmp_nvim_lsp.update_capabilities(capabilities) --nvim-cmp
+	local capabilities = cmp_nvim_lsp.default_capabilities()
 	capabilities.textDocument.completion.completionItem.snippetSupport = true
 else
 	print("cmp_nvim_lsp not installed")
