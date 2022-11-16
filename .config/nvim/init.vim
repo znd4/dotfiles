@@ -12,6 +12,9 @@ set guifont="FiraCode Nerd Font"
 
 autocmd VimLeavePre * :call system("date > ~/test.txt")
 
+" Don't yank when pasting over a selection
+" see: https://vi.stackexchange.com/a/39151
+xnoremap p P
 
 set clipboard+=unnamedplus
 
