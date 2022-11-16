@@ -2,6 +2,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"bashls",
+		"eslint",
 		"sumneko_lua",
 		"rust_analyzer",
 		"bufls",
@@ -143,6 +144,9 @@ local lspconfig = require("lspconfig")
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 
 lspconfig.bashls.setup({ on_attach = on_attach })
+lspconfig.eslint.setup({ on_attach = on_attach })
+lspconfig.tsserver.setup({ on_attach = on_attach })
+
 lspconfig.kotlin_language_server.setup({ on_attach = on_attach })
 lspconfig.bufls.setup({ on_attach = on_attach })
 
