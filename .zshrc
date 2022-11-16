@@ -6,6 +6,7 @@ if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
+eval $(thefuck --alias)
 
 aws_secret_edit() {
     # requires `brew install jq moreutils`

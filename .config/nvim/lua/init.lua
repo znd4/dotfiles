@@ -1,5 +1,3 @@
-require("colorscheme")
-require("neovide")
 
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
 vim.opt_global.tabstop = 4
@@ -12,6 +10,10 @@ vim.o.relativenumber = true
 vim.o.mouse = "a"
 
 require("plugins")
+
+require("colorscheme")
+require("neovide")
+
 require("fonts")
 require("lsp")
 require("mappings")
