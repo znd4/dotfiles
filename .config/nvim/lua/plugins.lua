@@ -36,6 +36,50 @@ return require("packer").startup({
 		-- 		"hrsh7th/nvim-cmp",
 		-- 	},
 		-- })
+		-- use('tpope/vim-surround')
+		use("tpope/vim-dotenv")
+
+		use("fladson/vim-kitty")
+		-- use('pedrohdz/vim-yaml-folds')
+		-- use('gabrielelana/vim-markdown')
+
+		use("vimwiki/vimwiki")
+
+		-- use('preservim/nerdtree')
+
+		-- open line in github
+		use("ruanyl/vim-gh-line")
+
+		-- direnv plugin
+		use("direnv/direnv.vim")
+		--
+		--""""""""""""""
+		-- Python plugins
+		--""""""""""""""
+
+		-- git plugin
+		use("tpope/vim-fugitive")
+
+		-- lazygit
+		use("kdheepak/lazygit.nvim")
+
+		-- use('flazz/vim-colorschemes')
+
+		use("earthly/earthly.vim")
+
+		-- use('junegunn/fzf', { 'do'): { -> fzf#install() } }
+		-- use('junegunn/fzf.vim')
+
+		-- Declare the list of plugins.
+		use("tpope/vim-sensible")
+		use("junegunn/seoul256.vim")
+
+		-- Fish support
+		use("dag/vim-fish")
+
+		-- editorconfig
+		use("editorconfig/editorconfig-vim")
+
 		use("vito-c/jq.vim")
 		use({
 			"karb94/neoscroll.nvim",
@@ -85,7 +129,8 @@ return require("packer").startup({
 			end,
 		})
 
-		-- Color schemes
+		-- Colorschemes
+		use("folke/tokyonight.nvim")
 		use("shaunsingh/moonlight.nvim")
 		use("bluz71/vim-moonfly-colors")
 		use("marko-cerovac/material.nvim")
@@ -382,7 +427,6 @@ return require("packer").startup({
 			requires = "nvim-telescope/telescope.nvim",
 		})
 		use("svermeulen/vimpeccable")
-		use("folke/tokyonight.nvim")
 
 		-- Automatically set up your configuration after cloning packer.nvim
 		-- Put this at the end after all plugins

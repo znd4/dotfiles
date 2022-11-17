@@ -75,54 +75,6 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " vim-plug stuff
 call plug#begin()
 
-" Plug 'tpope/vim-surround'
-Plug 'tpope/vim-dotenv'
-
-
-Plug 'fladson/vim-kitty'
-" Plug 'pedrohdz/vim-yaml-folds'
-" Plug 'gabrielelana/vim-markdown'
-
-Plug 'vimwiki/vimwiki'
-
-" Plug 'preservim/nerdtree'
-
-" open line in github
-Plug 'ruanyl/vim-gh-line'
-
-" direnv plugin
-Plug 'direnv/direnv.vim'
-"
-"""""""""""""""
-" Python plugins
-"""""""""""""""
-
-" git plugin
-Plug 'tpope/vim-fugitive'
-
-" lazygit
-Plug 'kdheepak/lazygit.nvim'
-
-
-
-" Plug 'flazz/vim-colorschemes'
-Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
-
-
-Plug 'earthly/earthly.vim', { 'branch': 'main' }
-
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-" Plug 'junegunn/fzf.vim'
-
-" Declare the list of plugins.
-Plug 'tpope/vim-sensible'
-Plug 'junegunn/seoul256.vim'
-
-" Fish support
-Plug 'dag/vim-fish'
-
-" editorconfig
-Plug 'editorconfig/editorconfig-vim'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
