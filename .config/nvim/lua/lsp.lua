@@ -2,6 +2,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"bashls",
+		"eslint",
 		"sumneko_lua",
 		"rust_analyzer",
 		"bufls",
@@ -114,6 +115,7 @@ local on_attach = function(client, bufnr)
 		map("K", vim.lsp.buf.hover)
 		map("gi", vim.lsp.buf.implementation)
 		map("<C-k>", vim.lsp.buf.signature_help)
+		vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
 		map("<space>wa", vim.lsp.buf.add_workspace_folder)
 		map("<space>wr", vim.lsp.buf.remove_workspace_folder)
 		map("<space>wl", function()
@@ -142,6 +144,9 @@ local lspconfig = require("lspconfig")
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 
 lspconfig.bashls.setup({ on_attach = on_attach })
+lspconfig.eslint.setup({ on_attach = on_attach })
+lspconfig.tsserver.setup({ on_attach = on_attach })
+
 lspconfig.kotlin_language_server.setup({ on_attach = on_attach })
 lspconfig.bufls.setup({ on_attach = on_attach })
 
