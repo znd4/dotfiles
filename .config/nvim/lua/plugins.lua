@@ -159,7 +159,6 @@ return require("packer").startup({
 			end,
 		})
 
-		use("direnv/direnv.vim")
 		use({
 			"nvim-telescope/telescope-hop.nvim",
 		})
