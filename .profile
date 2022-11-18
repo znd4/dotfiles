@@ -43,7 +43,10 @@ add_to_path "$HOME/bin"
 # set PATH so it includes user's private bin if it exists
 add_to_path "$HOME/.local/bin"
 
-add_to_path "$HOME/go/bin"
+export GOROOT="$HOME/go"
+export GOPATH="$GOROOT/bin"
+
+add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
 
@@ -54,12 +57,12 @@ if [ `uname -s` != 'Darwin' ]; then
 	# make capslock behave like ctrl when held
 	setxkbmap -option 'caps:ctrl_modifier'
 	# make capslock behave like esc when tapped
-	xcape -e 'Caps_Lock=Escape' -t 100
+	xcape -e 'Caps_Lock=Escape;Control_L=Escape;Control_R=Escape'
 
 	# OnePassword
-	if which 1password; then
-		1password --silent >/dev/null 2>&1 &
-	fi
+	# if which 1password; then
+	# 	1password --silent >/dev/null 2>&1 &
+	# fi
 else
 	eval `/opt/homebrew/bin/brew shellenv`
 	add_to_path /opt/local/bin
