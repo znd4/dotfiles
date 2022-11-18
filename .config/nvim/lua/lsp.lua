@@ -74,11 +74,13 @@ local enable_formatting = function(client, bufnr)
 end
 
 local module_exists, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+local capabilities
 if module_exists then
-	local capabilities = cmp_nvim_lsp.default_capabilities()
+	capabilities = cmp_nvim_lsp.default_capabilities()
 	capabilities.textDocument.completion.completionItem.snippetSupport = true
 else
 	print("cmp_nvim_lsp not installed")
+	return
 end
 
 local vimp = require("vimp")
@@ -106,7 +108,7 @@ local on_attach = function(client, bufnr)
 
 	-- Mappings.
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	vimp.add_buffer_maps(bufnr, function()
+	vimp.add_buffer_maps(function()
 		local function map(...)
 			vimp.nnoremap({ "silent" }, ...)
 		end
@@ -143,14 +145,14 @@ local lspconfig = require("lspconfig")
 
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 
-lspconfig.bashls.setup({ on_attach = on_attach })
-lspconfig.eslint.setup({ on_attach = on_attach })
-lspconfig.tsserver.setup({ on_attach = on_attach })
+lspconfig.bashls.setup({})
+lspconfig.eslint.setup({})
+lspconfig.tsserver.setup({})
 
-lspconfig.kotlin_language_server.setup({ on_attach = on_attach })
-lspconfig.bufls.setup({ on_attach = on_attach })
+lspconfig.kotlin_language_server.setup({})
+lspconfig.bufls.setup({})
 
-lspconfig["pyright"].setup({ on_attach = on_attach })
+lspconfig["pyright"].setup({})
 lspconfig.gopls.setup({
 	cmd = { "gopls" },
 	settings = {
@@ -191,7 +193,6 @@ null_ls.setup({
 	-- 	for source
 	-- 	client.config.sources
 	-- end
-	on_attach = on_attach,
 	sources = {
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
@@ -226,7 +227,7 @@ null_ls.setup({
 		-- }),
 	},
 })
-lspconfig.rust_analyzer.setup({ on_attach = on_attach })
+lspconfig.rust_analyzer.setup({})
 lspconfig.yamlls.setup({
 	settings = {
 		yaml = {
@@ -290,4 +291,4 @@ lspconfig.sumneko_lua.setup({
 -- 		},
 -- 	},
 -- })
-lspconfig.clangd.setup({ on_attach = on_attach })
+lspconfig.clangd.setup({})
