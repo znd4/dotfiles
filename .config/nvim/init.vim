@@ -99,8 +99,8 @@ let g:gh_use_canonical = 1 " open permalink, not branch
 "    PYTHON
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:loaded_python_provider = 0
-let g:loadedpython3_provider=0
+" let g:loaded_python_provider = 0
+" let g:loadedpython3_provider=0
 "let g:python3_host_prog = "/home/zane/.pyenv/versions/neovim3/bin/python"
 "let python_highlight_all=1
 "
