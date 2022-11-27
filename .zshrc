@@ -67,6 +67,7 @@ znap fpath _kubectl 'kubectl completion zsh'
 znap fpath _op      "op completion zsh"
 znap fpath _rustup  'rustup  completions zsh'
 znap fpath _cargo   'rustup  completions zsh cargo'
+znap fpath _gh 'gh completion --shell zsh'
 complete -C `which aws_completer` aws
 
 # e.g., zsh-syntax-highlighting must be loaded
@@ -85,6 +86,11 @@ export NVM_DIR="$HOME/.nvm"
 #####################
 ### zplug
 #####################
+[[ -f ~/.local/repos/zplug/init.zsh ]] ||
+    git clone --depth 1 -- \
+        https://github.com/zplug/zplug ~/.local/repos/zplug
+
+source ~/.local/repos/zplug/init.zsh  # Start Znap
 
 source `brew --prefix`/opt/zplug/init.zsh
 # Set the priority when loading
