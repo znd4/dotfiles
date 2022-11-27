@@ -1,20 +1,23 @@
 [alias]
-a = add
-pl = pull
-cedit = config --global --edit
-undo-last-commit = reset HEAD~1
-config-edit = config --global --edit
-new-branch = checkout -b
-conflicted = !nvim +Conflicted
-cb = branch --show-current
+    a = add
+    pl = pull
+    cedit = config --global --edit
+    undo-last-commit = reset HEAD~1
+    config-edit = config --global --edit
+    new-branch = checkout -b
+    conflicted = !nvim +Conflicted
+    cb = branch --show-current
 
 [init]
-defaultBranch = main
+    defaultBranch = main
 
 [user]
 	name = Zane Dufour
 	email = zane@znd4.me
 	# email = zdufour@aspiration.com
+
+[includeIf "gitdir:~/Work/"]
+    path = ~/Work/.gitconfig
 
 [pull]
 rebase = false

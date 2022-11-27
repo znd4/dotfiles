@@ -1,7 +1,6 @@
-
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
-vim.opt_global.tabstop = 4
-vim.opt_global.shiftwidth = 4
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
 vim.g.mapleader = " "
 
 vim.g.python3_host_prog = "python3"
@@ -13,7 +12,6 @@ require("plugins")
 
 require("colorscheme")
 require("neovide")
-
 require("fonts")
 require("lsp")
 require("mappings")

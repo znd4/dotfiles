@@ -159,7 +159,7 @@ local cmp_setup = function()
 			completion = cmp.config.window.bordered(),
 			documentation = cmp.config.window.bordered(),
 		},
-		mapping = cmp.mapping.preset.insert(filter_mode(mappings, "i")),
+		mapping = cmp.mapping.preset.insert(mappings),
 		completion = { autocomplete = true },
 	})
 

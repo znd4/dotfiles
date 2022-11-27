@@ -2,6 +2,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"bashls",
+		"rnix",
 		"eslint",
 		"sumneko_lua",
 		"rust_analyzer",
@@ -9,6 +10,7 @@ require("mason-lspconfig").setup({
 		"pyright",
 		"sqls",
 		"yamlls",
+		"taplo",
 	},
 	automatic_installation = true,
 })
@@ -112,6 +114,8 @@ local on_attach = function(client, bufnr)
 		local function map(...)
 			vimp.nnoremap({ "silent" }, ...)
 		end
+		map("gI", vim.lsp.buf.incoming_calls)
+		map("gO", vim.lsp.buf.outgoing_calls)
 		map("gD", vim.lsp.buf.declaration)
 		map("gd", vim.lsp.buf.definition)
 		map("K", vim.lsp.buf.hover)
@@ -144,22 +148,30 @@ local lsp_defaults = {
 local lspconfig = require("lspconfig")
 
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
+for _, x in pairs({
+	"bashls",
+	"bufls",
+	"clangd",
+	"eslint",
+	"kotlin_language_server",
+	"pyright",
+	"rnix",
+	"rust_analyzer",
+	"tsserver",
+}) do
+	lspconfig[x].setup({})
+end
 
-lspconfig.bashls.setup({})
-lspconfig.eslint.setup({})
-lspconfig.tsserver.setup({})
-
-lspconfig.kotlin_language_server.setup({})
-lspconfig.bufls.setup({})
-
-lspconfig["pyright"].setup({})
+-- TOML
+lspconfig.taplo.setup({
+	filetypes = { "toml", "gitconfig" },
+})
 lspconfig.gopls.setup({
 	cmd = { "gopls" },
 	settings = {
 		gopls = {
 			experimentalPostfixCompletions = true,
 			buildFlags = { "-tags=integration" },
-			-- env = { GOFLAGS = "-tags=integration,!integration" },
 			analyses = {
 				unusedparams = true,
 				shadow = true,
@@ -216,6 +228,11 @@ null_ls.setup({
 		null_ls.builtins.formatting.shfmt,
 		null_ls.builtins.diagnostics.shellcheck,
 
+		-- toml
+		null_ls.builtins.formatting.taplo.with({
+			filetypes = { "toml", "gitconfig" },
+		}),
+
 		-- sql
 		null_ls.builtins.formatting.sqlfluff,
 		null_ls.builtins.diagnostics.sqlfluff,
@@ -227,7 +244,6 @@ null_ls.setup({
 		-- }),
 	},
 })
-lspconfig.rust_analyzer.setup({})
 lspconfig.yamlls.setup({
 	settings = {
 		yaml = {
@@ -291,4 +307,3 @@ lspconfig.sumneko_lua.setup({
 -- 		},
 -- 	},
 -- })
-lspconfig.clangd.setup({})
