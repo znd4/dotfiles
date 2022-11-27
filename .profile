@@ -17,9 +17,17 @@ export EDITOR=nvim
 # export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
+export NETSKOPE_CERT='/Library/Application Support/Netskope/STAgent/data/nscacert.pem'
 
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
+
+# use neovim as default pager
+export PAGER='nvim -R'
+
+# use neovim as manpager
+export MANPAGER='nvim +Man!'
+export MANWIDTH=999
 
 ##########################################################################
 ########## Helper Functions
