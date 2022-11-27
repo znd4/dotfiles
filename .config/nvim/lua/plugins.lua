@@ -288,7 +288,14 @@ return require("packer").startup({
 			"neovim/nvim-lspconfig",
 			"jose-elias-alvarez/null-ls.nvim",
 		})
-
+		use({ "ldelossa/litee.nvim", config = [[require("litee.lib").setup({})]] })
+		use({
+			"ldelossa/litee-calltree.nvim",
+			after = "litee.nvim",
+			config = function()
+				require("litee.calltree").setup({})
+			end,
+		})
 		use({ "ckipp01/stylua-nvim" })
 
 		use({ "lukas-reineke/lsp-format.nvim" })
