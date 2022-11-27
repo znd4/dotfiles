@@ -112,6 +112,8 @@ local on_attach = function(client, bufnr)
 		local function map(...)
 			vimp.nnoremap({ "silent" }, ...)
 		end
+		map("gI", vim.lsp.buf.incoming_calls)
+		map("gO", vim.lsp.buf.outgoing_calls)
 		map("gD", vim.lsp.buf.declaration)
 		map("gd", vim.lsp.buf.definition)
 		map("K", vim.lsp.buf.hover)
