@@ -3,7 +3,7 @@ vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.g.mapleader = " "
 
-vim.g.python3_host_prog = "python3.10"
+vim.g.python3_host_prog = "python3"
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = "a"
