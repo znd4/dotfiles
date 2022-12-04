@@ -63,8 +63,6 @@ return require("packer").startup({
 		-- lazygit
 		use("kdheepak/lazygit.nvim")
 
-		-- use('flazz/vim-colorschemes')
-
 		use("earthly/earthly.vim")
 
 		-- use('junegunn/fzf', { 'do'): { -> fzf#install() } }
