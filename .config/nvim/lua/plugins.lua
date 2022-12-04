@@ -65,6 +65,16 @@ return require("packer").startup({
 
 		use("earthly/earthly.vim")
 
+		use({
+			"zbirenbaum/copilot.lua",
+			event = "InsertEnter",
+			config = function()
+				vim.schedule(function()
+					require("copilot").setup()
+				end)
+			end,
+		})
+
 		-- use('junegunn/fzf', { 'do'): { -> fzf#install() } }
 		-- use('junegunn/fzf.vim')
 
