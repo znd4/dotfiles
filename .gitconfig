@@ -7,6 +7,7 @@
     new-branch = checkout -b
     conflicted = !nvim +Conflicted
     cb = branch --show-current
+	root = !pwd
 
 [init]
     defaultBranch = main
