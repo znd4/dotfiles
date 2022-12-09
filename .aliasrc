@@ -8,6 +8,8 @@ if command apt >/dev/null 2>&1; then
     alias bat=batcat
 fi
 
+alias ssh-config-edit="$EDITOR ~/.ssh/config"
+
 alias wdotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.work-dotfiles"
 
 alias ls='ls --color=auto'
