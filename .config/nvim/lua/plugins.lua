@@ -65,15 +65,23 @@ return require("packer").startup({
 
 		use("earthly/earthly.vim")
 
-		use({
-			"zbirenbaum/copilot.lua",
-			event = "InsertEnter",
-			config = function()
-				vim.schedule(function()
-					require("copilot").setup()
-				end)
-			end,
-		})
+		use({ "github/copilot.vim", after = "direnv.vim", config = [[vim.cmd.Copilot("restart")]] })
+		-- use({
+		-- 	"zbirenbaum/copilot.lua",
+		-- 	event = "InsertEnter",
+		-- 	config = function()
+		-- 		vim.schedule(function()
+		-- 			require("copilot").setup()
+		-- 		end)
+		-- 	end,
+		-- })
+		-- use({
+		-- 	"zbirenbaum/copilot-cmp",
+		-- 	after = { "copilot.lua" },
+		-- 	config = function()
+		-- 		require("copilot_cmp").setup()
+		-- 	end,
+		-- })
 
 		-- use('junegunn/fzf', { 'do'): { -> fzf#install() } }
 		-- use('junegunn/fzf.vim')
