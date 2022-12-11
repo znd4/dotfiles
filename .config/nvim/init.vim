@@ -2,7 +2,12 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
 lua require('init')
-au! BufWritePost */lua/*.lua lua require('packer').compile()
+
+" reload packer config whenever updating plugins.lua
+augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source init.vim | lua require('packer').compile()
+augroup end
 
 set nocompatible              " required
 filetype plugin on                  " required
