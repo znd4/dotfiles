@@ -132,9 +132,13 @@ compinit
 export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
-export EDITOR="nvim"
-export ZVM_VI_EDITOR=$EDITOR
-export MANPAGER="nvim +Man!"
+export EDITOR=vi
+if type nvim >/dev/null; then
+    echo "Using nvim"
+    export EDITOR=`which nvim`
+    export MANPAGER="$EDITOR +Man!"
+    export ZVM_VI_EDITOR=$EDITOR
+fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
