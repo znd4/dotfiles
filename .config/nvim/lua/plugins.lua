@@ -24,17 +24,17 @@ return require("packer").startup({
 			end,
 		})
 		-- use({
-		-- 	"folke/noice.nvim",
-		-- 	event = "VimEnter",
-		-- 	config = function()
-		-- 		require("noice").setup({ debug = true })
-		-- 	end,
-		-- 	requires = {
-		-- 		-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-		-- 		"MunifTanjim/nui.nvim",
-		-- 		"rcarriga/nvim-notify",
-		-- 		"hrsh7th/nvim-cmp",
-		-- 	},
+		--  "folke/noice.nvim",
+		--  event = "VimEnter",
+		--  config = function()
+		--      require("noice").setup({ debug = true })
+		--  end,
+		--  requires = {
+		--      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+		--      "MunifTanjim/nui.nvim",
+		--      "rcarriga/nvim-notify",
+		--      "hrsh7th/nvim-cmp",
+		--  },
 		-- })
 		-- use('tpope/vim-surround')
 		use("tpope/vim-dotenv")
@@ -67,20 +67,20 @@ return require("packer").startup({
 
 		use({ "github/copilot.vim", after = "direnv.vim", config = [[require("config.copilot")]] })
 		-- use({
-		-- 	"zbirenbaum/copilot.lua",
-		-- 	event = "InsertEnter",
-		-- 	config = function()
-		-- 		vim.schedule(function()
-		-- 			require("copilot").setup()
-		-- 		end)
-		-- 	end,
+		--  "zbirenbaum/copilot.lua",
+		--  event = "InsertEnter",
+		--  config = function()
+		--      vim.schedule(function()
+		--          require("copilot").setup()
+		--      end)
+		--  end,
 		-- })
 		-- use({
-		-- 	"zbirenbaum/copilot-cmp",
-		-- 	after = { "copilot.lua" },
-		-- 	config = function()
-		-- 		require("copilot_cmp").setup()
-		-- 	end,
+		--  "zbirenbaum/copilot-cmp",
+		--  after = { "copilot.lua" },
+		--  config = function()
+		--      require("copilot_cmp").setup()
+		--  end,
 		-- })
 
 		-- use('junegunn/fzf', { 'do'): { -> fzf#install() } }
@@ -114,10 +114,10 @@ return require("packer").startup({
 		})
 		use({ "stevearc/dressing.nvim" })
 		-- use({
-		-- 	"nmac427/guess-indent.nvim",
-		-- 	config = function()
-		-- 		require("guess-indent").setup({})
-		-- 	end,
+		--  "nmac427/guess-indent.nvim",
+		--  config = function()
+		--      require("guess-indent").setup({})
+		--  end,
 		-- })
 		use({
 			"AckslD/nvim-FeMaco.lua",
@@ -370,11 +370,11 @@ return require("packer").startup({
 			end,
 		})
 		-- use({
-		-- 	"TimUntersberger/neogit",
-		-- 	requires = "nvim-lua/plenary.nvim",
-		-- 	config = function()
-		-- 		require("neogit").setup()
-		-- 	end,
+		--  "TimUntersberger/neogit",
+		--  requires = "nvim-lua/plenary.nvim",
+		--  config = function()
+		--      require("neogit").setup()
+		--  end,
 		-- })
 		use("elihunter173/dirbuf.nvim")
 		use({

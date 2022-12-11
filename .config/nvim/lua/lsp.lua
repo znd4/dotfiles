@@ -201,16 +201,18 @@ lspconfig.sqls.setup({
 local null_ls = require("null-ls")
 null_ls.setup({
 	-- on_init = function(client)
-	-- 	local path = client.workspace_folders[1].name
-	-- 	for source
-	-- 	client.config.sources
+	--  local path = client.workspace_folders[1].name
+	--  for source
+	--  client.config.sources
 	-- end
 	sources = {
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
 		null_ls.builtins.formatting.buf,
 
-		null_ls.builtins.formatting.stylua,
+		null_ls.builtins.formatting.stylua.with({
+			extra_args = { "--indent-type", "spaces" },
+		}),
 		null_ls.builtins.diagnostics.eslint,
 
 		-- python
@@ -234,14 +236,32 @@ null_ls.setup({
 		}),
 
 		-- sql
-		null_ls.builtins.formatting.sqlfluff,
-		null_ls.builtins.diagnostics.sqlfluff,
+		null_ls.builtins.formatting.sqlfluff.with({
+			extra_args = { "--dialect", "postgres" },
+		}),
+		null_ls.builtins.diagnostics.sqlfluff.with({
+			extra_args = { "--dialect", "postgres" },
+		}),
 		-- null_ls.builtins.formatting.sqlfluff.with({
 		--     extra_args = { "--config=pyproject.toml" },
 		-- }),
 		-- null_ls.builtins.diagnostics.sqlfluff.with({
 		--     extra_args = { "--config=pyproject.toml" },
 		-- }),
+
+		-- retab
+		{
+			filetypes = { "lua", "python" },
+			name = "retab",
+			method = null_ls.methods.FORMATTING,
+			generator = {
+				async = true,
+				fn = function(_, done)
+					vim.cmd.retab()
+					done()
+				end,
+			},
+		},
 	},
 })
 lspconfig.yamlls.setup({
@@ -286,24 +306,24 @@ lspconfig.sumneko_lua.setup({
 })
 
 -- lspconfig.pylsp.setup({
--- 	settings = {
--- 		pylsp = {
--- 			plugins = {
--- 				pycodestyle = {
--- 					ignore = { "W391" },
--- 					maxLineLength = 100,
--- 				},
--- 				pyflakes = { enabled = false },
--- 				flake8 = { enabled = true },
--- 				pydocstyle = { enabled = true },
--- 				black = {
--- 					enable = true,
--- 				},
--- 				-- jedi = {
--- 				--     -- TODO - Add something to on_attach that finds virtual environment path
--- 				--     environment = environment
--- 				-- }
--- 			},
--- 		},
--- 	},
+--  settings = {
+--      pylsp = {
+--          plugins = {
+--              pycodestyle = {
+--                  ignore = { "W391" },
+--                  maxLineLength = 100,
+--              },
+--              pyflakes = { enabled = false },
+--              flake8 = { enabled = true },
+--              pydocstyle = { enabled = true },
+--              black = {
+--                  enable = true,
+--              },
+--              -- jedi = {
+--              --     -- TODO - Add something to on_attach that finds virtual environment path
+--              --     environment = environment
+--              -- }
+--          },
+--      },
+--  },
 -- })
