@@ -10,6 +10,11 @@ vim.o.mouse = "a"
 
 vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
 
+if vim.g.neovide ~= nil then
+	print("changing directory to home")
+	vim.cmd.cd()
+end
+
 require("plugins")
 
 require("colorscheme")
