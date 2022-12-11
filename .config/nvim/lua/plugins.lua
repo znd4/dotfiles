@@ -65,7 +65,7 @@ return require("packer").startup({
 
 		use("earthly/earthly.vim")
 
-		use({ "github/copilot.vim", after = "direnv.vim", config = [[vim.cmd.Copilot("restart")]] })
+		use({ "github/copilot.vim", after = "direnv.vim", config = [[require("config.copilot")]] })
 		-- use({
 		-- 	"zbirenbaum/copilot.lua",
 		-- 	event = "InsertEnter",
@@ -99,9 +99,7 @@ return require("packer").startup({
 		use("vito-c/jq.vim")
 		use({
 			"karb94/neoscroll.nvim",
-			config = function()
-				require("neoscroll").setup()
-			end,
+			config = [[require("config.neoscroll")]],
 		})
 		-- Lua
 		use({
