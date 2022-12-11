@@ -8,6 +8,8 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = "a"
 
+vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
+
 require("plugins")
 
 require("colorscheme")
