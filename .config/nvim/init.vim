@@ -74,13 +74,6 @@ set expandtab
 " show whitespace
 set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 
-" Plugins will be downloaded under the specified directory.
-" vim-plug stuff
-call plug#begin()
-
-
-" List ends here. Plugins become visible to Vim after this call.
-call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " markdown
