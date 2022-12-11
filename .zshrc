@@ -91,7 +91,6 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.local/repos/zplug/init.zsh  # Start Znap
 
-source `brew --prefix`/opt/zplug/init.zsh
 # Set the priority when loading
 # (If the defer tag is given 2 or above, run after compinit command)
 
