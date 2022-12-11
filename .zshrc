@@ -12,6 +12,7 @@ fi
 
 eval $(thefuck --alias)
 
+setopt HIST_IGNORE_SPACE
 
 lg() {
     # start lazygit and change to new directory if we change repos while in lazygit
