@@ -148,7 +148,6 @@ bindkey '^N' history-beginning-search-forward
 bindkey '^ ' complete-word
 bindkey '^Y' autosuggest-accept
 
-unset CURL_CA_BUNDLE
 
 export GOPRIVATE=github.com/AspirationPartners
 
