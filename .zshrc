@@ -7,6 +7,9 @@ if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
+# ssl cert fix for node on aspiration laptop
+[ -f "$NETSKOPE_CERT" ] && export NODE_EXTRA_CA_CERTS="${NETSKOPE_CERT?}"
+
 eval $(thefuck --alias)
 
 
