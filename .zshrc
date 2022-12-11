@@ -14,6 +14,13 @@ eval $(thefuck --alias)
 
 setopt HIST_IGNORE_SPACE
 
+get_aws_secret() {
+    setopt local_options pipefail
+    aws secretsmanager get-secret-value \
+        --secret-id "${1?}" \
+    | jq -r '.SecretString|fromjson|.'${2?}
+}
+
 lg() {
     # start lazygit and change to new directory if we change repos while in lazygit
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
