@@ -161,7 +161,7 @@ local cmp_setup = function()
 			documentation = cmp.config.window.bordered(),
 		},
 		mapping = cmp.mapping.preset.insert(mappings),
-		completion = { autocomplete = true },
+		-- completion = { autocomplete = true },
 	})
 
 	-- command mode completion

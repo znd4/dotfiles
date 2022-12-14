@@ -206,6 +206,9 @@ null_ls.setup({
 	--  client.config.sources
 	-- end
 	sources = {
+		-- dotenv
+		null_ls.builtins.diagnostics.dotenv_linter,
+
 		-- protobuf
 		null_ls.builtins.diagnostics.buf,
 		null_ls.builtins.formatting.buf,
