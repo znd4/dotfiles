@@ -11,8 +11,8 @@ vim.o.mouse = "a"
 vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
 
 if vim.g.neovide ~= nil then
-	print("changing directory to home")
-	vim.cmd.cd()
+    print("changing directory to home")
+    vim.cmd.cd()
 end
 
 require("plugins")
@@ -25,11 +25,11 @@ require("mappings")
 require("commands")
 
 if vim.fn.executable("fd") ~= 1 then
-	print("please brew install fd")
+    print("please brew install fd")
 end
 if vim.fn.executable("lolcate") ~= 1 then
-	print("please cargo install lolcate-rs")
+    print("please cargo install lolcate-rs")
 end
 if vim.fn.executable("rg") ~= 1 then
-	print("please brew install ripgrep")
+    print("please brew install ripgrep")
 end
