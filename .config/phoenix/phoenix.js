@@ -54,7 +54,7 @@ quakeApp({
   // appName: "Alacritty",
   position: full,
   followsMouse: true,
-  hideOnBlur: true,
+  hideOnBlur: false,
 });
 quakeApp({
   key: "s",
