@@ -10,7 +10,7 @@ require("mason-lspconfig").setup({
         "sqls",
         "sumneko_lua",
         "taplo",
-        "terraform_lsp",
+        "terraformls",
         "yamlls",
     },
     automatic_installation = true,
