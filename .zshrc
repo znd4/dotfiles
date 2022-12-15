@@ -133,7 +133,6 @@ export POETRY_VIRTUALENVS_IN_PROJECT=true
 # Editor config
 export EDITOR=vi
 if type nvim >/dev/null; then
-    echo "Using nvim"
     export EDITOR=`which nvim`
     export MANPAGER="$EDITOR +Man!"
     export ZVM_VI_EDITOR=$EDITOR
