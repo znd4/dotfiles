@@ -2,15 +2,16 @@ require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
         "bashls",
-        "rnix",
-        "eslint",
-        "sumneko_lua",
-        "rust_analyzer",
         "bufls",
+        "eslint",
         "pyright",
+        "rnix",
+        "rust_analyzer",
         "sqls",
-        "yamlls",
+        "sumneko_lua",
         "taplo",
+        "terraform_lsp",
+        "yamlls",
     },
     automatic_installation = true,
 })
