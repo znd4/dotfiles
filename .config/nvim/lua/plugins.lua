@@ -441,7 +441,7 @@ return require("packer").startup({
                     -- your configuration comes here
                     -- or leave it empty to use the default settings
                     -- refer to the configuration section below
-                    ignore_lsp = { "null-ls" },
+                    ignore_lsp = { "null-ls", "terraform_lsp" },
                     show_hidden = true,
                     datapath = datapath,
                 })

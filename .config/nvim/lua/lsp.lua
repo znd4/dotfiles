@@ -11,6 +11,7 @@ require("mason-lspconfig").setup({
         "sumneko_lua",
         "taplo",
         "terraformls",
+        "tflint",
         "yamlls",
     },
     automatic_installation = true,
@@ -150,6 +151,8 @@ local lspconfig = require("lspconfig")
 
 lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
 for _, x in pairs({
+    "tflint",
+    "terraform_lsp",
     "bashls",
     "bufls",
     "clangd",
@@ -233,6 +236,9 @@ null_ls.setup({
         -- shell scripts
         null_ls.builtins.formatting.shfmt,
         null_ls.builtins.diagnostics.shellcheck,
+
+        -- terraform
+        null_ls.builtins.formatting.terraform_fmt,
 
         -- toml
         null_ls.builtins.formatting.taplo.with({
