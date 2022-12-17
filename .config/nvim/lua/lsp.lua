@@ -287,6 +287,7 @@ lspconfig.yamlls.setup({
         },
         schemas = {
             ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] = "/overlays/*/*.yaml",
+            ["https://json.schemastore.org/circleciconfig.json"] = "/.circleci/*",
         },
     },
     filetypes = { "yaml", "yml", "yaml.docker-compose" },
