@@ -50,6 +50,13 @@ source ~/Git/zsh-snap/znap.zsh  # Start Znap
 
 
 znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
+
+# https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
+
+# The plugin will auto execute this zvm_after_init function
+function zvm_after_init() {
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+}
 znap source jeffreytse/zsh-vi-mode
 
 # `znap prompt` makes your prompt visible in just 15-40ms!
@@ -146,10 +153,13 @@ fi
 # Path to your oh-my-zsh installation.
 # export ZSH="$HOME/.oh-my-zsh"
 
+# Omni-completion
 bindkey '^P' history-beginning-search-backward
 bindkey '^N' history-beginning-search-forward
 bindkey '^ ' complete-word
 bindkey '^Y' autosuggest-accept
+
+zvm_bindkey -i '^F' '<esc>-vv'
 
 
 export GOPRIVATE=github.com/AspirationPartners
