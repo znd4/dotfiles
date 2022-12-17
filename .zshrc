@@ -13,6 +13,7 @@ fi
 eval $(thefuck --alias)
 
 setopt HIST_IGNORE_SPACE
+setopt interactivecomments
 
 get_aws_secret() {
     setopt local_options pipefail
