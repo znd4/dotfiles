@@ -13,7 +13,6 @@ set nocompatible              " required
 filetype plugin on                  " required
 syntax on
 
-set guifont="FiraCode Nerd Font"
 
 autocmd VimLeavePre * :call system("date > ~/test.txt")
 
@@ -122,13 +121,5 @@ au BufNewFile,BufRead *.py
 " Set up :make to use fish for syntax checking.
 if &shell =~# 'fish$'
     set shell=bash
+    setlocal foldmethod=expr
 endif
-" compiler fish
-
-" Set this to have long lines wrap inside comments.
-" setlocal textwidth=79
-
-" Enable folding of block structures in fish.
-setlocal foldmethod=expr
-
-
