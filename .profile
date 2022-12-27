@@ -106,7 +106,7 @@ if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-export PATH="/Users/zdufour/.rd/bin:$PATH"
+add_to_path "$HOME/.rd/bin"
 
 [[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
 
