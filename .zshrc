@@ -159,6 +159,9 @@ bindkey '^N' history-beginning-search-forward
 bindkey '^ ' complete-word
 bindkey '^Y' autosuggest-accept
 
+zle -N expand-or-complete-prefix
+bindkey '^X^E' expand-or-complete-prefix
+
 zvm_bindkey -i '^F' '<esc>-vv'
 
 
@@ -197,3 +200,5 @@ source "$HOME/.cargo/env"
 # Hishtory Config:
 export PATH="$PATH:/Users/zdufour/.hishtory"
 source /Users/zdufour/.hishtory/config.zsh
+
+export PATH=$PATH:/Users/zdufour/.aido
