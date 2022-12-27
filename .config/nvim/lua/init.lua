@@ -41,11 +41,13 @@ vim.filetype.add({
         tf = "terraform",
         tfvars = "terraform",
         tfstate = "json",
+        plist = "xml",
         ["tfstate.backup"] = "json",
     },
     filename = {
         [".terraformrc"] = "hcl",
         ["terraform.rc"] = "hcl",
+        [".yamllint"] = "yaml",
     },
     pattern = {
         [".*"] = {

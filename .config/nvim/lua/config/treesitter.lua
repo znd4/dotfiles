@@ -1,5 +1,16 @@
 require("orgmode").setup_ts_grammar()
 
+-- trick treesitter into thinking zsh files are bash
+local ft_to_lang = require("nvim-treesitter.parsers").ft_to_lang
+require("nvim-treesitter.parsers").ft_to_lang = function(ft)
+    if ft == "zsh" then
+        return "bash"
+    elseif ft == "xml" then
+        return "html"
+    end
+    return ft_to_lang(ft)
+end
+
 vim.filetype.add({
     extension = {
         sh = "bash",
@@ -19,12 +30,15 @@ require("nvim-treesitter.configs").setup({
             lookahead = true,
 
             keymaps = {
+                ["ab"] = "@block.outer",
+                ["ib"] = "@block.inner",
+
                 -- You can use the capture groups defined in textobjects.scm
                 ["af"] = "@function.outer",
                 ["if"] = "@function.inner",
-                ["ac"] = "@class.outer",
-                -- you can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
-                ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+
+                ["al"] = "@call.outer",
+                ["il"] = { query = "@call.inner", desc = "Select inner part of a function call" },
             },
             -- You can choose the select mode (default is charwise 'v')
             selection_modes = {
@@ -36,7 +50,7 @@ require("nvim-treesitter.configs").setup({
             -- extended to include preceding xor succeeding whitespace. Succeeding
             -- whitespace has priority in order to act similarly to eg the built-in
             -- `ap`.
-            include_surrounding_whitespace = true,
+            -- include_surrounding_whitespace = true,
         },
         move = {
             enable = true,
@@ -90,7 +104,7 @@ require("nvim-treesitter.configs").setup({
         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
         -- Using this option may slow down your editor, and you may see some duplicate highlights.
         -- Instead of true it can also be a list of languages
-        additional_vim_regex_highlighting = { "org" },
+        additional_vim_regex_highlighting = { "org", "vim" },
     },
     incremental_selection = {
         enable = true,
@@ -104,9 +118,4 @@ require("nvim-treesitter.configs").setup({
     indent = {
         enable = true,
     },
-})
-
-require("orgmode").setup({
-    org_agenda_files = { "~/Dropbox/org/*", "~/my-orgs/**/*" },
-    org_default_notes_file = "~/Dropbox/org/refile.org",
 })

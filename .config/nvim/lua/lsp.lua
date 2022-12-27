@@ -132,6 +132,8 @@ local on_attach = function(client, bufnr)
         map("<space>D", vim.lsp.buf.type_definition)
         map("<space>rn", vim.lsp.buf.rename)
         map("<space>ca", vim.lsp.buf.code_action)
+        map("<leader>d]", vim.diagnostic.goto_next)
+        map("<leader>d[", vim.diagnostic.goto_prev)
         map("gr", vim.lsp.buf.references)
         map("<space>f", function()
             vim.lsp.buf.format({ async = true })
@@ -276,18 +278,21 @@ null_ls.setup({
 })
 lspconfig.yamlls.setup({
     settings = {
-        yaml = {
-            format = {
-                enable = true,
+        redhat = {
+            telemetry = {
+                enabled = true,
             },
         },
-        schemaStore = {
-            url = "https://www.schemastore.org/api/json/catalog.json",
-            enable = true,
-        },
-        schemas = {
-            ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] = "/overlays/*/*.yaml",
-            ["https://json.schemastore.org/circleciconfig.json"] = "/.circleci/*",
+        yaml = {
+            schemas = {
+                ["Kubernetes"] = "/overlays/**/*",
+                ["https://json.schemastore.org/circleciconfig.json"] = {
+                    "/.circleci/config.*",
+                    "/.circleci/test-deploy.*",
+                },
+                -- codecov
+                ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
+            },
         },
     },
     filetypes = { "yaml", "yml", "yaml.docker-compose" },
