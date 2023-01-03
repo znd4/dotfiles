@@ -1,0 +1,6 @@
+# source ~/.config/mutt/chroma.theme
+set alias_file = ~/.config/mutt/aliases
+
+set folder=~/.maildir
+set spoolfile=+INBOX
+

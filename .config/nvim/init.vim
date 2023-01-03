@@ -6,7 +6,7 @@ lua require('init')
 " reload packer config whenever updating plugins.lua
 augroup packer_user_config
     autocmd!
-    autocmd BufWritePost plugins.lua source init.vim | lua require('packer').compile()
+    autocmd BufWritePost plugins.lua source init.vim
 augroup end
 
 set nocompatible              " required

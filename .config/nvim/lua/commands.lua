@@ -29,7 +29,7 @@ end
 vimp.map_command("Projects", projects)
 vimp.map_command("Help", telescope.help_tags)
 vimp.map_command("Files", telescope.find_files)
-vimp.nnoremap("<C-f>", telescope.find_files)
+-- vimp.nnoremap("<C-f>", telescope.find_files)
 
 local nnoremap = function(...)
     vim.keymap.set("n", ...)

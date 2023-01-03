@@ -15,12 +15,12 @@ if vim.g.neovide ~= nil then
     vim.cmd.cd()
 end
 
+require("colorscheme")
+
 require("plugins")
 
-require("colorscheme")
 require("neovide")
 require("fonts")
-require("lsp")
 require("mappings")
 require("commands")
 

@@ -1,0 +1,6 @@
+local vimp = require("vimp")
+vimp.add_buffer_maps(function()
+    vimp.nnoremap("gs", ":G<CR>")
+    vimp.nnoremap("gp", ":Git! pull<CR>")
+    vimp.nnoremap("gP", ":Git! push<CR>")
+end)
