@@ -100,13 +100,6 @@ local on_attach = function(client, bufnr)
     end
     enable_formatting(client, bufnr)
     -- require("lsp-format").on_attach(client)
-    -- Enable completion triggered by <c-x><c-o>
-    local function buf_set_keymap(...)
-        vim.api.nvim_buf_set_keymap(bufnr, ...)
-    end
-    local function buf_set_option(...)
-        vim.api.nvim_buf_set_option(bufnr, ...)
-    end
 
     -- buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -222,7 +215,6 @@ null_ls.setup({
         null_ls.builtins.formatting.stylua.with({
             extra_args = { "--indent-type", "spaces" },
         }),
-        null_ls.builtins.diagnostics.eslint,
 
         -- python
         null_ls.builtins.formatting.black,
