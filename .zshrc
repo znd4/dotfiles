@@ -143,6 +143,7 @@ export EDITOR=vi
 if type nvim >/dev/null; then
     export EDITOR=`which nvim`
     export MANPAGER="$EDITOR +Man!"
+    export PAGER="$MANPAGER"
     export ZVM_VI_EDITOR=$EDITOR
 fi
 
