@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+SHELL=`which zsh` toolbox enter
