@@ -7,3 +7,5 @@ repos:
     rev: v0.14.1
     hooks:
       - id: stylua # or stylua-system / stylua-github
+        args:
+          - "--indent-type=spaces"

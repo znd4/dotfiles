@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Add aliases
 . ~/.aliasrc
 . ~/.dotfiles/path_functions.sh
@@ -9,20 +10,17 @@ fi
 
 check_path thefuck && eval $(thefuck --alias)
 
-aws_secret_edit() {
-    # requires `brew install jq moreutils`
-    secret_string=$(
-        aws secretsmanager get-secret-value --secret-id "$1" \
-            | jq -r ".SecretString|fromjson" \
-            | vipe --suffix=json \
-            | jq -rc .
-    )
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    aws secretsmanager put-secret-value \
-        --secret-id="$1" \
-        --secret-string=$secret_string
+# ssl cert fix for node on aspiration laptop
+[ -f "$NETSKOPE_CERT" ] && export NODE_EXTRA_CA_CERTS="${NETSKOPE_CERT?}"
+
+setopt HIST_IGNORE_SPACE
+setopt interactivecomments
+
+get_aws_secret() {
+    setopt local_options pipefail
+    aws secretsmanager get-secret-value \
+        --secret-id "${1?}" \
+    | jq -r '.SecretString|fromjson|.'${2?}
 }
 
 lg() {
@@ -53,6 +51,13 @@ source ~/Git/zsh-snap/znap.zsh  # Start Znap
 
 
 znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
+
+# https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
+
+# The plugin will auto execute this zvm_after_init function
+function zvm_after_init() {
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+}
 znap source jeffreytse/zsh-vi-mode
 
 # `znap prompt` makes your prompt visible in just 15-40ms!
@@ -88,6 +93,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
+[ -f "$NETSKOPE_CERT" ] && alias nvm="CURL_CA_BUNDLE=\"${NETSKOPE_CERT?}\" nvm"
+
 #####################
 ### zplug
 #####################
@@ -97,7 +104,6 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.local/repos/zplug/init.zsh  # Start Znap
 
-# source `brew --prefix`/opt/zplug/init.zsh
 # Set the priority when loading
 # (If the defer tag is given 2 or above, run after compinit command)
 
@@ -138,9 +144,13 @@ compinit
 export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
-export EDITOR="nvim"
-export ZVM_VI_EDITOR=$EDITOR
-export MANPAGER="nvim +Man!"
+export EDITOR=vi
+if type nvim >/dev/null; then
+    export EDITOR=`which nvim`
+    export MANPAGER="$EDITOR +Man!"
+    export PAGER="$MANPAGER"
+    export ZVM_VI_EDITOR=$EDITOR
+fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -149,12 +159,17 @@ export MANPAGER="nvim +Man!"
 # Path to your oh-my-zsh installation.
 # export ZSH="$HOME/.oh-my-zsh"
 
+# Omni-completion
 bindkey '^P' history-beginning-search-backward
 bindkey '^N' history-beginning-search-forward
 bindkey '^ ' complete-word
 bindkey '^Y' autosuggest-accept
 
-unset CURL_CA_BUNDLE
+zle -N expand-or-complete-prefix
+bindkey '^X^E' expand-or-complete-prefix
+
+zvm_bindkey -i '^F' '<esc>-vv'
+
 
 export GOPRIVATE=github.com/AspirationPartners
 
@@ -187,3 +202,4 @@ source_if_exists "$HOME/.cargo/env"
 add_to_path "$HOME/.hishtory"
 source_if_exists "$HOME/.hishtory/config.zsh"
 
+export PATH=$PATH:/Users/zdufour/.aido

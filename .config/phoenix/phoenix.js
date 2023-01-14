@@ -54,7 +54,7 @@ quakeApp({
   // appName: "Alacritty",
   position: full,
   followsMouse: true,
-  hideOnBlur: true,
+  hideOnBlur: false,
 });
 quakeApp({
   key: "s",
@@ -67,8 +67,8 @@ quakeApp({
 quakeApp({
 	key: "e",
 	modifiers: ["cmd"],
-	// appName: "Neovide",
-	appName: "VimR",
+	appName: "Neovide",
+	// appName: "VimR",
 	position: full,
 	followsMouse: true,
 	hideOnBlur: false,

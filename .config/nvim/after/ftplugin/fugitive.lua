@@ -1,0 +1,6 @@
+local vimp = require("vimp")
+vimp.add_buffer_maps(function()
+    vimp.nmap({ "override" }, "gs", ":G<CR>")
+    vimp.nmap({ "override" }, "gp", ":Git! pull<CR>")
+    vimp.nmap({ "override" }, "gP", ":Git! push<CR>")
+end)

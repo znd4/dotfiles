@@ -1,12 +1,16 @@
 #!/bin/sh
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
+alias roll='docker run --rm -it ghcr.io/brittonhayes/roll:latest'
+
 alias kustomize="kubectl kustomize"
 alias vi="nvim"
 
 if command apt >/dev/null 2>&1; then
     alias bat=batcat
 fi
+
+alias ssh-config-edit="$EDITOR ~/.ssh/config"
 
 alias wdotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.work-dotfiles"
 

@@ -2,13 +2,17 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
 lua require('init')
-au! BufWritePost */lua/*.lua lua require('packer').compile()
+
+" reload packer config whenever updating plugins.lua
+augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source init.vim
+augroup end
 
 set nocompatible              " required
 filetype plugin on                  " required
 syntax on
 
-set guifont="FiraCode Nerd Font"
 
 autocmd VimLeavePre * :call system("date > ~/test.txt")
 
@@ -74,13 +78,6 @@ set expandtab
 " show whitespace
 set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 
-" " Plugins will be downloaded under the specified directory.
-" " vim-plug stuff
-" call plug#begin()
-"
-"
-" " List ends here. Plugins become visible to Vim after this call.
-" call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " markdown
@@ -124,13 +121,5 @@ au BufNewFile,BufRead *.py
 " Set up :make to use fish for syntax checking.
 if &shell =~# 'fish$'
     set shell=bash
+    setlocal foldmethod=expr
 endif
-" compiler fish
-
-" Set this to have long lines wrap inside comments.
-" setlocal textwidth=79
-
-" Enable folding of block structures in fish.
-setlocal foldmethod=expr
-
-

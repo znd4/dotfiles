@@ -176,3 +176,5 @@ export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 # Hishtory Config:
 export PATH="$PATH:/Users/zdufour/.hishtory"
 source /Users/zdufour/.hishtory/config.sh
+
+export PATH=$PATH:/Users/zdufour/.aido
