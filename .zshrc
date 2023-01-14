@@ -1,12 +1,13 @@
 # Add aliases
 . ~/.aliasrc
+. ~/.dotfiles/path_functions.sh
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
-eval $(thefuck --alias)
+check_path thefuck && eval $(thefuck --alias)
 
 aws_secret_edit() {
     # requires `brew install jq moreutils`
@@ -55,19 +56,23 @@ znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd
 znap source jeffreytse/zsh-vi-mode
 
 # `znap prompt` makes your prompt visible in just 15-40ms!
-znap eval starship "starship init zsh --print-full-init"
-znap prompt
+# unset PROMPT
+echo $PROMPT
+# znap eval starship "starship init zsh --print-full-init"
+# znap prompt
+eval $(starship init zsh)
+print $PROMPT
 
 znap source zsh-users/zsh-autosuggestions
 znap source zsh-users/zsh-completions
 
 znap source Aloxaf/fzf-tab
 
-znap fpath _kubectl 'kubectl completion zsh'
-znap fpath _op      "op completion zsh"
-znap fpath _rustup  'rustup  completions zsh'
-znap fpath _cargo   'rustup  completions zsh cargo'
-znap fpath _gh 'gh completion --shell zsh'
+check_path kubectl && znap fpath _kubectl 'kubectl completion zsh'
+check_path op && znap fpath _op      "op completion zsh"
+check_path rustup && znap fpath _rustup  'rustup  completions zsh'
+check_path cargo && znap fpath _cargo   'rustup  completions zsh cargo'
+check_path gh && znap fpath _gh 'gh completion --shell zsh'
 complete -C `which aws_completer` aws
 
 # e.g., zsh-syntax-highlighting must be loaded
@@ -92,7 +97,7 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.local/repos/zplug/init.zsh  # Start Znap
 
-source `brew --prefix`/opt/zplug/init.zsh
+# source `brew --prefix`/opt/zplug/init.zsh
 # Set the priority when loading
 # (If the defer tag is given 2 or above, run after compinit command)
 
@@ -158,15 +163,7 @@ export GOROOT=~/go
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
 
-# Created by `pipx` on 2022-01-04 23:54:41
-export PATH="$PATH:/Users/zdufour/.local/bin"
-export PATH="$PATH:/Users/zdufour/Library/Python/3.8/bin"
-eval "$(direnv hook zsh)"
-
-if [ -d /home/linuxbrew ]; then
-    export PATH="/home/linuxbrew/.linuxbrew/opt/python@3.10/bin:$PATH"
-fi
-
+check_path direnv && eval "$(direnv hook zsh)"
 
 export NPM_PACKAGES="/home/zdufour/.npm-packages"
 export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
@@ -176,13 +173,17 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source_if_exists() {
+    [ -f "$1" ] && source "$1"
+}
 
-[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+source_if_exists "$HOME/.fzf.zsh"
+source_if_exists "$HOME/.gvm/scripts/gvm"
+source_if_exists "$HOME/.cargo/env"
 
-source "$HOME/.cargo/env"
 
 
 # Hishtory Config:
-export PATH="$PATH:/Users/zdufour/.hishtory"
-source /Users/zdufour/.hishtory/config.zsh
+add_to_path "$HOME/.hishtory"
+source_if_exists "$HOME/.hishtory/config.zsh"
+
