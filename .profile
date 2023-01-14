@@ -12,8 +12,9 @@
 ########### Environment Variables
 ##########################################################################
 
-export LANG=en_US.UTF-8
-export EDITOR=nvim
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export EDITOR=`which nvim`
 # export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
@@ -23,23 +24,17 @@ export NETSKOPE_CERT='/Library/Application Support/Netskope/STAgent/data/nscacer
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 
 # use neovim as default pager
-export PAGER='nvim -R'
+export PAGER="$EDITOR -R"
 
 # use neovim as manpager
-export MANPAGER='nvim +Man!'
+export MANPAGER="$EDITOR +Man!"
 export MANWIDTH=999
 
 ##########################################################################
 ########## Helper Functions
 ##########################################################################
 
-add_to_path() {
-    directory=$1
-	# todo: if not -d $directory; then mkdir --parents $directory
-	# fi
-	# export PATH=$...
-    export PATH="$directory:$PATH"
-}
+. ~/.dotfiles/path_functions.sh
 
 ##########################################################################
 ########## Add to path
@@ -61,11 +56,11 @@ add_to_path "/usr/local/go/bin"
 
 if [ `uname -s` != 'Darwin' ]; then
 	# Start all of my after-login systemd services
-	systemctl --user start autostart.service
+    check_path systemctl && systemctl --user start autostart.service
 	# make capslock behave like ctrl when held
-	setxkbmap -option 'caps:ctrl_modifier'
+	check_path setxkbmap && setxkbmap -option 'caps:ctrl_modifier'
 	# make capslock behave like esc when tapped
-	xcape -e 'Caps_Lock=Escape;Control_L=Escape;Control_R=Escape'
+	check_path xcape && xcape -e 'Caps_Lock=Escape;Control_L=Escape;Control_R=Escape'
 
 	# OnePassword
 	# if which 1password; then
