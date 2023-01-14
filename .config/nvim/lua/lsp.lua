@@ -11,6 +11,7 @@ require("mason-lspconfig").setup({
 		"sqls",
 		"yamlls",
 		"taplo",
+        "texlab",
 	},
 	automatic_installation = true,
 })
@@ -161,6 +162,23 @@ for _, x in pairs({
 }) do
 	lspconfig[x].setup({})
 end
+
+lspconfig.texlab.setup({
+    settings= {
+        texlab={
+            build={
+                -- executable="tectonic",
+                executable="xelatex",
+                args={"-pdf", "-interaction=nonstopmode", "-synctex=1", "%f"},
+                onSave=true,
+            },
+            chktex={
+                onEdit=true,
+                onOpenAndSave=true,
+            },
+        },
+    },
+})
 
 -- TOML
 lspconfig.taplo.setup({
