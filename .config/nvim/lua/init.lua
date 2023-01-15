@@ -8,7 +8,8 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = "a"
 
-vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
+-- TODO - use `nvm exec 17 which node` to set this
+-- vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
 
 if vim.g.neovide ~= nil then
     print("changing directory to home")
