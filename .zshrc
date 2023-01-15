@@ -90,8 +90,17 @@ znap source zsh-users/zsh-syntax-highlighting
 
 export NVM_DIR="$HOME/.nvm"
 
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+#####################
+### volta
+#####################
+
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
 
 [ -f "$NETSKOPE_CERT" ] && alias nvm="CURL_CA_BUNDLE=\"${NETSKOPE_CERT?}\" nvm"
 
@@ -203,3 +212,4 @@ add_to_path "$HOME/.hishtory"
 source_if_exists "$HOME/.hishtory/config.zsh"
 
 export PATH=$PATH:/Users/zdufour/.aido
+
