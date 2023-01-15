@@ -23,6 +23,7 @@ export NETSKOPE_CERT='/Library/Application Support/Netskope/STAgent/data/nscacer
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 
 # use neovim as default pager
+export GIT_PAGER=delta
 export PAGER='nvim -R'
 
 # use neovim as manpager
