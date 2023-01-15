@@ -33,7 +33,9 @@ require("lazy").setup({
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
-    "vimwiki/vimwiki",
+    -- split and join treesitter
+    { "Wansmer/treesj", config = true },
+    -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
     {
@@ -73,10 +75,6 @@ require("lazy").setup({
     "elihunter173/dirbuf.nvim",
 
     "svermeulen/vimpeccable",
-    {
-        "ray-x/go.nvim",
-        dependencies = { "ray-x/guihua.lua" },
-    },
 
     {
         "folke/which-key.nvim",
@@ -231,6 +229,52 @@ require("lazy").setup({
         priority = 1, -- load after cmp (and most plugins)
         config = function()
             require("config.lsp")
+        end,
+    },
+    {
+        "mfussenegger/nvim-dap",
+        dependencies = { "leoluz/nvim-dap-go" },
+        config = function()
+            local dapgo = require("dap-go")
+            dapgo.setup()
+            local vimp = require("vimp")
+            vimp.nnoremap("<leader>dt", function()
+                dapgo.debug_test()
+            end)
+            local dap = require("dap")
+            vimp.nnoremap({ "silent" }, "<F5>", dap.continue, { desc = "debugger continue" })
+            vimp.nnoremap({ "silent" }, "<F10>", dap.step_over, { desc = "debugger step over" })
+            vimp.nnoremap({ "silent" }, "<F11>", dap.step_into, { desc = "debugger step into" })
+            vimp.nnoremap({ "silent" }, "<F12>", dap.step_out, { desc = "debugger step out" })
+            vimp.nnoremap({ "silent" }, "<Leader>b", dap.toggle_breakpoint, { desc = "debugger toggle breakpoint" })
+            vimp.nnoremap({ "silent" }, "<Leader>B", function()
+                require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+            end, { desc = "debugger set breakpoint condition" })
+            vimp.nnoremap({ "silent" }, "<Leader>lp", function()
+                require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+            end, { desc = "debugger set log point message" })
+            vimp.nnoremap({ "silent" }, "<Leader>dr", dap.repl.open, { desc = "open debugger repl" })
+            vimp.nnoremap({ "silent" }, "<Leader>dl", dap.run_last, { desc = "run last debugger" })
+        end,
+    },
+    {
+        "crispgm/nvim-go",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            -- TODO - enable this + figure out what it is
+            "rcarriga/nvim-notify",
+        },
+        build = ":GoInstallBinaries",
+        config = function()
+            require("go").setup({
+                -- notify: use nvim-notify
+                auto_format = false,
+                auto_lint = false,
+                notify = true,
+                auto_format = false,
+                lint_prompt_style = "vt",
+                -- auto_lint = false,
+            })
         end,
     },
     {

@@ -27,8 +27,11 @@ telescope.setup({
         mappings = {
             n = {
                 [","] = telescope.extensions.hop.hop,
+                -- map backspace to delete_buffer
+                ["<BS>"] = actions.delete_buffer,
             },
             i = {
+                ["<C-BS>"] = actions.delete_buffer,
                 ["<C-,>"] = telescope.extensions.hop.hop, -- hop.hop_toggle_selection
                 -- custom hop loop to multi selects and sending selected entries to quickfix list
                 ["<C-space>"] = function(prompt_bufnr)

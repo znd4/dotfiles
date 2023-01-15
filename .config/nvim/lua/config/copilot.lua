@@ -4,6 +4,9 @@ vim.cmd('imap <silent><script><expr> <C-j> copilot#Accept("")')
 
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
+vim.g.copilot_filetypes = {
+    ["dap-repl"] = false,
+}
 
 vim.api.nvim_create_augroup("yamlenter", { clear = true })
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
