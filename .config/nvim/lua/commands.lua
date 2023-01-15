@@ -16,8 +16,6 @@ if not exists then
     return
 end
 
-local telex = require("telescope").extensions
-
 vimp.map_command("Buffers", function()
     telescope.buffers()
 end)
@@ -27,15 +25,29 @@ local projects = function()
 end
 
 vimp.map_command("Projects", projects)
-vimp.map_command("Help", telescope.help_tags)
-vimp.map_command("Files", telescope.find_files)
+vimp.map_command("Help", function()
+    telescope.help_tags()
+end)
+vimp.map_command("GF", function()
+    telescope.git_files()
+end)
+vimp.map_command("GS", function()
+    telescope.git_status()
+end)
+vimp.map_command("Commands", function()
+    telescope.commands()
+end)
+vimp.map_command("Files", function()
+    telescope.find_files()
+end)
+
 -- vimp.nnoremap("<C-f>", telescope.find_files)
 
 local nnoremap = function(...)
     vim.keymap.set("n", ...)
 end
 
-nnoremap(leader .. "ff", function()
+local git_status = nnoremap(leader .. "ff", function()
     telescope.find_files({ hidden = true })
 end, { desc = "Telescope find files" })
 nnoremap(leader .. "fg", telescope.live_grep, { desc = "Telescope grep contents" })
@@ -49,12 +61,5 @@ nnoremap(leader .. "fo", ":Octo actions<CR>")
 nnoremap(leader .. "fl", telescope.lsp_dynamic_workspace_symbols, { desc = "Telescope lsp_dynamic_workspace_symbols" })
 -- vimp.nnoremap(leader .. "fp", projects)
 nnoremap(leader .. "fc", telescope.commands, { desc = "Telescope commands" })
-nnoremap(leader .. "fm", telescope.keymaps, { desc = "Telescope commands" })
-
-vimp.map_command("GF", function()
-    telescope.git_files()
-end)
-
-vimp.map_command("Commands", function()
-    telescope.commands()
-end)
+nnoremap(leader .. "fs", telescope.git_status, { desc = "Search git status" })
+nnoremap(leader .. "fm", telescope.keymaps, { desc = "Telescope keymaps" })
