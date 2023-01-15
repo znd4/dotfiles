@@ -61,10 +61,6 @@ endfunction
 command! GHOpen :call GHOpen()
 
 
-let g:vimwiki_list = [ 
-			\ {'path': '~/my_site/', 'path_html': '~/public_html/', 'syntax': 'markdown', 'ext': '.md'},
-			\ ]
-
 " prompt when closing buffer with unsaved changes
 " https://vi.stackexchange.com/a/5879
 set confirm
