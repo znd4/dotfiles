@@ -2,17 +2,16 @@ require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
         "bashls",
-        "bufls",
-        "eslint",
-        "pyright",
         "rnix",
-        "rust_analyzer",
-        "sqls",
+        "eslint",
         "sumneko_lua",
-        "taplo",
-        "terraformls",
-        "tflint",
+        "rust_analyzer",
+        "bufls",
+        "pyright",
+        "sqls",
         "yamlls",
+        "taplo",
+        "texlab",
     },
     automatic_installation = true,
 })
@@ -161,6 +160,24 @@ for _, x in pairs({
     lspconfig[x].setup({})
 end
 
+print("Setting up texlab")
+lspconfig.texlab.setup({
+    settings = {
+        texlab = {
+            build = {
+                -- executable="tectonic",
+                executable = "xelatex",
+                args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "%f" },
+                onSave = true,
+            },
+            chktex = {
+                onEdit = true,
+                onOpenAndSave = true,
+            },
+        },
+    },
+})
+
 -- TOML
 lspconfig.taplo.setup({
     filetypes = { "toml", "gitconfig" },
@@ -215,6 +232,7 @@ null_ls.setup({
         null_ls.builtins.formatting.stylua.with({
             extra_args = { "--indent-type", "spaces" },
         }),
+        null_ls.builtins.diagnostics.eslint,
 
         -- python
         null_ls.builtins.formatting.black,
@@ -285,6 +303,9 @@ lspconfig.yamlls.setup({
                 -- codecov
                 ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
             },
+            format = {
+                enable = true,
+            },
         },
     },
     filetypes = { "yaml", "yml", "yaml.docker-compose" },
@@ -314,24 +335,24 @@ lspconfig.sumneko_lua.setup({
 })
 
 -- lspconfig.pylsp.setup({
---  settings = {
---      pylsp = {
---          plugins = {
---              pycodestyle = {
---                  ignore = { "W391" },
---                  maxLineLength = 100,
---              },
---              pyflakes = { enabled = false },
---              flake8 = { enabled = true },
---              pydocstyle = { enabled = true },
---              black = {
---                  enable = true,
---              },
---              -- jedi = {
---              --     -- TODO - Add something to on_attach that finds virtual environment path
---              --     environment = environment
---              -- }
---          },
---      },
---  },
+-- 	settings = {
+-- 		pylsp = {
+-- 			plugins = {
+-- 				pycodestyle = {
+-- 					ignore = { "W391" },
+-- 					maxLineLength = 100,
+-- 				},
+-- 				pyflakes = { enabled = false },
+-- 				flake8 = { enabled = true },
+-- 				pydocstyle = { enabled = true },
+-- 				black = {
+-- 					enable = true,
+-- 				},
+-- 				-- jedi = {
+-- 				--     -- TODO - Add something to on_attach that finds virtual environment path
+-- 				--     environment = environment
+-- 				-- }
+-- 			},
+-- 		},
+-- 	},
 -- })
