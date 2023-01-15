@@ -74,10 +74,6 @@ require("lazy").setup({
     "elihunter173/dirbuf.nvim",
 
     "svermeulen/vimpeccable",
-    {
-        "ray-x/go.nvim",
-        dependencies = { "ray-x/guihua.lua" },
-    },
 
     {
         "folke/which-key.nvim",
