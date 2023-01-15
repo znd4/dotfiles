@@ -1,6 +1,7 @@
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
+vim.g.timeoutlen = 500
 vim.g.mapleader = " "
 
 vim.g.python3_host_prog = "python3"
