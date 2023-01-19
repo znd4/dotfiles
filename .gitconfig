@@ -17,8 +17,6 @@
 	email = zane@znd4.me
 	# email = zdufour@aspiration.com
 
-[includeIf "gitdir:~/Work/"]
-    path = ~/Work/.gitconfig
 
 [pull]
 rebase = false
@@ -28,11 +26,18 @@ rebase = false
 # 	helper = /usr/local/share/gcm-core/git-credential-manager-core
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 
 [url "git@github-aspiration:AspirationPartners"]
     insteadOf = git@github.com:AspirationPartners
+
+[url "git@github-aspiration:AspirationPartners"]
+    insteadOf = https://github.com/AspirationPartners
+
+[includeIf "gitdir:~/Work/"]
+    path = ~/Work/.gitconfig
 
 [core]
 	sshCommand = ssh -o StrictHostKeyChecking=no
@@ -60,9 +65,9 @@ rebase = false
     colorMoved = default
     pager = delta
 
-
 [commit]
 	template = /Users/zdufour/.stCommitMsg
+
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
