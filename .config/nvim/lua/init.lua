@@ -52,6 +52,7 @@ vim.filetype.add({
         [".yamllint"] = "yaml",
     },
     pattern = {
+        ["${HOME}/%.ssh/config%.d/.*"] = "sshconfig",
         [".*"] = {
             priority = -math.huge,
             function(path, bufnr)
