@@ -50,30 +50,25 @@ telescope.load_extension("hop")
 
 local vimp = require("vimp")
 
-vimp.map_command("Buffers", function()
-    telescope.buffers()
-end)
--- local projects = ":Telescope projects<cr>"
-local projects = function()
-    vim.cmd.Telescope("projects")
+local factory = function(func, ...)
+    local args = { ... }
+    return function()
+        func(unpack(args))
+    end
 end
 
+local builtin = require("telescope.builtin")
+
+vimp.map_command("Buffers", factory(builtin.buffers))
+-- local projects = ":Telescope projects<cr>"
+local projects = factory(vim.cmd.Telescope, "projects")
+
 vimp.map_command("Projects", projects)
-vimp.map_command("Help", function()
-    telescope.help_tags()
-end)
-vimp.map_command("GF", function()
-    telescope.git_files()
-end)
-vimp.map_command("GS", function()
-    telescope.git_status()
-end)
-vimp.map_command("Commands", function()
-    telescope.commands()
-end)
-vimp.map_command("Files", function()
-    telescope.find_files()
-end)
+vimp.map_command("Help", factory(builtin.help_tags))
+vimp.map_command("GF", factory(builtin.git_files))
+vimp.map_command("GS", factory(builtin.git_status))
+vimp.map_command("Commands", factory(builtin.commands))
+vimp.map_command("Files", factory(builtin.find_files))
 
 -- vimp.nnoremap("<C-f>", telescope.find_files)
 
@@ -83,11 +78,7 @@ end
 
 local leader = "<leader>"
 
-local builtin = require("telescope.builtin")
-
-nnoremap(leader .. "ff", function()
-    builtin.find_files({ hidden = true })
-end, { desc = "Telescope find files" })
+nnoremap(leader .. "ff", factory(builtin.find_files, { hidden = true }), { desc = "Telescope find files" })
 nnoremap(leader .. "fg", builtin.live_grep, { desc = "Telescope grep contents" })
 nnoremap(leader .. "fb", builtin.buffers, { desc = "Telescope buffers" })
 -- nnoremap(leader .. "ft", builtin.builtins, { desc = "Telescope buffers" })
