@@ -14,6 +14,7 @@ telescope.setup({
         },
     },
     defaults = {
+        file_ignore_patterns = { "%.git/*", "rpc/*" },
         vimgrep_arguments = {
             "rg",
             "--color=never",
