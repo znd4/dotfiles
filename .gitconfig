@@ -30,8 +30,10 @@ rebase = false
 	useHttpPath = true
 [url "git@github.com:"]
 	insteadOf = https://github.com/
-[url "git@github-zdog234:zdog234"]
-    insteadOf = git@github.com:zdog234
+
+[url "git@github-aspiration:AspirationPartners"]
+    insteadOf = git@github.com:AspirationPartners
+
 [core]
 	sshCommand = ssh -o StrictHostKeyChecking=no
 	excludesfile = ~/.gitignore_global

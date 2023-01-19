@@ -69,3 +69,5 @@ function setup_coreutils_for_mac
 end
 
 main
+set -gx VOLTA_HOME "$HOME/.volta"
+set -gx PATH "$VOLTA_HOME/bin" $PATH
