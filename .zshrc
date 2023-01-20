@@ -204,3 +204,5 @@ source_if_exists "$HOME/.hishtory/config.zsh"
 
 export PATH=$PATH:/Users/zdufour/.aido
 
+source_if_exists /Users/zdufour/.config/op/plugins.sh
+
