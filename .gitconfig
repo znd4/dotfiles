@@ -27,14 +27,7 @@ rebase = false
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 
-[url "git@github.com:"]
-	insteadOf = https://github.com/
 
-[url "git@github-aspiration:AspirationPartners"]
-    insteadOf = git@github.com:AspirationPartners
-
-[url "git@github-aspiration:AspirationPartners"]
-    insteadOf = https://github.com/AspirationPartners
 
 [includeIf "gitdir:~/Work/"]
     path = ~/Work/.gitconfig
