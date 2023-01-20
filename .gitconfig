@@ -27,8 +27,6 @@ rebase = false
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 
-
-
 [includeIf "gitdir:~/Work/"]
     path = ~/Work/.gitconfig
 
