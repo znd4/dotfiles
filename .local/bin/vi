@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# vi -> nvim
+if [ -x "$(command -v nvim)" ]; then
+    exec nvim "$@"
+fi
+
