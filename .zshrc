@@ -8,6 +8,8 @@ if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"
 fi
 
+export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_personal"
+
 check_path thefuck && eval $(thefuck --alias)
 
 # ssl cert fix for node on aspiration laptop
