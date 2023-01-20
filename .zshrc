@@ -71,6 +71,8 @@ check_path gh && znap fpath _gh 'gh completion --shell zsh'
 check_path circleci && znap fpath _circleci 'circleci completion zsh'
 complete -C `which aws_completer` aws
 
+setopt completealiases # so that gh works when aliased by op plugin
+
 # e.g., zsh-syntax-highlighting must be loaded
 # after executing compinit command and sourcing other plugins
 znap source zsh-users/zsh-syntax-highlighting
@@ -135,8 +137,6 @@ then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
-autoload -Uz compinit
-compinit
 
 
 
