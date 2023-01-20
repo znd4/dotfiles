@@ -68,6 +68,7 @@ check_path op && znap fpath _op      "op completion zsh"
 check_path rustup && znap fpath _rustup  'rustup  completions zsh'
 check_path cargo && znap fpath _cargo   'rustup  completions zsh cargo'
 check_path gh && znap fpath _gh 'gh completion --shell zsh'
+check_path circleci && znap fpath _circleci 'circleci completion zsh'
 complete -C `which aws_completer` aws
 
 # e.g., zsh-syntax-highlighting must be loaded
