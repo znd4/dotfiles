@@ -3,18 +3,11 @@ set foldexpr=nvim_treesitter#foldexpr()
 
 lua require('init')
 
-" reload packer config whenever updating plugins.lua
-augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source init.vim
-augroup end
 
 set nocompatible              " required
 filetype plugin on                  " required
 syntax on
 
-
-autocmd VimLeavePre * :call system("date > ~/test.txt")
 
 " Don't yank when pasting over a selection
 " see: https://vi.stackexchange.com/a/39151
