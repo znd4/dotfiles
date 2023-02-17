@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+PRs=$(
+	gh pr list \
+		--json=number,title,headRefName,state,updatedAt |
+		jq '.[]'
+)
+echo "$PRs" | jq -r '. | "\(.number) \(.headRefName) \(.title)"' | gum choose | awk '{print $1}'

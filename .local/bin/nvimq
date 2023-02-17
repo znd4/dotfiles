@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import argparse
+import subprocess as sp
+import sys
+import tempfile
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    # first argument is a file to read from
+    parser.add_argument(
+        "file",
+        # nargs="?",
+        type=argparse.FileType("r"),
+        default=sys.stdin,
+    )
+    args = parser.parse_args()
+    with tempfile.NamedTemporaryFile() as tmp:
+        with open(tmp.name, "w") as f:
+            nvim_process = sp.run(
+                ["nvim", "-q", tmp.name],
+            )
+            for line in args.file:
+                f.write(line)
+
+        nvim_process.check_returncode()
+
+
+if __name__ == "__main__":
+    main()
