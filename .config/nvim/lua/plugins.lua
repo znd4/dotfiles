@@ -210,38 +210,38 @@ require("lazy").setup({
     },
     { "ckipp01/stylua-nvim" },
     {
-        "hrsh7th/nvim-cmp",
+        "VonHeikemen/lsp-zero.nvim",
         dependencies = {
             { "L3MON4D3/LuaSnip", version = "1.*" },
-            { "SirVer/ultisnips", dependencies = { "honza/vim-snippets", rtp = "." } },
+            "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
-            "quangnguyen30192/cmp-nvim-ultisnips",
             "nvim-treesitter/nvim-treesitter",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-emoji",
+            "hrsh7th/cmp-nvim-lua", -- Optional
             "saadparwaiz1/cmp_luasnip",
-        },
-        priority = 102,
-        config = function()
-            require("completion")
-        end,
-    },
-    {
-        "williamboman/mason.nvim",
-        dependencies = {
+
             "lukas-reineke/lsp-format.nvim",
+            "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
             "neovim/nvim-lspconfig",
             "jose-elias-alvarez/null-ls.nvim",
         },
-        priority = 1, -- load after cmp (and most plugins)
+        priority = 102,
         config = function()
             require("config.lsp")
         end,
     },
+    --{
+    --    dependencies = {},
+    --    priority = 1, -- load after cmp (and most plugins)
+    --    config = function()
+    --        require("config.lsp")
+    --    end,
+    --},
     {
         "mfussenegger/nvim-dap",
         dependencies = { "leoluz/nvim-dap-go" },

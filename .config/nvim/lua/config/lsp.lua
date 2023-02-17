@@ -1,20 +1,20 @@
-require("mason").setup()
-require("mason-lspconfig").setup({
-    ensure_installed = {
-        "bashls",
-        "rnix",
-        "eslint",
-        "sumneko_lua",
-        "rust_analyzer",
-        "bufls",
-        "pyright",
-        "sqls",
-        "yamlls",
-        "taplo",
-        "texlab",
-    },
-    automatic_installation = true,
-})
+local ensure_installed = {
+    "bashls",
+    "bufls",
+    "eslint",
+    "gopls",
+    "jsonls",
+    "ltex",
+    "marksman",
+    "pyright",
+    "rnix",
+    "rust_analyzer",
+    "sqls",
+    "lua_ls",
+    "taplo",
+    "texlab",
+    "yamlls",
+}
 
 if vim.fn.executable("lua-language-server") ~= 1 then
     print("plz brew install lua-language-server or something")
@@ -34,7 +34,7 @@ vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
 require("lsp-format").setup({
     exclude = {
-        "sumneko_lua",
+        "lua_ls",
         "sqls",
     },
     sync = true,
@@ -48,12 +48,11 @@ local lsp_formatting = function(bufnr)
             if ft == "sql" then
                 result = client.name ~= "sqls"
             elseif ft == "lua" then
-                result = client.name ~= "sumneko_lua"
+                result = client.name ~= "lua_ls"
             else
                 result = true
             end
             return result
-            --return client.name == "null-ls"
         end,
         bufnr = bufnr,
     })
@@ -95,7 +94,7 @@ end
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
     if client.name == "yamlls" then
-        client.server_capabilities.documentFormattingProvider = true
+        client.server_capabilities.documentFormattingProvider = false
     end
     enable_formatting(client, bufnr)
     -- require("lsp-format").on_attach(client)
@@ -108,13 +107,9 @@ local on_attach = function(client, bufnr)
         local function map(...)
             vimp.nnoremap({ "silent" }, ...)
         end
+
         map("gI", vim.lsp.buf.incoming_calls)
         map("gO", vim.lsp.buf.outgoing_calls)
-        map("gD", vim.lsp.buf.declaration)
-        map("gd", vim.lsp.buf.definition)
-        map("K", vim.lsp.buf.hover)
-        map("gi", vim.lsp.buf.implementation)
-        map("<C-k>", vim.lsp.buf.signature_help)
         vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
         map("<space>wa", vim.lsp.buf.add_workspace_folder)
         map("<space>wr", vim.lsp.buf.remove_workspace_folder)
@@ -122,67 +117,109 @@ local on_attach = function(client, bufnr)
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end)
         map("<space>D", vim.lsp.buf.type_definition)
-        map("<space>rn", vim.lsp.buf.rename)
-        map("<space>ca", vim.lsp.buf.code_action)
-        map("<leader>d]", vim.diagnostic.goto_next)
-        map("<leader>d[", vim.diagnostic.goto_prev)
-        map("gr", vim.lsp.buf.references)
-        map("<space>f", function()
-            vim.lsp.buf.format({ async = true })
-        end)
+        -- map("<space>ca", vim.lsp.buf.code_action)
     end)
 end
 
-local lsp_defaults = {
-    flags = {
-        debounce_text_changes = 150,
+local lsp = require("lsp-zero")
+lsp.preset("recommended")
+local lua_library = vim.api.nvim_get_runtime_file("", true)
+
+-- lsp.skip_server_setup({ "marksman" })
+lsp.skip_server_setup({ "ltex" })
+
+lsp.nvim_workspace({
+    library = lua_library,
+})
+lsp.on_attach(on_attach)
+lsp.ensure_installed(ensure_installed)
+
+local yamlls_settings = {
+    redhat = {
+        telemetry = {
+            enabled = true,
+        },
     },
-    capabilities = capabilities,
-    on_attach = on_attach,
-}
-
-local lspconfig = require("lspconfig")
-
-lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, lsp_defaults)
-for _, x in pairs({
-    "tflint",
-    "terraform_lsp",
-    "bashls",
-    "bufls",
-    "clangd",
-    "eslint",
-    "kotlin_language_server",
-    "pyright",
-    "rnix",
-    "rust_analyzer",
-    "tsserver",
-}) do
-    lspconfig[x].setup({})
-end
-
-print("Setting up texlab")
-lspconfig.texlab.setup({
-    settings = {
-        texlab = {
-            build = {
-                -- executable="tectonic",
-                executable = "xelatex",
-                args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "%f" },
-                onSave = true,
+    yaml = {
+        schemas = {
+            ["Kubernetes"] = "/overlays/**/*",
+            ["https://json.schemastore.org/circleciconfig.json"] = {
+                "/.circleci/config.*",
+                "/.circleci/test-deploy.*",
             },
-            chktex = {
-                onEdit = true,
-                onOpenAndSave = true,
+            -- codecov
+            ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
+        },
+        format = {
+            enable = true,
+        },
+    },
+}
+local yamlls_filetypes = { "yaml", "yml", "yaml.docker-compose" }
+
+lsp.configure("yamlls", {
+    settings = yamlls_settings,
+    filetypes = yamlls_filetypes,
+})
+
+lsp.configure("lua_ls", {
+    settings = {
+        Lua = {
+            runtime = {
+                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                version = "LuaJIT",
+            },
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = { "vim" },
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                -- add ~/.local/share/nvim/lazy to vim.api.nvim_get_runtime_file("", true)
+                library = lua_library,
+                checkThirdParty = false,
+            },
+            -- Do not send telemetry data containing a randomized but unique identifier
+            telemetry = {
+                enable = false,
             },
         },
     },
 })
 
--- TOML
-lspconfig.taplo.setup({
+local texlab_settings = {
+    texlab = {
+        build = {
+            -- executable="tectonic",
+            executable = "xelatex",
+            args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "%f" },
+            onSave = true,
+        },
+        chktex = {
+            onEdit = true,
+            onOpenAndSave = true,
+        },
+    },
+}
+lsp.configure("texlab", {
+    settings = texlab_settings,
+})
+lsp.configure("taplo", {
     filetypes = { "toml", "gitconfig" },
 })
-lspconfig.gopls.setup({
+
+lsp.configure("sqls", {
+    init_options = {
+        provideFormatter = false,
+    },
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        on_attach(client, bufnr)
+    end,
+})
+
+lsp.configure("gopls", {
     cmd = { "gopls" },
     settings = {
         gopls = {
@@ -203,16 +240,48 @@ lspconfig.gopls.setup({
     },
 })
 
-lspconfig.sqls.setup({
-    init_options = {
-        provideFormatter = false,
+local lspkind = require("lspkind")
+
+local cmp = require("cmp")
+
+-- vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+lsp.setup()
+
+local cmp_config = lsp.defaults.cmp_config({
+    completion = {
+        keyword_length = 1,
     },
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        on_attach(client, bufnr)
-    end,
+    formatting = {
+        format = lspkind.cmp_format({
+            mode = "symbol",
+            with_text = true,
+            -- maxwidth = 50,
+            menu = {
+                buffer = "[buf]",
+                nvim_lsp = "[LSP]",
+                nvim_lua = "[api]",
+                path = "[path]",
+                luasnip = "[snip]",
+                tn = "[TabNine]",
+            },
+        }),
+    },
+    window = cmp.config.window.bordered(),
+    mapping = {
+        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+        ["<C-f>"] = cmp.mapping.scroll_docs(4),
+        ["<C-Space>"] = cmp.mapping.complete(),
+        ["<C-e>"] = cmp.mapping.close(),
+        ["<C-y>"] = cmp.mapping.confirm(),
+        ["<CR>"] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+        }),
+    },
 })
+
+cmp.setup(cmp_config)
 
 local null_ls = require("null-ls")
 null_ls.setup({
@@ -221,6 +290,7 @@ null_ls.setup({
     --  for source
     --  client.config.sources
     -- end
+    on_attach = on_attach,
     sources = {
         -- dotenv
         null_ls.builtins.diagnostics.dotenv_linter,
@@ -232,15 +302,39 @@ null_ls.setup({
         null_ls.builtins.formatting.stylua.with({
             extra_args = { "--indent-type", "spaces" },
         }),
-        null_ls.builtins.diagnostics.eslint,
+        null_ls.builtins.code_actions.eslint_d,
+        null_ls.builtins.diagnostics.eslint_d,
 
         -- python
         null_ls.builtins.formatting.black,
         null_ls.builtins.formatting.isort,
 
         -- golang
-        null_ls.builtins.formatting.goimports,
+        null_ls.builtins.formatting.goimports.with({
+            extra_args = { "-local", "github.com/AspirationPartners" },
+        }),
         null_ls.builtins.formatting.gofmt,
+
+        -- prettier
+        null_ls.builtins.formatting.prettierd.with({
+            -- remove javascript from filetypes
+            filetypes = {
+                "json",
+                "yaml",
+                "markdown",
+                "html",
+                "css",
+                "scss",
+                "less",
+                "graphql",
+                "vue",
+                "svelte",
+                "bash",
+                "yaml.docker-compose",
+            },
+        }),
+
+        null_ls.builtins.formatting.prettier_eslint,
 
         -- Spellchecking
         null_ls.builtins.completion.spell,
@@ -264,12 +358,6 @@ null_ls.setup({
         null_ls.builtins.diagnostics.sqlfluff.with({
             extra_args = { "--dialect", "postgres" },
         }),
-        -- null_ls.builtins.formatting.sqlfluff.with({
-        --     extra_args = { "--config=pyproject.toml" },
-        -- }),
-        -- null_ls.builtins.diagnostics.sqlfluff.with({
-        --     extra_args = { "--config=pyproject.toml" },
-        -- }),
 
         -- retab
         {
@@ -286,74 +374,3 @@ null_ls.setup({
         },
     },
 })
-lspconfig.yamlls.setup({
-    settings = {
-        redhat = {
-            telemetry = {
-                enabled = true,
-            },
-        },
-        yaml = {
-            schemas = {
-                ["Kubernetes"] = "/overlays/**/*",
-                ["https://json.schemastore.org/circleciconfig.json"] = {
-                    "/.circleci/config.*",
-                    "/.circleci/test-deploy.*",
-                },
-                -- codecov
-                ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
-            },
-            format = {
-                enable = true,
-            },
-        },
-    },
-    filetypes = { "yaml", "yml", "yaml.docker-compose" },
-})
-
-lspconfig.sumneko_lua.setup({
-    settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = "LuaJIT",
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { "vim" },
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-                checkThirdParty = false,
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
-            },
-        },
-    },
-})
-
--- lspconfig.pylsp.setup({
--- 	settings = {
--- 		pylsp = {
--- 			plugins = {
--- 				pycodestyle = {
--- 					ignore = { "W391" },
--- 					maxLineLength = 100,
--- 				},
--- 				pyflakes = { enabled = false },
--- 				flake8 = { enabled = true },
--- 				pydocstyle = { enabled = true },
--- 				black = {
--- 					enable = true,
--- 				},
--- 				-- jedi = {
--- 				--     -- TODO - Add something to on_attach that finds virtual environment path
--- 				--     environment = environment
--- 				-- }
--- 			},
--- 		},
--- 	},
--- })
