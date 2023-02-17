@@ -1,7 +1,3 @@
 #!/usr/bin/env bash
-PRs=$(
-	gh pr list \
-		--json=number,title,headRefName,state,updatedAt |
-		jq '.[]'
-)
-echo "$PRs" | jq -r '. | "\(.number) \(.headRefName) \(.title)"' | gum choose | awk '{print $1}'
+# https://github.com/charmbracelet/gum
+gh pr list | gum choose | awk '{print $1}'
