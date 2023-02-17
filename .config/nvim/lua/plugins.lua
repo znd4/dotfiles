@@ -80,7 +80,11 @@ require("lazy").setup({
         "folke/which-key.nvim",
         config = true,
     },
-    { "stevearc/dressing.nvim" },
+    { "stevearc/dressing.nvim", config = {
+        input = {
+            insert_only = false,
+        },
+    } },
     {
         "AckslD/nvim-FeMaco.lua",
         config = {
