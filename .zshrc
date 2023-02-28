@@ -63,6 +63,9 @@ check_path rustup && znap fpath _rustup  'rustup  completions zsh'
 check_path cargo && znap fpath _cargo   'rustup  completions zsh cargo'
 check_path gh && znap fpath _gh 'gh completion --shell zsh'
 check_path circleci && znap fpath _circleci 'circleci completion zsh'
+check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
+
+znap eval nx "http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh"
 complete -C `which aws_completer` aws
 
 setopt completealiases # so that gh works when aliased by op plugin
