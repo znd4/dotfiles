@@ -202,3 +202,7 @@ export PATH=$PATH:/Users/zdufour/.aido
 
 source_if_exists /Users/zdufour/.config/op/plugins.sh
 
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
