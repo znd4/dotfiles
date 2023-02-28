@@ -79,6 +79,9 @@ znap source zsh-users/zsh-syntax-highlighting
 #####################
 
 export NVM_DIR="$HOME/.nvm"
+[[ -f $NVM_DIR/nvm.sh ]] ||
+    git clone -- \
+        https://github.com/nvm-sh/nvm.git $NVM_DIR && (cd $NVM_DIR; pwd; git checkout v0.39.3)
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
