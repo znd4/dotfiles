@@ -39,7 +39,6 @@ fdf() {
 
 source ~/Git/zsh-snap/znap.zsh  # Start Znap
 
-
 znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
 
 # https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
@@ -51,12 +50,7 @@ function zvm_after_init() {
 znap source jeffreytse/zsh-vi-mode
 
 # `znap prompt` makes your prompt visible in just 15-40ms!
-# unset PROMPT
-echo $PROMPT
-# znap eval starship "starship init zsh --print-full-init"
-# znap prompt
 eval $(starship init zsh)
-print $PROMPT
 
 znap source zsh-users/zsh-autosuggestions
 znap source zsh-users/zsh-completions
