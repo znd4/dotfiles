@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# List all repositories owned by AspirationPartners
+gh repo list -L 1000 AspirationPartners | gum choose | awk '{print $1}'
