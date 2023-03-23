@@ -1,13 +1,4 @@
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
-
 lua require('init')
-
-
-set nocompatible              " required
-filetype plugin on                  " required
-syntax on
-
 
 " Don't yank when pasting over a selection
 " see: https://vi.stackexchange.com/a/39151
@@ -41,10 +32,6 @@ vmap <C-x> "+c
 
 
 
-" case-insensitive search
-set ignorecase
-
-
 " open current file in github
 function! GHOpen()
 	let cmd = "gh browse " . expand("%") . ":" . line(".")
@@ -52,20 +39,6 @@ function! GHOpen()
 endfunction
 
 command! GHOpen :call GHOpen()
-
-
-" prompt when closing buffer with unsaved changes
-" https://vi.stackexchange.com/a/5879
-set confirm
-
-" keep terminals open even when changing buffers
-set hidden
-
-" Set default tab width to 4
-set expandtab
-
-" show whitespace
-set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -78,30 +51,6 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
 " https://github.com/ruanyl/vim-gh-line
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gh_use_canonical = 1 " open permalink, not branch
-
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"    PYTHON
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" let g:loaded_python_provider = 0
-" let g:loadedpython3_provider=0
-"let g:python3_host_prog = "/home/zane/.pyenv/versions/neovim3/bin/python"
-"let python_highlight_all=1
-"
-"" Run python stuff faster
-"nnoremap py :!python3 %
-
-" python syntax highlighting
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ | set softtabstop=4
-    \ | set shiftwidth=4
-    \ | set expandtab
-    \ | set autoindent
-    \ | set fileformat=unix
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 "    FISH

@@ -1,13 +1,9 @@
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.g.timeoutlen = 500
+require("set")
+
 vim.g.mapleader = " "
 
 vim.g.python3_host_prog = "python3"
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.mouse = "a"
 
 -- TODO - use `nvm exec 17 which node` to set this
 -- vim.g.copilot_node_command = "/Users/zdufour/.nvm/versions/node/v17.9.1/bin/node"
@@ -44,6 +40,7 @@ vim.filetype.add({
         tfvars = "terraform",
         tfstate = "json",
         plist = "xml",
+        shell = "bash",
         ["tfstate.backup"] = "json",
     },
     filename = {
