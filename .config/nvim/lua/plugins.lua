@@ -55,6 +55,20 @@ require("lazy").setup({
     "dag/vim-fish",
     "editorconfig/editorconfig-vim",
     "vito-c/jq.vim",
+    {
+        "johmsalas/text-case.nvim",
+        config = function()
+            local textcase = require("textcase")
+            textcase.setup({})
+            local vimp = require("vimp")
+            vimp.nnoremap("gas", function()
+                textcase.current_word("to_snake_case")
+            end)
+            vimp.nnoremap("gaS", function()
+                textcase.lsp_rename("to_snake_case")
+            end)
+        end,
+    },
 
     "folke/tokyonight.nvim",
     "shaunsingh/moonlight.nvim",
