@@ -128,13 +128,15 @@ lsp.on_attach(function(client, bufnr)
         end)
     end)
 
-    if client.name == "yamlls" then
-        client.server_capabilities.documentFormattingProvider = false
-    end
     enable_formatting(client, bufnr)
 end)
 
 lsp.ensure_installed(ensure_installed)
+
+local function disableFormatting(client)
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentRangeFormattingProvider = false
+end
 
 local yamlls_settings = {
     redhat = {
@@ -166,14 +168,10 @@ local yamlls_settings = {
 local yamlls_filetypes = { "yaml", "yml", "yaml.docker-compose" }
 
 lsp.configure("yamlls", {
+    on_init = disableFormatting,
     settings = yamlls_settings,
     filetypes = yamlls_filetypes,
 })
-
-local function disableFormatting(client)
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-end
 
 lsp.configure("tsserver", {
     on_init = disableFormatting,
