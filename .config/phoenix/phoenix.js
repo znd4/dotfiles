@@ -12,98 +12,98 @@
 
 // common screen locations
 const topHalf = {
-  left: 0,
-  top: 0,
-  right: 0,
-  bottom: 0.5,
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0.5,
 };
 
 const leftHalf = {
-  left: 0,
-  top: 0,
-  right: 0.5,
-  bottom: 0,
+    left: 0,
+    top: 0,
+    right: 0.5,
+    bottom: 0,
 };
 
 const lowerLeftHalf = {
-  left: 0,
-  top: 0.5,
-  right: 0.5,
-  bottom: 0,
+    left: 0,
+    top: 0.5,
+    right: 0.5,
+    bottom: 0,
 };
 
 const rightHalf = {
-  left: 0.5,
-  top: 0,
-  right: 0,
-  bottom: 0,
+    left: 0.5,
+    top: 0,
+    right: 0,
+    bottom: 0,
 };
 
 const full = {
-  left: 0,
-  top: 0,
-  right: 0,
-  bottom: 0,
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
 };
 
 // the actual applications
 quakeApp({
-  key: "`",
-  modifiers: ["cmd"],
-  appName: "kitty",
-  // appName: "Alacritty",
-  position: full,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "`",
+    modifiers: ["cmd"],
+    appName: "WezTerm",
+    // appName: "Alacritty",
+    position: full,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "s",
-  modifiers: ["alt"],
-  appName: "Slack",
-  position: full,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "s",
+    modifiers: ["alt"],
+    appName: "Slack",
+    position: full,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-	key: "e",
-	modifiers: ["cmd"],
-	appName: "Neovide",
-	// appName: "VimR",
-	position: full,
-	followsMouse: true,
-	hideOnBlur: false,
+    key: "e",
+    modifiers: ["cmd"],
+    appName: "Neovide",
+    // appName: "VimR",
+    position: full,
+    followsMouse: true,
+    hideOnBlur: false,
 })
 quakeApp({
-  key: "m",
-  modifiers: ["alt"],
-  appName: "Messages",
-  position: lowerLeftHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "m",
+    modifiers: ["alt"],
+    appName: "Messages",
+    position: lowerLeftHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "p",
-  modifiers: ["alt"],
-  appName: "Spotify",
-  position: full,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "p",
+    modifiers: ["alt"],
+    appName: "Spotify",
+    position: full,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "r",
-  modifiers: ["alt"],
-  appName: "Roam Research",
-  position: rightHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "r",
+    modifiers: ["alt"],
+    appName: "Roam Research",
+    position: rightHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "z",
-  modifiers: ["alt"],
-  appName: "Zotero",
-  position: leftHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "z",
+    modifiers: ["alt"],
+    appName: "Zotero",
+    position: leftHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 // quakeApp({
 //   key: "c",
@@ -114,36 +114,36 @@ quakeApp({
 //   hideOnBlur: false,
 // });
 quakeApp({
-  key: "u",
-  modifiers: ["alt"],
-  appName: "zoom.us",
-  position: full,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "u",
+    modifiers: ["alt"],
+    appName: "zoom.us",
+    position: full,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "h",
-  modifiers: ["alt"],
-  appName: "Highlights",
-  position: leftHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "h",
+    modifiers: ["alt"],
+    appName: "Highlights",
+    position: leftHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "g",
-  modifiers: ["alt"],
-  appName: "Gmail",
-  position: leftHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "g",
+    modifiers: ["alt"],
+    appName: "Gmail",
+    position: leftHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 quakeApp({
-  key: "o",
-  modifiers: ["alt"],
-  appName: "Obsidian",
-  position: leftHalf,
-  followsMouse: true,
-  hideOnBlur: false,
+    key: "o",
+    modifiers: ["alt"],
+    appName: "Obsidian",
+    position: leftHalf,
+    followsMouse: true,
+    hideOnBlur: false,
 });
 
 /**
@@ -156,52 +156,52 @@ quakeApp({
  * @param {hideOnBlur} boolean whether the window should hide when it loses focus
  */
 function quakeApp({
-  key,
-  modifiers,
-  appName,
-  position,
-  followsMouse,
-  hideOnBlur,
+    key,
+    modifiers,
+    appName,
+    position,
+    followsMouse,
+    hideOnBlur,
 }) {
-  console.log("setting up quakeApp");
-  Key.on(key, modifiers, async function (_, repeat) {
-	console.log("got a request to do a thing");
-    // ignore keyboard repeats
-    if (repeat) {
-      return;
-    }
-    let [app, opened] = await startApp(appName, { focus: false });
-    console.log("quakeApp running");
+    console.log("setting up quakeApp");
+    Key.on(key, modifiers, async function(_, repeat) {
+        console.log("got a request to do a thing");
+        // ignore keyboard repeats
+        if (repeat) {
+            return;
+        }
+        let [app, opened] = await startApp(appName, { focus: false });
+        console.log("quakeApp running");
 
-	console.log(app);
-    // if the app started
-    if (app !== undefined) {
-      // move the app to the currently active space
-      const { moved, space } = moveAppToActiveSpace(app, followsMouse);
+        console.log(app);
+        // if the app started
+        if (app !== undefined) {
+            // move the app to the currently active space
+            const { moved, space } = moveAppToActiveSpace(app, followsMouse);
 
-      // set the app position
-      setAppPosition(app, position, space);
+            // set the app position
+            setAppPosition(app, position, space);
 
-      // hide the app if it is active and wasn't just opened or moved to
-      // a new space
-      if (app.isActive() && !opened && !moved) {
-        console.log("hiding b.c. active");
-        app.hide();
-      } else {
-        app.focus();
-      }
+            // hide the app if it is active and wasn't just opened or moved to
+            // a new space
+            if (app.isActive() && !opened && !moved) {
+                console.log("hiding b.c. active");
+                app.hide();
+            } else {
+                app.focus();
+            }
 
-      if (hideOnBlur) {
-        const identifier = Event.on("appDidActivate", (activatedApp) => {
-          if (app.name() !== activatedApp.name()) {
-            console.log("hiding b.c. hideOnBlur");
-            app.hide();
-            Event.off(identifier);
-          }
-        });
-      }
-    }
-  });
+            if (hideOnBlur) {
+                const identifier = Event.on("appDidActivate", (activatedApp) => {
+                    if (app.name() !== activatedApp.name()) {
+                        console.log("hiding b.c. hideOnBlur");
+                        app.hide();
+                        Event.off(identifier);
+                    }
+                });
+            }
+        }
+    });
 }
 
 /**
@@ -216,31 +216,31 @@ function quakeApp({
  * @param {Space} space the space to position the app in
  */
 function setAppPosition(app, relativeFrame, space) {
-  const mainWindow = app.mainWindow(); // get app window
-  if (space.screens().length > 1) {
-    // check one space per screen
-    throw new Error(DISPLAYS_HAVE_SEPARATE_SPACES);
-  } else if (space.screens().length > 0) {
-    // set the position of the app
-    const activeScreen = space.screens()[0];
-    const screen = activeScreen.flippedVisibleFrame();
-    const left = screen.x + relativeFrame.left * screen.width;
-    const top = screen.y + relativeFrame.top * screen.height;
-    const right = screen.x + screen.width - relativeFrame.right * screen.width;
-    const bottom =
-      screen.y + screen.height - relativeFrame.bottom * screen.height;
-    if (mainWindow.isFullScreen()) {
-      mainWindow.setFullScreen(false);
+    const mainWindow = app.mainWindow(); // get app window
+    if (space.screens().length > 1) {
+        // check one space per screen
+        throw new Error(DISPLAYS_HAVE_SEPARATE_SPACES);
+    } else if (space.screens().length > 0) {
+        // set the position of the app
+        const activeScreen = space.screens()[0];
+        const screen = activeScreen.flippedVisibleFrame();
+        const left = screen.x + relativeFrame.left * screen.width;
+        const top = screen.y + relativeFrame.top * screen.height;
+        const right = screen.x + screen.width - relativeFrame.right * screen.width;
+        const bottom =
+            screen.y + screen.height - relativeFrame.bottom * screen.height;
+        if (mainWindow.isFullScreen()) {
+            mainWindow.setFullScreen(false);
+        }
+        mainWindow.setTopLeft({
+            x: left,
+            y: top,
+        });
+        mainWindow.setSize({
+            width: right - left,
+            height: bottom - top,
+        });
     }
-    mainWindow.setTopLeft({
-      x: left,
-      y: top,
-    });
-    mainWindow.setSize({
-      width: right - left,
-      height: bottom - top,
-    });
-  }
 }
 
 /**
@@ -250,26 +250,26 @@ function setAppPosition(app, relativeFrame, space) {
  * @param {boolean} followsMouse whether the app should open in the screen containing the mouse or the key with keyboard focus
  */
 function moveAppToActiveSpace(app, followsMouse) {
-  const activeSpace = followsMouse ? mouseSpace() : Space.active();
-  const mainWindow = app.mainWindow(); // get app window
-  let moved = false; // boolean if the app was moved to a new space
-  if (mainWindow.spaces().length > 1) {
-    // check one space per screen
-    throw new Error(DISPLAYS_HAVE_SEPARATE_SPACES);
-  }
-  if (activeSpace !== undefined) {
-    // check if the main window was moved
-    moved = !!!(
-      mainWindow.spaces().length > 0 &&
-      mainWindow.spaces()[0].isEqual(activeSpace)
-    );
-    if (moved) {
-      // otherwise remove the main window from the spaces it is in
-      // add window to active space
-      activeSpace.moveWindows([mainWindow]);
+    const activeSpace = followsMouse ? mouseSpace() : Space.active();
+    const mainWindow = app.mainWindow(); // get app window
+    let moved = false; // boolean if the app was moved to a new space
+    if (mainWindow.spaces().length > 1) {
+        // check one space per screen
+        throw new Error(DISPLAYS_HAVE_SEPARATE_SPACES);
     }
-  }
-  return { moved, space: activeSpace };
+    if (activeSpace !== undefined) {
+        // check if the main window was moved
+        moved = !!!(
+            mainWindow.spaces().length > 0 &&
+            mainWindow.spaces()[0].isEqual(activeSpace)
+        );
+        if (moved) {
+            // otherwise remove the main window from the spaces it is in
+            // add window to active space
+            activeSpace.moveWindows([mainWindow]);
+        }
+    }
+    return { moved, space: activeSpace };
 }
 
 /**
@@ -279,21 +279,21 @@ function moveAppToActiveSpace(app, followsMouse) {
  * @param {{focus: boolean}} options focus determines whether or not to focus the app on launch
  */
 async function startApp(appName) {
-  // https://github.com/kasper/phoenix/issues/209
-  // basically a hack to get around this bug
+    // https://github.com/kasper/phoenix/issues/209
+    // basically a hack to get around this bug
 
-  // get the app if it is open
-  let app = App.get(appName);
-  let opened = false;
+    // get the app if it is open
+    let app = App.get(appName);
+    let opened = false;
 
-  console.log("app in startApp", app);
+    console.log("app in startApp", app);
 
-  // if app is open
-  if (app !== undefined) {
-    // make sure it has an open window
-    if (app.windows().length === 0) {
-      // if not open a new window
-      await osascript(`tell application "${appName}"
+    // if app is open
+    if (app !== undefined) {
+        // make sure it has an open window
+        if (app.windows().length === 0) {
+            // if not open a new window
+            await osascript(`tell application "${appName}"
         try
             reopen
         on error
@@ -302,20 +302,20 @@ async function startApp(appName) {
         end
           end tell
         `);
-      opened = true;
-    }
-  } else {
-    // if app is not open activate it
-    await osascript(`tell application "${appName}"
+            opened = true;
+        }
+    } else {
+        // if app is not open activate it
+        await osascript(`tell application "${appName}"
             activate
           end tell
         `);
 
-    app = App.get(appName);
-    opened = true;
-  }
+        app = App.get(appName);
+        opened = true;
+    }
 
-  return [app, opened];
+    return [app, opened];
 }
 
 /**
@@ -324,28 +324,28 @@ async function startApp(appName) {
  * @param {string} script the osascript script to run
  */
 function osascript(script) {
-  return new Promise((resolve, reject) =>
-    Task.run("/usr/bin/osascript", ["-e", script], (handler) => {
-      if (handler.status === 0) {
-        return resolve(handler);
-      } else {
-        return reject(handler);
-      }
-    })
-  );
+    return new Promise((resolve, reject) =>
+        Task.run("/usr/bin/osascript", ["-e", script], (handler) => {
+            if (handler.status === 0) {
+                return resolve(handler);
+            } else {
+                return reject(handler);
+            }
+        })
+    );
 }
 
 /**
  * Get the space which contains the mouse
  */
 function mouseSpace() {
-  const mouseLocation = Mouse.location();
-  const screen = Screen.all().find((s) =>
-    screenContainsPoint(s, mouseLocation)
-  );
-  if (screen !== undefined) {
-    return screen.currentSpace();
-  }
+    const mouseLocation = Mouse.location();
+    const screen = Screen.all().find((s) =>
+        screenContainsPoint(s, mouseLocation)
+    );
+    if (screen !== undefined) {
+        return screen.currentSpace();
+    }
 }
 
 /**
@@ -354,13 +354,13 @@ function mouseSpace() {
  * @param {Point} point a point using flipped coordinates (origin upper left)
  */
 function screenContainsPoint(screen, point) {
-  const frame = screen.flippedFrame();
-  return (
-    point.x >= frame.x &&
-    point.x <= frame.x + frame.width &&
-    point.y >= frame.y &&
-    point.y <= frame.y + frame.height
-  );
+    const frame = screen.flippedFrame();
+    return (
+        point.x >= frame.x &&
+        point.x <= frame.x + frame.width &&
+        point.y >= frame.y &&
+        point.y <= frame.y + frame.height
+    );
 }
 
 /**
