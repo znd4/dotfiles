@@ -8,6 +8,7 @@
     conflicted = !nvim +Conflicted
     cb = branch --show-current
 	root = !pwd
+	findall = "!f() { echo -e \"\nFound in refs:\n\"; git for-each-ref refs/ | grep $1; echo -e \"\nFound in commit messages:\n\"; git log --all --oneline --grep=\"$1\"; echo -e \"\nFound in commit contents:\n\"; git log --all --oneline -S \"$1\"; }; f"
 
 [init]
     defaultBranch = main
