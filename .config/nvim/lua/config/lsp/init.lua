@@ -81,66 +81,59 @@ if vimp == nil then
     print("failed to import vimpeccable")
     return
 end
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-    if client.name == "yamlls" then
-        client.server_capabilities.documentFormattingProvider = false
-    end
-    enable_formatting(client, bufnr)
-    -- require("lsp-format").on_attach(client)
 
-    -- buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+local lsp = require("lsp-zero").preset({
+    manage_nvim_cmp = {
+        set_extra_mappings = true,
+    },
+})
 
-    -- Mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    vimp.add_buffer_maps(function()
-        local function map(...)
-            vimp.nnoremap({ "silent" }, ...)
-        end
-        -- LSP actions
-        map("K", vim.lsp.buf.hover)
-        map("gd", vim.lsp.buf.definition)
-        map("gD", vim.lsp.buf.declaration)
-        map("gi", vim.lsp.buf.implementation)
-        map("go", vim.lsp.buf.type_definition)
-        map("gr", vim.lsp.buf.references)
-        map("<C-k>", vim.lsp.buf.signature_help)
-        map("<F2>", vim.lsp.buf.rename)
-        map("<F4>", vim.lsp.buf.code_action)
-        vimp.xnoremap({ "silent" }, "<F4>", vim.lsp.buf.range_code_action)
-
-        -- Diagnostics
-        map("gl", vim.diagnostic.open_float)
-        map("[d", vim.diagnostic.goto_prev)
-        map("]d", vim.diagnostic.goto_next)
-
-        map("gI", vim.lsp.buf.incoming_calls)
-        map("gr", vim.lsp.buf.references)
-        map("gO", vim.lsp.buf.outgoing_calls)
-
-        vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
-        map("<space>wa", vim.lsp.buf.add_workspace_folder)
-        map("<space>wr", vim.lsp.buf.remove_workspace_folder)
-        map("<space>wl", function()
-            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end)
-        map("<space>D", vim.lsp.buf.type_definition)
-        -- map("<space>ca", vim.lsp.buf.code_action)
-    end)
-end
-
-local lsp = require("lsp-zero")
-lsp.preset("recommended")
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
 -- lsp.skip_server_setup({ "marksman" })
 lsp.skip_server_setup({ "ltex" })
+require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
+-- lsp.nvim_workspace({
+--     library = lua_library,
+-- })
 
-lsp.nvim_workspace({
-    library = lua_library,
-})
-lsp.on_attach(on_attach)
+lsp.on_attach(function(client, bufnr)
+    lsp.default_keymaps({ buffer = bufnr, preserve_mappings = false })
+
+    -- Mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    vimp.add_buffer_maps(function()
+        local function nnoremap(...)
+            vimp.nnoremap({ "silent" }, ...)
+        end
+
+        -- LSP actions
+        nnoremap("<C-k>", vim.lsp.buf.signature_help)
+        vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
+
+        vimp.xnoremap({ "silent" }, "<F4>", vim.lsp.buf.range_code_action)
+
+        -- Diagnostics
+        nnoremap("gl", vim.diagnostic.open_float)
+        nnoremap("[d", vim.diagnostic.goto_prev)
+        nnoremap("]d", vim.diagnostic.goto_next)
+
+        nnoremap("gI", vim.lsp.buf.incoming_calls)
+        nnoremap("gO", vim.lsp.buf.outgoing_calls)
+
+        nnoremap("<space>wa", vim.lsp.buf.add_workspace_folder)
+        nnoremap("<space>wr", vim.lsp.buf.remove_workspace_folder)
+        nnoremap("<space>wl", function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end)
+    end)
+
+    if client.name == "yamlls" then
+        client.server_capabilities.documentFormattingProvider = false
+    end
+    enable_formatting(client, bufnr)
+end)
+
 lsp.ensure_installed(ensure_installed)
 
 local yamlls_settings = {
@@ -182,9 +175,6 @@ local function disableFormatting(client)
     client.server_capabilities.documentRangeFormattingProvider = false
 end
 
--- lsp.configure("eslint", {
---     on_init = disableFormatting,
--- })
 lsp.configure("tsserver", {
     on_init = disableFormatting,
 })
@@ -291,6 +281,9 @@ local cmp = require("cmp")
 
 lsp.setup()
 
+require("luasnip.loaders.from_vscode").lazy_load()
+require("luasnip.loaders.from_snipmate").lazy_load()
+
 local cmp_config = lsp.defaults.cmp_config({
     completion = {
         keyword_length = 1,
@@ -299,12 +292,11 @@ local cmp_config = lsp.defaults.cmp_config({
         format = lspkind.cmp_format({
             mode = "symbol",
             with_text = true,
-            -- maxwidth = 50,
             menu = {
-                buffer = "[buf]",
+                fuzzy_buffer = "[buf]",
                 nvim_lsp = "[LSP]",
                 nvim_lua = "[api]",
-                path = "[path]",
+                fuzzy_path = "[path]",
                 luasnip = "[snip]",
                 tn = "[TabNine]",
             },
@@ -312,18 +304,7 @@ local cmp_config = lsp.defaults.cmp_config({
     },
     window = cmp.config.window.bordered(),
     mapping = {
-        -- disable tab and shift-tab
-        ["<Tab>"] = vim.NIL,
-        ["<S-Tab>"] = vim.NIL,
-        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
-        ["<C-e>"] = cmp.mapping.close(),
-        ["<C-y>"] = cmp.mapping.confirm(),
-        ["<CR>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-        }),
     },
     sources = cmp.config.sources({
         { name = "nvim_lsp" },
@@ -331,7 +312,6 @@ local cmp_config = lsp.defaults.cmp_config({
         { name = "fuzzy_path" },
         { name = "git" },
         { name = "emoji" },
-        -- { name = "buffer" },
         { name = "fuzzy_buffer" },
         { name = "luasnip" },
     }),
@@ -366,4 +346,4 @@ cmp.setup.cmdline(":", {
 
 require("cmp_git").setup()
 
-require(".null-ls").setup(on_attach)
+require(".null-ls").setup()

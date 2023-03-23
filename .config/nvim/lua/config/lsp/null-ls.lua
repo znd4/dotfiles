@@ -1,10 +1,8 @@
 local null_ls = require("null-ls")
 
-local setup = function(on_attach)
+local setup = function()
     table.insert(null_ls.builtins.formatting.prettier.filetypes, "sql")
-
     null_ls.setup({
-        on_attach = on_attach,
         sources = {
             -- dotenv
             null_ls.builtins.diagnostics.dotenv_linter,

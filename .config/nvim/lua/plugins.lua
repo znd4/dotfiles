@@ -285,6 +285,7 @@ require("lazy").setup({
             "jose-elias-alvarez/null-ls.nvim",
         },
         priority = 102,
+        branch = "v2.x",
         config = function()
             require("config.lsp")
         end,
