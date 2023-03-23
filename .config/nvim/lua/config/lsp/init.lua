@@ -289,8 +289,6 @@ local lspkind = require("lspkind")
 
 local cmp = require("cmp")
 
--- vim.opt.completeopt = { "menu", "menuone", "noselect" }
-
 lsp.setup()
 
 local cmp_config = lsp.defaults.cmp_config({
