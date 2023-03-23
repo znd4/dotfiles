@@ -318,6 +318,13 @@ require("lazy").setup({
             vimp.nnoremap({ "silent" }, "<Leader>lp", function()
                 require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
             end, { desc = "debugger set log point message" })
+            vimp.nnoremap({ "silent" }, "<Leader>ds", function()
+                local widgets = require("dap.ui.widgets")
+                widgets.centered_float(widgets.scopes)
+            end, { desc = "Open scopes in sidebar" })
+            vimp.nnoremap({ "silent" }, "<Leader>dh", function()
+                require("dap.ui.widgets").hover()
+            end, { desc = "View value of expression under cursor" })
             vimp.nnoremap({ "silent" }, "<Leader>dr", dap.repl.open, { desc = "open debugger repl" })
             vimp.nnoremap({ "silent" }, "<Leader>dl", dap.run_last, { desc = "run last debugger" })
         end,
