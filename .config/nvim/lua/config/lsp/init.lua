@@ -344,4 +344,6 @@ cmp.setup.cmdline(":", {
 
 require("cmp_git").setup()
 
-require(".null-ls").setup()
+local null_ls = require("null-ls")
+table.insert(null_ls.builtins.formatting.prettier.filetypes, "sql")
+null_ls.setup(require(".null-ls"))
