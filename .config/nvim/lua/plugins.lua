@@ -399,7 +399,7 @@ require("lazy").setup({
         config = function()
             require("config.treesitter")
         end,
-        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects", "HiPhish/nvim-ts-rainbow2" },
     },
 
     {

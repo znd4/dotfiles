@@ -140,4 +140,8 @@ require("nvim-treesitter.configs").setup({
     indent = {
         enable = true,
     },
+    rainbow = {
+        enable = true,
+        strategy = require("ts-rainbow.strategy.global"),
+    },
 })
