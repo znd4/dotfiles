@@ -115,7 +115,7 @@ require("lazy").setup({
             local vimp = require("vimp")
             vimp.noremap(",", function()
                 -- hop.hint_char2()
-                hop.hint_words()
+                hop.hint_words({ multi_windows = true })
             end)
         end,
         dependencies = { "svermeulen/vimpeccable" },
