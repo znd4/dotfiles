@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 return {
+    adjust_window_size_when_changing_font_size = false,
     color_scheme = "neon-night (Gogh)",
     -- set font size to 14
     font_size = 14,
