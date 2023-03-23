@@ -178,6 +178,21 @@ require("lazy").setup({
         config = true,
     },
     {
+        "jakewvincent/mkdnflow.nvim",
+        config = {
+            links = {
+                -- TODO: add highlighting for links, then re-enable this
+                -- conceal = true,
+            },
+            mappings = {
+                MkdnTab = { "i", "<Tab>" },
+                MkdnSTab = { "i", "<S-Tab>" },
+                MkdnTableNextCell = false,
+                MkdnTablePrevCell = false,
+            },
+        },
+    },
+    {
         "akinsho/toggleterm.nvim",
         version = "2.*",
         config = function()
