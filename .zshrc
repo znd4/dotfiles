@@ -13,7 +13,10 @@ export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_personal"
 check_path thefuck && eval $(thefuck --alias)
 
 # ssl cert fix for node on aspiration laptop
-[ -f "$NETSKOPE_CERT" ] && export NODE_EXTRA_CA_CERTS="${NETSKOPE_CERT?}"
+# [ -f "$NETSKOPE_CERT" ] && export NODE_EXTRA_CA_CERTS="${NETSKOPE_CERT?}"
+unset CURL_CA_BUNDLE
+unset REQUESTS_CA_BUNDLE
+unset NODE_EXTRA_CA_CERTS
 
 setopt HIST_IGNORE_SPACE
 setopt interactivecomments
@@ -64,6 +67,9 @@ check_path cargo && znap fpath _cargo   'rustup  completions zsh cargo'
 check_path gh && znap fpath _gh 'gh completion --shell zsh'
 check_path circleci && znap fpath _circleci 'circleci completion zsh'
 check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
+check_path jira && znap fpath _jira 'jira completion zsh'
+check_path pack && znap fpath _pack 'cat ~/.pack/completion.zsh'
+check_path cdktf && . `cdktf completion`
 
 znap eval nx "http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh"
 complete -C `which aws_completer` aws
@@ -96,7 +102,6 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 
 
 # NETSKOPE_CERT doesn't seem to be needed for nvm anymore
-# [ -f "$NETSKOPE_CERT" ] && alias nvm="CURL_CA_BUNDLE=\"${NETSKOPE_CERT?}\" nvm"
 
 #####################
 ### zplug
@@ -176,8 +181,6 @@ zvm_bindkey -i '^F' '<esc>-vv'
 
 export GOPRIVATE=github.com/AspirationPartners
 
-# GO Configuration
-export GOROOT=~/go
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
 

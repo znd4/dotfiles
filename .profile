@@ -12,11 +12,10 @@
 ########### Environment Variables
 ##########################################################################
 
-export EDITOR=`which nvim`
+export EDITOR=$(which nvim)
 # export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
-export NETSKOPE_CERT='/Library/Application Support/Netskope/STAgent/data/nscacert.pem'
 
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
@@ -45,17 +44,15 @@ add_to_path "$HOME/bin"
 # set PATH so it includes user's private bin if it exists
 add_to_path "$HOME/.local/bin"
 
-export GOROOT="$HOME/go"
-export GOPATH="$GOROOT/bin"
+GOROOT="$HOME/go"
+GOPATH="$GOROOT/bin"
 
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
-
-
-if [ `uname -s` != 'Darwin' ]; then
+if [ $(uname -s) != 'Darwin' ]; then
 	# Start all of my after-login systemd services
-    check_path systemctl && systemctl --user start autostart.service
+	check_path systemctl && systemctl --user start autostart.service
 	# make capslock behave like ctrl when held
 	check_path setxkbmap && setxkbmap -option 'caps:ctrl_modifier'
 	# make capslock behave like esc when tapped
@@ -66,7 +63,7 @@ if [ `uname -s` != 'Darwin' ]; then
 	# 	1password --silent >/dev/null 2>&1 &
 	# fi
 else
-	eval `/opt/homebrew/bin/brew shellenv`
+	eval $(/opt/homebrew/bin/brew shellenv)
 	add_to_path /opt/local/bin
 	add_to_path /opt/local/sbin
 fi
@@ -76,24 +73,21 @@ fi
 #
 # eval `pyenv init --path`
 
-
 # use 1password for ssh
 export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-        . "$HOME/.bashrc"
-    fi
+	# include .bashrc if it exists
+	if [ -f "$HOME/.bashrc" ]; then
+		. "$HOME/.bashrc"
+	fi
 fi
-
 
 x86_64_pkgconfig=/usr/lib/x86_64-linux-gnu/pkgconfig
 if [ -d $x86_64_pkgconfig ]; then
-    export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
+	export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
 fi
-
 
 # add linuxbrew directory to PATH
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
@@ -101,6 +95,7 @@ if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 fi
 
 add_to_path "$HOME/.rd/bin"
+add_to_path "/usr/local/bin"
 
 [[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
 

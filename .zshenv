@@ -4,7 +4,6 @@ export EDITOR=nvim
 # export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
-export NETSKOPE_CERT='/Library/Application Support/Netskope/STAgent/data/nscacert.pem'
 
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
@@ -28,8 +27,8 @@ add_to_path "$HOME/bin"
 # set PATH so it includes user's private bin if it exists
 add_to_path "$HOME/.local/bin"
 
-export GOROOT="$HOME/go"
-export GOPATH="$GOROOT/bin"
+GOROOT="$HOME/go"
+GOPATH="$GOROOT/bin"
 
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
