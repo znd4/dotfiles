@@ -215,7 +215,7 @@ require("lazy").setup({
         version = "2.*",
         config = function()
             require("toggleterm").setup({
-                open_mapping = [[<c-.>]],
+                open_mapping = [[<c-q>]],
                 insert_mappings = true,
                 hide_numbers = true,
                 close_on_exit = true,
