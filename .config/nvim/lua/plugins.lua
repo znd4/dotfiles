@@ -263,12 +263,19 @@ require("lazy").setup({
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
+
+            -- cmp sources
+            "davidsierradz/cmp-conventionalcommits",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-emoji",
             "hrsh7th/cmp-nvim-lua", -- Optional
+            "dmitmel/cmp-cmdline-history",
+            "petertriho/cmp-git",
+            { "tzachar/cmp-fuzzy-path", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
+            { "tzachar/cmp-fuzzy-buffer", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             "saadparwaiz1/cmp_luasnip",
 
             "lukas-reineke/lsp-format.nvim",
