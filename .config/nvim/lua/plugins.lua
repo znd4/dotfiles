@@ -426,6 +426,8 @@ require("lazy").setup({
                 -- or leave it empty to use the default settings
                 -- refer to the configuration section below
                 ignore_lsp = { "null-ls", "terraform_lsp" },
+                detection_methods = { "pattern", "lsp" },
+                patterns = { ".git", ".hg", ".svn", "package.json" },
                 show_hidden = true,
                 datapath = datapath,
             })
