@@ -7,6 +7,7 @@ local ensure_installed = {
     "ltex",
     "marksman",
     "pyright",
+    "tsserver",
     "rnix",
     "rust_analyzer",
     "sqls",
@@ -36,24 +37,14 @@ require("lsp-format").setup({
     exclude = {
         "lua_ls",
         "sqls",
+        "tsserver",
+        -- "eslint",
     },
     sync = true,
 })
 
 local lsp_formatting = function(bufnr)
     vim.lsp.buf.format({
-        filter = function(client)
-            local ft = vim.fn.getbufvar(bufnr, "&filetype")
-            local result
-            if ft == "sql" then
-                result = client.name ~= "sqls"
-            elseif ft == "lua" then
-                result = client.name ~= "lua_ls"
-            else
-                result = true
-            end
-            return result
-        end,
         bufnr = bufnr,
     })
 end
@@ -107,9 +98,27 @@ local on_attach = function(client, bufnr)
         local function map(...)
             vimp.nnoremap({ "silent" }, ...)
         end
+        -- LSP actions
+        map("K", vim.lsp.buf.hover)
+        map("gd", vim.lsp.buf.definition)
+        map("gD", vim.lsp.buf.declaration)
+        map("gi", vim.lsp.buf.implementation)
+        map("go", vim.lsp.buf.type_definition)
+        map("gr", vim.lsp.buf.references)
+        map("<C-k>", vim.lsp.buf.signature_help)
+        map("<F2>", vim.lsp.buf.rename)
+        map("<F4>", vim.lsp.buf.code_action)
+        vimp.xnoremap({ "silent" }, "<F4>", vim.lsp.buf.range_code_action)
+
+        -- Diagnostics
+        map("gl", vim.diagnostic.open_float)
+        map("[d", vim.diagnostic.goto_prev)
+        map("]d", vim.diagnostic.goto_next)
 
         map("gI", vim.lsp.buf.incoming_calls)
+        map("gr", vim.lsp.buf.references)
         map("gO", vim.lsp.buf.outgoing_calls)
+
         vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
         map("<space>wa", vim.lsp.buf.add_workspace_folder)
         map("<space>wr", vim.lsp.buf.remove_workspace_folder)
@@ -141,6 +150,12 @@ local yamlls_settings = {
         },
     },
     yaml = {
+        customTags = {
+            "!Sub",
+            "!FindInMap sequence",
+            "!Ref",
+            "!GetAtt",
+        },
         schemas = {
             ["Kubernetes"] = "/overlays/**/*",
             ["https://json.schemastore.org/circleciconfig.json"] = {
@@ -162,7 +177,41 @@ lsp.configure("yamlls", {
     filetypes = yamlls_filetypes,
 })
 
+local function disableFormatting(client)
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentRangeFormattingProvider = false
+end
+
+-- lsp.configure("eslint", {
+--     on_init = disableFormatting,
+-- })
+lsp.configure("tsserver", {
+    on_init = disableFormatting,
+})
+
+lsp.configure("jsonls", {
+    on_init = disableFormatting,
+    settings = {
+        json = {
+            format = {
+                enable = false,
+            },
+            schemas = {
+                {
+                    fileMatch = { ".prettierrc" },
+                    url = "https://json.schemastore.org/prettierrc.json",
+                },
+                {
+                    fileMatch = { ".eslintrc", ".eslintrc.json" },
+                    url = "https://json.schemastore.org/eslintrc.json",
+                },
+            },
+        },
+    },
+})
+
 lsp.configure("lua_ls", {
+    on_init = disableFormatting,
     settings = {
         Lua = {
             runtime = {
@@ -212,11 +261,7 @@ lsp.configure("sqls", {
     init_options = {
         provideFormatter = false,
     },
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        on_attach(client, bufnr)
-    end,
+    on_init = disableFormatting,
 })
 
 lsp.configure("gopls", {
@@ -269,6 +314,9 @@ local cmp_config = lsp.defaults.cmp_config({
     },
     window = cmp.config.window.bordered(),
     mapping = {
+        -- disable tab and shift-tab
+        ["<Tab>"] = vim.NIL,
+        ["<S-Tab>"] = vim.NIL,
         ["<C-d>"] = cmp.mapping.scroll_docs(-4),
         ["<C-f>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
@@ -279,11 +327,50 @@ local cmp_config = lsp.defaults.cmp_config({
             select = true,
         }),
     },
+    sources = cmp.config.sources({
+        { name = "nvim_lsp" },
+        { name = "nvim_lua" },
+        { name = "fuzzy_path" },
+        { name = "git" },
+        { name = "emoji" },
+        -- { name = "buffer" },
+        { name = "fuzzy_buffer" },
+        { name = "luasnip" },
+    }),
 })
 
 cmp.setup(cmp_config)
 
+cmp.setup.filetype("gitcommit", {
+    sources = cmp.config.sources({
+        { name = "conventionalcommits" },
+        { name = "git" },
+        { name = "fuzzy_buffer" },
+    }),
+})
+
+cmp.setup.cmdline({ "/", "?" }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = "fuzzy_buffer" },
+        { name = "cmdline_history" },
+    }),
+})
+
+cmp.setup.cmdline(":", {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = "fuzzy_path" },
+        { name = "cmdline" },
+        { name = "cmdline_history" },
+    }),
+})
+
+require("cmp_git").setup()
+
 local null_ls = require("null-ls")
+table.insert(null_ls.builtins.formatting.prettier.filetypes, "sql")
+
 null_ls.setup({
     -- on_init = function(client)
     --  local path = client.workspace_folders[1].name
@@ -302,8 +389,6 @@ null_ls.setup({
         null_ls.builtins.formatting.stylua.with({
             extra_args = { "--indent-type", "spaces" },
         }),
-        null_ls.builtins.code_actions.eslint_d,
-        null_ls.builtins.diagnostics.eslint_d,
 
         -- python
         null_ls.builtins.formatting.black,
@@ -316,25 +401,7 @@ null_ls.setup({
         null_ls.builtins.formatting.gofmt,
 
         -- prettier
-        null_ls.builtins.formatting.prettierd.with({
-            -- remove javascript from filetypes
-            filetypes = {
-                "json",
-                "yaml",
-                "markdown",
-                "html",
-                "css",
-                "scss",
-                "less",
-                "graphql",
-                "vue",
-                "svelte",
-                "bash",
-                "yaml.docker-compose",
-            },
-        }),
-
-        null_ls.builtins.formatting.prettier_eslint,
+        null_ls.builtins.formatting.prettier,
 
         -- Spellchecking
         null_ls.builtins.completion.spell,
