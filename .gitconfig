@@ -58,7 +58,7 @@ rebase = false
     pager = delta
 
 [commit]
-	template = /Users/zdufour/.stCommitMsg
+	template = /home/zanedufour/.stCommitMsg
 
 [filter "lfs"]
 	process = git-lfs filter-process
@@ -67,7 +67,7 @@ rebase = false
 	smudge = git-lfs smudge -- %f
 [credential "https://github.com"]
 	helper = 
-	helper = !/usr/local/bin/op plugin run -- gh auth git-credential
+	helper = !/usr/bin/op plugin run -- gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
-	helper = !/usr/local/bin/op plugin run -- gh auth git-credential
+	helper = !/usr/bin/op plugin run -- gh auth git-credential
