@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+import subprocess as sp
+import sys
+import shutil
+import shlex
+
+def main():
+    if not shutil.which("nix-env"):
+        sp.check_call(
+            shlex.split(
+            "sh <(curl -L https://nixos.org/nix/install) --daemon"
+            ),
+            shell=True,
+            stdin=sys.stdin,
+        )
+
+    nix_shell_run("rustup", "default", "stable")
+    nix_shell_run("cargo", "install", *GLOBAL_CRATES)
+
+    sp.check_call(["nix-env", "-iA", "nixpkgs.myPackages"]) # mostly installs fonts
+
+    if shutil.which("fc-cache"):
+        sp.check_call(["fc-cache"])
+
+GLOBAL_CRATES = ["lolcate-rs"]
+    
+
+def nix_shell_run(*args: str):
+    sp.check_call(
+        [
+            "nix-shell",
+            "--run",
+            shlex.join([
+                "bash",
+                "-c",
+                shlex.join(args)
+            ]),
+        ])
+
+
+if __name__ == "__main__":
+    main()

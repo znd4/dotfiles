@@ -40,4 +40,3 @@ else
 	add_to_path /opt/local/sbin
 fi
 
-. "$HOME/.cargo/env"
