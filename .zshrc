@@ -208,9 +208,9 @@ source_if_exists "$HOME/.cargo/env"
 add_to_path "$HOME/.hishtory"
 source_if_exists "$HOME/.hishtory/config.zsh"
 
-export PATH=$PATH:/Users/zdufour/.aido
+export PATH="$PATH:$HOME/.aido"
 
-source_if_exists /Users/zdufour/.config/op/plugins.sh
+source_if_exists "$HOME/.config/op/plugins.sh"
 
 
 # tabtab source for packages
