@@ -45,6 +45,7 @@ pkgs.mkShell rec {
 
     # use 1passsword for git credentials
     git-credential-1password
+
     # Add some extra dependencies from `pkgs`
     clippy
     direnv
