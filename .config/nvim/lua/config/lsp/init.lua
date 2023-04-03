@@ -17,10 +17,6 @@ local ensure_installed = {
     "yamlls",
 }
 
-if vim.fn.executable("lua-language-server") ~= 1 then
-    print("plz brew install lua-language-server or something")
-end
-
 if vim.fn.executable("stylua") ~= 1 then
     print("plz cargo install stylua")
 end
