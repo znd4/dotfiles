@@ -5,7 +5,6 @@ import shutil
 import shlex
 
 def main():
-
     if not shutil.which("nix-env"):
         sp.check_call(
             shlex.split(
@@ -17,6 +16,11 @@ def main():
 
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
+
+    sp.check_call(["nix-env", "-iA", "nixpkgs.myPackages"]) # mostly installs fonts
+
+    if shutil.which("fc-cache"):
+        sp.check_call(["fc-cache"])
 
 GLOBAL_CRATES = ["lolcate-rs"]
     
