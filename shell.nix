@@ -55,6 +55,7 @@ pkgs.mkShell rec {
     github-cli
     go
     lazygit
+    joplin
     nodejs
     openssl
     pkgconfig
