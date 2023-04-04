@@ -46,6 +46,13 @@ znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd
 
 # https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
 
+[[ -f ~/.fzf.zsh ]] || (
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
+        ~/.fzf/install
+    )
+
+
+
 # The plugin will auto execute this zvm_after_init function
 function zvm_after_init() {
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -216,3 +223,5 @@ source_if_exists "$HOME/.config/op/plugins.sh"
 # tabtab source for packages
 # uninstall by removing these lines
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+[[ -s "/home/zanedufour/.gvm/scripts/gvm" ]] && source "/home/zanedufour/.gvm/scripts/gvm"
