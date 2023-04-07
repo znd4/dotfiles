@@ -16,7 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     -- load scrollbar before gitsigns
-    { "petertriho/nvim-scrollbar", priority = 102, config = true },
+    { "petertriho/nvim-scrollbar", priority = 102,              config = true },
     {
         "lewis6991/gitsigns.nvim",
         config = function()
@@ -29,12 +29,12 @@ require("lazy").setup({
         priority = 101,
     },
     -- smooth scrolling
-    { "declancm/cinnamon.nvim", config = { centered = true } },
+    { "declancm/cinnamon.nvim",    config = { centered = true } },
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
     -- split and join treesitter
-    { "Wansmer/treesj", config = true },
+    { "Wansmer/treesj",    config = true },
     -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
@@ -46,7 +46,7 @@ require("lazy").setup({
         end,
     },
 
-    { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
+    { "tpope/vim-fugitive",                              dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
     "kdheepak/lazygit.nvim",
     "earthly/earthly.vim",
@@ -90,15 +90,20 @@ require("lazy").setup({
 
     "svermeulen/vimpeccable",
 
+    { "https://codeberg.org/esensar/nvim-dev-container", config = true, },
+
     {
         "folke/which-key.nvim",
         config = true,
     },
-    { "stevearc/dressing.nvim", config = {
-        input = {
-            insert_only = false,
-        },
-    } },
+    {
+        "stevearc/dressing.nvim",
+        config = {
+            input = {
+                insert_only = false,
+            },
+        }
+    },
     {
         "AckslD/nvim-FeMaco.lua",
         config = {
@@ -197,9 +202,9 @@ require("lazy").setup({
         build = ":Neorg sync-parsers",
         opts = {
             load = {
-                ["core.defaults"] = {}, -- Loads default behaviour
+                ["core.defaults"] = {},       -- Loads default behaviour
                 ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
-                ["core.norg.dirman"] = { -- Manages Neorg workspaces
+                ["core.norg.dirman"] = {      -- Manages Neorg workspaces
                     config = {
                         workspaces = {
                             notes = "~/notes",
@@ -259,7 +264,7 @@ require("lazy").setup({
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
-            { "L3MON4D3/LuaSnip", version = "1.*" },
+            { "L3MON4D3/LuaSnip",         version = "1.*" },
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
@@ -274,7 +279,7 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lua", -- Optional
             "dmitmel/cmp-cmdline-history",
             "petertriho/cmp-git",
-            { "tzachar/cmp-fuzzy-path", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
+            { "tzachar/cmp-fuzzy-path",   dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             { "tzachar/cmp-fuzzy-buffer", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             "saadparwaiz1/cmp_luasnip",
 
@@ -379,7 +384,7 @@ require("lazy").setup({
         dependencies = {
             "kyazdani42/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly", -- optional, updated every week. (see issue #1193)
+        tag = "nightly",                    -- optional, updated every week. (see issue #1193)
         config = {
             open_on_setup = false,
             sync_root_with_cwd = true,
@@ -392,10 +397,9 @@ require("lazy").setup({
             hijack_directories = { enable = false },
         },
     },
-    { "akinsho/bufferline.nvim", version = "2.*", dependencies = { "kyazdani42/nvim-web-devicons" } },
+    { "akinsho/bufferline.nvim",   version = "2.*", dependencies = { "kyazdani42/nvim-web-devicons" } },
     {
         "nvim-treesitter/nvim-treesitter",
-
         build = ":TSUpdate",
         config = function()
             require("config.treesitter")
