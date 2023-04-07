@@ -1,6 +1,13 @@
 [alias]
     a = add
     pl = pull
+    p = pull
+    c = commit
+    cm = commit
+    co = checkout
+    s = status
+    P = push
+
     cedit = config --global --edit
     undo-last-commit = reset HEAD~1
     config-edit = config --global --edit
