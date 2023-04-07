@@ -54,6 +54,7 @@ pkgs.mkShell rec {
     gcc
     github-cli
     go
+    gum
     lazygit
     joplin
     nodejs
