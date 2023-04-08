@@ -41,6 +41,7 @@ vim.filetype.add({
         tfstate = "json",
         plist = "xml",
         shell = "bash",
+        kbd = "clojure",
         ["tfstate.backup"] = "json",
     },
     filename = {
