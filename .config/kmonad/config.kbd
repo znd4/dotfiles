@@ -222,11 +222,13 @@
   -------------------------------------------------------------------------- |#
 
 (defsrc
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lmet lalt           spc            ralt rmet cmp  rctl
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -     =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [     ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '          ret
+  lsft z    x    c    v    b    n    m    ,    .    /               rsft
+  wkup lctl lmet lalt           spc            ralt sys  rctl  pgdn up   pgup
+                                                               left down rght
 )
 
 
@@ -251,6 +253,7 @@
   -------------------------------------------------------------------------- |#
 
 (defalias
+  scln semicolon             ;; Bind scln to a button that emits a semicolon
   num  (layer-toggle numbers) ;; Bind num to a button that switches to a layer
   kil  C-A-del                ;; Bind kil to a button that Ctrl-Alt-deletes
 )
@@ -307,15 +310,36 @@
 
 (defalias
   xcp (tap-hold-next 400 esc ctl)
+  ;; mvmt (tap-hold-next-release 1000 semicolon (layer-toggle movement))
+  mvmt (tap-next-release semicolon (layer-toggle movement))
+  ssft (sticky-key 400 lsft)
+  ;; mvmt (tap-hold-next 500 semicolon (layer-toggle movement))
 )
 
+
 (deflayer qwerty
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  @xcp a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl @num lalt           spc            ralt rmet @sym @tst
+  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11  f12  home end  ins  del
+  grv   1    2    3    4    5    6    7    8    9    0     -    =    bspc
+  tab   q    w    e    r    t    y    u    i    o    p     [    ]    \
+  @xcp  a    s    d    f    g    h    j    k    l    @mvmt '    ret
+  @ssft z    x    c    v    b    n    m    ,    .    /     rsft
+  wkup  lctl lmet lalt           spc            ralt sys   rctl  pgdn up   pgup
+                                                                 left down rght
 )
+
+
+;; Movement layer
+
+(deflayer movement
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _
+  _    _    _    _    _    _    left down up   right _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _
+  _    _    _    _              _              _    _     _    _    _    _
+                                                               _    _    _
+)
+
 
 
 #| --------------------------------------------------------------------------
@@ -333,11 +357,13 @@
   -------------------------------------------------------------------------- |#
 
 (deflayer numbers
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    XX   /    7    8    9    -    _    _    _
   _    _    _    _    _    XX   *    4    5    6    +    _    _
   _    _    \(   \)   .    XX   0    1    2    3    _    _
-  _    _    _              _              _    _    _    _
+  _    _    _    _              _              _    _    _    _    _    _
+                                                              _    _    _
 )
 
 
@@ -455,19 +481,20 @@
 ;; it to `rctl`), any button we press when holding `rctl` will be pressed in the
 ;; context of those 4 layers overlayed on the stack. When we release `rctl`, all
 ;; these layers will be popped again.
-(defalias tst (around (layer-toggle macro-test)
-                (around (layer-toggle layer-test)
-                  (around (layer-toggle around-next-test)
-                    (around (layer-toggle command-test)
-                            (layer-toggle modded-test))))))
 
-(deflayer modded-test
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    @md4 _    _    _    _    _    _    _    _    _    _    _
-  _    _    @md1 @md2 @md3 _    _    _    _    _    _    _    _
-  _    _    @cut @cpy @pst _    _    _    _    _    _    _
-  _    _    _              _              _    _    _    _
-)
+;; (defalias tst (around (layer-toggle macro-test)
+;;                 (around (layer-toggle layer-test)
+;;                   (around (layer-toggle around-next-test)
+;;                     (around (layer-toggle command-test)
+;;                             (layer-toggle modded-test))))))
+
+;; (deflayer modded-test
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    @md4 _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    @md1 @md2 @md3 _    _    _    _    _    _    _    _
+;;   _    _    @cut @cpy @pst _    _    _    _    _    _    _
+;;   _    _    _              _              _    _    _    _
+;; )
 
 #| --------------------------------------------------------------------------
                               Optional: tap-macros
@@ -527,22 +554,22 @@
 
   -------------------------------------------------------------------------- |#
 
-(defalias
-  mc1 #(K M o n a d)
-  mc2 #(C-c P50 A-tab P50 C-v) ;; Careful, this might do something
-  mc3 #(P200 h P150 4 P100 > < P50 > < P20 0 r z 1 ! 1 ! !)
-  mc4 (tap-macro a (pause 50) @md2 (pause 50) c)
-  mc5 (tap-macro-release esc esc esc)
-  mc6 #(@mc3 spc @mc3 spc @mc3)
-)
-
-(deflayer macro-test
-  _    @mc1 @mc2 @mc3 @mc4 @mc5 @mc6 _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _    _
-)
+;; (defalias
+;;   mc1 #(K M o n a d)
+;;   mc2 #(C-c P50 A-tab P50 C-v) ;; Careful, this might do something
+;;   mc3 #(P200 h P150 4 P100 > < P50 > < P20 0 r z 1 ! 1 ! !)
+;;   mc4 (tap-macro a (pause 50) @md2 (pause 50) c)
+;;   mc5 (tap-macro-release esc esc esc)
+;;   mc6 #(@mc3 spc @mc3 spc @mc3)
+;; )
+;; 
+;; (deflayer macro-test
+;;   _    @mc1 @mc2 @mc3 @mc4 @mc5 @mc6 _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _              _              _    _    _    _
+;; )
 
 
 #| --------------------------------------------------------------------------
@@ -624,56 +651,56 @@
 
   -------------------------------------------------------------------------- |#
 
-(defalias
-
-  yah (layer-toggle asking-for-trouble) ;; Completely safe
-  nah (layer-add asking-for-trouble)    ;; Completely unsafe
-
-  ld1 (layer-delay 500 numbers) ;; One way to get a leader-key
-  ld2 (layer-next numbers)      ;; Another way to get a leader key
-
-  ;; NOTE, this is safe because both `qwerty` and `colemak` contain the `@tst`
-  ;; button which will get us to the `layer-test` layer, which itself contains
-  ;; both `@qwe` and `@col`.
-  qwe (layer-switch qwerty) ;; Set qwerty as the base layer
-  col (layer-switch colemak) ;; Set colemak as the base layer
-)
-(deflayer layer-test
-  @qwe _    _    _    _    _    _    _    _    _    _    @add _    @nah
-  @col _    _    _    _    _    _    _    _    _    _    _    _    @yah
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    @ld1 @ld2 _
-  _    _    _              _              _    _    _    _
-)
+;; (defalias
+;; 
+;;   yah (layer-toggle asking-for-trouble) ;; Completely safe
+;;   nah (layer-add asking-for-trouble)    ;; Completely unsafe
+;; 
+;;   ld1 (layer-delay 500 numbers) ;; One way to get a leader-key
+;;   ld2 (layer-next numbers)      ;; Another way to get a leader key
+;; 
+;;   ;; NOTE, this is safe because both `qwerty` and `colemak` contain the `@tst`
+;;   ;; button which will get us to the `layer-test` layer, which itself contains
+;;   ;; both `@qwe` and `@col`.
+;;   qwe (layer-switch qwerty) ;; Set qwerty as the base layer
+;;   col (layer-switch colemak) ;; Set colemak as the base layer
+;; )
+;; (deflayer layer-test
+;;   @qwe _    _    _    _    _    _    _    _    _    _    @add _    @nah
+;;   @col _    _    _    _    _    _    _    _    _    _    _    _    @yah
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    @ld1 @ld2 _
+;;   _    _    _              _              _    _    _    _
+;; )
 
 ;; Exactly like qwerty, but with the letters switched around
-(deflayer colemak
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    f    p    g    j    l    u    y    ;    [    ]    \
-  @xcp a    r    s    t    d    h    n    e    i    o    '    ret
-  @sl  z    x    c    v    b    k    m    ,    .    /    @sr
-  lctl @num lalt           spc            ralt rmet @sym @tst
-)
-
-(defalias lol #(: - D))
-
-;; Contrived example
-(deflayer asking-for-trouble
-  @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
-  @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
-  @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
-  @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
-  @lol @lol @lol           @lol           @lol @lol @lol @lol
-)
+;; (deflayer colemak
+;;   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+;;   tab  q    w    f    p    g    j    l    u    y    ;    [    ]    \
+;;   @xcp a    r    s    t    d    h    n    e    i    o    '    ret
+;;   @sl  z    x    c    v    b    k    m    ,    .    /    @sr
+;;   lctl @num lalt           spc            ralt rmet @sym @tst
+;; )
+;; 
+;; (defalias lol #(: - D))
+;; 
+;; ;; Contrived example
+;; (deflayer asking-for-trouble
+;;   @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
+;;   @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
+;;   @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
+;;   @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol @lol
+;;   @lol @lol @lol           @lol           @lol @lol @lol @lol
+;; )
 
 ;; One way to safely use layer-add and layer-rem: the button bound to layer-add
 ;; is the same button bound to layer-rem in the layer that `add` adds to the
 ;; stack. I.e., it becomes impossible to add or remove multiple copies of a
 ;; layer.
-(defalias
-  add (layer-add multi-overlay) ;; multi-overlay is defined in the next
-  rem (layer-rem multi-overlay) ;; section below this
-  )
+;; (defalias
+;;   add (layer-add multi-overlay) ;; multi-overlay is defined in the next
+;;   rem (layer-rem multi-overlay) ;; section below this
+;;   )
 
 #| --------------------------------------------------------------------------
                           Optional: Multi-use buttons
@@ -807,13 +834,13 @@
 )
 
 ;; Some of the buttons used here are defined in the next section
-(deflayer multi-overlay
-  @mt  _    _    _    _    _    _    _    _    _    _    _    @rem _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  @thn _    _    _    _    _    _    _    _    _    _    _    _
-  @xtn _    _    _    _    _    _    _    _    _    _    @xth
-  @tnr @tnp _              _              _    _    _    @tnh
-)
+;; (deflayer multi-overlay
+;;   @mt  _    _    _    _    _    _    _    _    _    _    _    @rem _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   @thn _    _    _    _    _    _    _    _    _    _    _    _
+;;   @xtn _    _    _    _    _    _    _    _    _    _    @xth
+;;   @tnr @tnp _              _              _    _    _    @tnh
+;; )
 
 
 #| --------------------------------------------------------------------------
@@ -866,13 +893,13 @@
 
 )
 
-(deflayer around-next-test
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  @ns  _    _    _    _    _    _    _    _    _    _    _    _
-  @nnm _    _    _    _    _    _    _    _    _    _    _
-  @ntm _    _              _              _    _    _    _
-)
+;; (deflayer around-next-test
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   @ns  _    _    _    _    _    _    _    _    _    _    _    _
+;;   @nnm _    _    _    _    _    _    _    _    _    _    _
+;;   @ntm _    _              _              _    _    _    _
+;; )
 
 #| --------------------------------------------------------------------------
                         Optional: Compose-key sequences
@@ -914,17 +941,17 @@
 
   -------------------------------------------------------------------------- |#
 
-(defalias
-  sym (layer-toggle symbols)
-
-)
-
-(deflayer symbols
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    ä    é    ©    _    _    _    _    _    _    _    _    _    _
-  _    +'   +~   +`   +^   _    _    _    _    _    _    _    _
-  _    +"   +,   _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _    _)
+;; (defalias
+;;   sym (layer-toggle symbols)
+;; 
+;; )
+;; 
+;; (deflayer symbols
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    ä    é    ©    _    _    _    _    _    _    _    _    _    _
+;;   _    +'   +~   +`   +^   _    _    _    _    _    _    _    _
+;;   _    +"   +,   _    _    _    _    _    _    _    _    _
+;;   _    _    _              _              _    _    _    _)
 
 
 #| --------------------------------------------------------------------------
@@ -957,10 +984,10 @@
                   "echo $PATH > /tmp/kmonad_path.txt")
 )
 
-(deflayer command-test
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    @dat @pth _
-  _    _    _              _              _    _    _    _
-)
+;; (deflayer command-test
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    @dat @pth _
+;;   _    _    _              _              _    _    _    _
+;; )
