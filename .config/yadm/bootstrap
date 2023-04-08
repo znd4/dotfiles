@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+import tempfile
 import subprocess as sp
 from pathlib import Path
 
@@ -81,8 +83,32 @@ def kmonad():
         "/etc/udev/rules.d/99-kmonad.rules",
     ], stdin=sys.stdin)
     sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
-    # TODO: install kmonad
-    # TODO: set up service
+
+    # clone https://github.com/kmonad/kmonad into temporary directory
+    with tempfile.TemporaryDirectory() as tmpdir:
+        build_and_install_kmonad(Path(tmpdir))
+
+
+    sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
+
+def build_and_install_kmonad(dir_: Path):
+    if shutil.which("kmonad"):
+        print("kmonad already installed, skipping")
+        return
+
+    sp.check_call([
+        "git",
+        "clone",
+        "https://github.com/kmonad/kmonad",
+        str(dir_),
+    ], stdin=sys.stdin)
+
+    os.chdir(dir_)
+    sp.check_call(["stack", "setup"], stdin=sys.stdin)
+    sp.check_call(["stack", "build"], stdin=sys.stdin)
+    sp.check_call(["stack", "install"], stdin=sys.stdin)
+
 
 
 
