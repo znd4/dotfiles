@@ -40,6 +40,7 @@ let
     github-cli
     go
     gum
+    httpie
     lazygit
     joplin
     nodejs
