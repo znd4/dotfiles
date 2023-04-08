@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 import subprocess as sp
+from pathlib import Path
+
 import sys
+import getpass
 import shutil
 import shlex
 
 def main():
+    install_ubuntu_packages(*UBUNTU_PACKAGES)
+
     if not shutil.which("nix-env"):
         sp.check_call(
             shlex.split(
@@ -22,8 +27,64 @@ def main():
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
 
-GLOBAL_CRATES = ["lolcate-rs"]
+    kmonad()
+
     
+
+def gui_only(func):
+    def wrapper(*args, **kwargs):
+        if HEADLESS:
+            print("Skipping GUI-only command")
+            return
+        return func(*args, **kwargs)
+    return wrapper
+
+HEADLESS = False
+GLOBAL_CRATES = ["lolcate-rs"]
+UBUNTU_PACKAGES = []
+UBUNTU_PACKAGES.append("libgmp-dev") # for haskell stack
+    
+def haskell_stack():
+    if shutil.which("stack"):
+        print("Stack already installed, skipping")
+        return
+    sp.check_call(
+        "curl -sSL https://get.haskellstack.org/ | sh",
+        shell=True,
+        stdin=sys.stdin
+    )
+
+@gui_only
+def kmonad():
+    print("running kmonad setup")
+    haskell_stack()
+    # create uinput group if it doesn't already exist
+    sp.check_call(["sudo", "groupadd", "uinput", "--force"], stdin=sys.stdin)
+    # add current user to uinput group and input group
+    for group in ["uinput", "input"]:
+        sp.check_call([
+            "sudo",
+            "usermod",
+            "-aG",
+            group,
+            getpass.getuser(),
+        ], stdin=sys.stdin)
+
+    # add to udev rules
+    # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
+    # then reload udev rules
+    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"], stdin=sys.stdin)
+    sp.check_call([
+        "sudo",
+        "cp",
+        Path.home() / ".config/kmonad/udev.rules",
+        "/etc/udev/rules.d/99-kmonad.rules",
+    ], stdin=sys.stdin)
+    sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
+    # TODO: install kmonad
+    # TODO: set up service
+
+
 
 def nix_shell_run(*args: str):
     sp.check_call(
@@ -36,6 +97,12 @@ def nix_shell_run(*args: str):
                 shlex.join(args)
             ]),
         ])
+
+def install_ubuntu_packages(*pkgs: str):
+    if not shutil.which("apt-get"):
+        print("Not on Ubuntu, skipping apt installation")
+        return
+    sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
 
 
 if __name__ == "__main__":

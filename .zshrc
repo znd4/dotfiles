@@ -110,6 +110,7 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 
 # NETSKOPE_CERT doesn't seem to be needed for nvm anymore
 
+# TODO - remove zplug and replace with *something* faster
 #####################
 ### zplug
 #####################

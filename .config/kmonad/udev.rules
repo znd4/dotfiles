@@ -1,0 +1,3 @@
+# KMonad user access to /dev/uinput
+# This is needed for KMonad to be able to send keypresses to the system
+KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
