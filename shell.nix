@@ -55,6 +55,7 @@ let
     starship
     stylua
     thefuck
+    zoxide
     zsh
   ];
 
