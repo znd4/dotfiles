@@ -40,6 +40,7 @@ let
     github-cli
     go
     gum
+    hatch
     httpie
     lazygit
     joplin
