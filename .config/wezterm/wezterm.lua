@@ -8,9 +8,7 @@ end
 
 config.adjust_window_size_when_changing_font_size = false
 
--- config.default_prog = { "bash", "-c", "nix-shell --run zsh" }
--- config.default_prog = { "zsh", "-c", "nix-shell --run zsh" }
-config.default_prog = { "nix-shell", "--run", "zsh" }
+config.default_prog = { "cached-nix-shell", "--run", "zsh" }
 
 config.adjust_window_size_when_changing_font_size = false
 config.color_scheme = "neon-night (Gogh)"

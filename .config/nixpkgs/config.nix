@@ -6,6 +6,9 @@ let
     paths = [
       "victor-mono"
       "fira-code"
+      "cached-nix-shell"
+      "vscode"
+      "neovim"
     ];
   };
 in
