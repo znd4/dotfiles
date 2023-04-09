@@ -3,6 +3,7 @@
 let
   universalPackages = [
     "hatchling"
+    "pynvim"
   ];
 
   # Define function to create Python environment with specified packages and universal packages
@@ -43,6 +44,7 @@ let
     hatch
     httpie
     lazygit
+    libstdcxx5
     joplin
     nodejs
     openssl
