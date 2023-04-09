@@ -36,6 +36,7 @@ let
     clippy
     direnv
     fd
+    fnm # faster node version manager
     fzf
     gcc
     github-cli
@@ -43,11 +44,12 @@ let
     gum
     hatch
     httpie
+    joplin
     lazygit
     libstdcxx5
-    joplin
     nodejs
     openssl
+    pdd
     pkgconfig
     ripgrep
     starship
