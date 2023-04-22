@@ -1,0 +1,7 @@
+
+# negative -w arg to account for a border width (default: 100%)
+F12
+    tdrop -ma dropdown wezterm
+    # tdrop -ma -s dropdown alacritty
+    #tdrop -ma -w "" -h "" -y "$PANEL_HEIGHT" -s dropdown kitty --start-as=maximized
+    #tdrop -ma -s dropdown -P ‘wmctrl -i -r $1 -b add,above’ alacritty 

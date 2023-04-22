@@ -1,7 +1,0 @@
-[user]
-name = Zane Dufour
-email = zdufour@aspiration.com
-
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-
