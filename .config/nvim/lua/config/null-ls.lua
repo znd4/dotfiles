@@ -1,6 +1,9 @@
+require("mason").setup()
 local null_ls = require("null-ls")
 
-return {
+table.insert(null_ls.builtins.formatting.prettier.filetypes, "sql")
+
+null_ls.setup({
     sources = {
         -- dotenv
         null_ls.builtins.diagnostics.dotenv_linter,
@@ -16,6 +19,8 @@ return {
         -- python
         null_ls.builtins.formatting.black,
         null_ls.builtins.formatting.isort,
+        null_ls.builtins.diagnostics.ruff,
+        null_ls.builtins.diagnostics.mypy,
 
         -- golang
         null_ls.builtins.formatting.goimports.with({
@@ -63,4 +68,10 @@ return {
             },
         },
     },
-}
+})
+
+require("mason-null-ls").setup({
+    ensure_installed = nil,
+    automatic_installation = true,
+    automatic_setup = false,
+})
