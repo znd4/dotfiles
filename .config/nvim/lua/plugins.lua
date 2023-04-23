@@ -119,7 +119,7 @@ require("lazy").setup({
 
     "svermeulen/vimpeccable",
 
-    { "https://codeberg.org/esensar/nvim-dev-container", config = true, },
+    { "https://codeberg.org/esensar/nvim-dev-container", config = true },
 
     {
         "folke/which-key.nvim",
@@ -131,7 +131,7 @@ require("lazy").setup({
             input = {
                 insert_only = false,
             },
-        }
+        },
     },
     {
         "AckslD/nvim-FeMaco.lua",
@@ -226,24 +226,24 @@ require("lazy").setup({
             },
         },
     },
-    {
-        "nvim-neorg/neorg",
-        build = ":Neorg sync-parsers",
-        opts = {
-            load = {
-                ["core.defaults"] = {},       -- Loads default behaviour
-                ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
-                ["core.norg.dirman"] = {      -- Manages Neorg workspaces
-                    config = {
-                        workspaces = {
-                            notes = "~/notes",
-                        },
-                    },
-                },
-            },
-        },
-        dependencies = { { "nvim-lua/plenary.nvim" } },
-    },
+    -- {
+    --     "nvim-neorg/neorg",
+    --     build = ":Neorg sync-parsers",
+    --     opts = {
+    --         load = {
+    --             ["core.defaults"] = {}, -- Loads default behaviour
+    --             ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
+    --             ["core.norg.dirman"] = { -- Manages Neorg workspaces
+    --                 config = {
+    --                     workspaces = {
+    --                         notes = "~/notes",
+    --                     },
+    --                 },
+    --             },
+    --         },
+    --     },
+    --     dependencies = { { "nvim-lua/plenary.nvim" } },
+    -- },
     {
         "akinsho/toggleterm.nvim",
         version = "2.*",
@@ -257,6 +257,7 @@ require("lazy").setup({
                 winblend = 0,
                 direction = "float",
                 height = 20,
+                shell = "nix-zsh",
             })
         end,
     },
@@ -316,12 +317,22 @@ require("lazy").setup({
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
             "neovim/nvim-lspconfig",
-            "jose-elias-alvarez/null-ls.nvim",
         },
         priority = 102,
         branch = "v2.x",
         config = function()
             require("config.lsp")
+        end,
+    },
+    {
+        "jay-babu/mason-null-ls.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        dependencies = {
+            "williamboman/mason.nvim",
+            "jose-elias-alvarez/null-ls.nvim",
+        },
+        config = function()
+            require("config.null-ls") -- require your null-ls config here (example below)
         end,
     },
     --{
