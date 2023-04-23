@@ -45,6 +45,35 @@ require("lazy").setup({
             require("config.copilot")
         end,
     },
+    {
+        "glacambre/firenvim",
+        -- Lazy load firenvim
+        -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+        cond = not not vim.g.started_by_firenvim,
+        build = function()
+            require("lazy").load({ plugins = "firenvim", wait = true })
+
+            vim.fn["firenvim#install"](0)
+
+            -- set lines to max of current lines value and 10
+            vim.o.lines = math.max(vim.o.lines, 10)
+            vim.api.nvim_create_autocmd("UIEnter", {
+                callback = function()
+                    vim.g.gui_font_size = 12
+                    vim.g.gui_font_face = "VictorMono"
+                    -- set lines to max of current lines value and 10
+                    -- after an asynchronous 1000 ms delay
+                    print("in UIEnter")
+                    vim.defer_fn(function()
+                        print("UIEnter fired")
+                        vim.g.lines = math.max(vim.g.lines, 10)
+                        vim.o.columns = 110
+                        vim.o.laststatus = 0
+                    end, 2000)
+                end,
+            })
+        end,
+    },
 
     { "tpope/vim-fugitive",                              dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
