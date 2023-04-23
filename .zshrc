@@ -158,6 +158,7 @@ source_if_exists "$HOME/.fzf.zsh"
 source_if_exists "$HOME/.gvm/scripts/gvm"
 source_if_exists "$HOME/.cargo/env"
 
+add_to_path "$HOME/.cargo/bin"
 
 
 # Hishtory Config:
