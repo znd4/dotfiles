@@ -9,6 +9,11 @@ require("orgmode").setup({
             target = org_dir .. "/magic_wishlist.org",
             template = "%^{Card name}",
         },
+        j = {
+            description = "Jobs to apply to",
+            target = org_dir .. "/jobs.org",
+            template = "* TODO %?\n  %u",
+        },
         t = { description = "Task", template = "* TODO %?\n  %u" },
     },
 })
