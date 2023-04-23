@@ -40,6 +40,8 @@ fdf() {
 source ~/Git/zsh-snap/znap.zsh  # Start Znap
 
 znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
+znap source TheLocehiliosan/yadm completion/zsh/_yadm
+compdef _yadm y
 
 # https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
 
