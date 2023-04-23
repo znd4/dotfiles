@@ -30,6 +30,16 @@ def main():
         sp.check_call(["fc-cache"])
 
     kmonad()
+    
+    nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
+    sp.check_call(
+        f"echo '{nix_shell}' | sudo bash -c 'cat >> /etc/shells'",
+        shell=True,
+        text=True,
+        stdin=sys.stdin,
+    )
+
+
 
     
 
