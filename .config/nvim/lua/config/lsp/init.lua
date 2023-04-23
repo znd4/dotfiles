@@ -10,7 +10,7 @@ local ensure_installed = {
     "tsserver",
     "rnix",
     "rust_analyzer",
-    "sqls",
+    "sqlls",
     "lua_ls",
     "taplo",
     "texlab",
@@ -32,7 +32,7 @@ vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 require("lsp-format").setup({
     exclude = {
         "lua_ls",
-        "sqls",
+        "sqlls",
         "tsserver",
         -- "eslint",
     },
@@ -241,7 +241,7 @@ lsp.configure("taplo", {
     filetypes = { "toml", "gitconfig" },
 })
 
-lsp.configure("sqls", {
+lsp.configure("sqlls", {
     init_options = {
         provideFormatter = false,
     },
@@ -339,7 +339,3 @@ cmp.setup.cmdline(":", {
 })
 
 require("cmp_git").setup()
-
-local null_ls = require("null-ls")
-table.insert(null_ls.builtins.formatting.prettier.filetypes, "sql")
-null_ls.setup(require(".null-ls"))
