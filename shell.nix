@@ -35,6 +35,7 @@ let
   # Other dependencies
   globalPackages = with pkgs; [
     bat
+    brev-cli
     clippy
     direnv
     fd
