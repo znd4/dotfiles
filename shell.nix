@@ -4,6 +4,9 @@ let
   universalPackages = [
     "hatchling"
     "pynvim"
+    "ipython"
+    "numpy"
+    "pandas"
   ];
 
   # Define function to create Python environment with specified packages and universal packages
@@ -13,7 +16,6 @@ let
   #k Create Python 3.10 environment
   python310Packages = createPythonEnv {
     packages = [
-      "numpy"
       "pandas"
     ];
     withPackagesFn = pkgs.python310.withPackages;
@@ -23,7 +25,6 @@ let
   python311Packages = createPythonEnv {
     packages = [
       "nbconvert"
-      "ipython"
     ];
     withPackagesFn = pkgs.python311.withPackages;
   };
@@ -39,6 +40,7 @@ let
     fnm # faster node version manager
     fzf
     gcc
+    gfortran # needed for scipy and numpy
     github-cli
     go
     gum
