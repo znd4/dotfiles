@@ -34,6 +34,7 @@ let
 
   # Other dependencies
   globalPackages = with pkgs; [
+    bat
     clippy
     direnv
     fd
