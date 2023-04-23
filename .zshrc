@@ -79,6 +79,7 @@ check_path circleci && znap fpath _circleci 'circleci completion zsh'
 check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
 check_path jira && znap fpath _jira 'jira completion zsh'
 check_path pack && znap fpath _pack 'cat ~/.pack/completion.zsh'
+check_path pdm && znap fpath _pdm 'pdm completion zsh'
 check_path cdktf && . `cdktf completion`
 
 
