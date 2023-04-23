@@ -1,0 +1,3 @@
+#!/bin/sh
+exec cached-nix-shell --run zsh "$HOME/shell.nix"
+
