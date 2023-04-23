@@ -60,6 +60,7 @@ let
     ripgrep
     starship
     stylua
+    texlive.combined.scheme-full
     thefuck
     zoxide
     zsh
