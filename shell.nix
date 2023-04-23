@@ -37,6 +37,8 @@ let
     bat
     brev-cli
     clippy
+    cookiecutter
+    copier
     direnv
     fd
     fnm # faster node version manager
