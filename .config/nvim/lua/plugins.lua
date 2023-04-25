@@ -16,7 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     -- load scrollbar before gitsigns
-    { "petertriho/nvim-scrollbar", priority = 102,              config = true },
+    { "petertriho/nvim-scrollbar", priority = 102, config = true },
     {
         "lewis6991/gitsigns.nvim",
         config = function()
@@ -29,12 +29,12 @@ require("lazy").setup({
         priority = 101,
     },
     -- smooth scrolling
-    { "declancm/cinnamon.nvim",    config = { centered = true } },
+    { "declancm/cinnamon.nvim", config = { centered = true } },
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
     -- split and join treesitter
-    { "Wansmer/treesj",    config = true },
+    { "Wansmer/treesj", config = true },
     -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
@@ -52,11 +52,16 @@ require("lazy").setup({
         cond = not not vim.g.started_by_firenvim,
         build = function()
             require("lazy").load({ plugins = "firenvim", wait = true })
-
-            vim.fn["firenvim#install"](0)
-
+            vim.cmd([[packadd firenvim]])
+        end,
+        config = function()
             -- set lines to max of current lines value and 10
             vim.o.lines = math.max(vim.o.lines, 10)
+            vim.api.nvim_create_autocmd({ "BufEnter" }, {
+                pattern = "colab.research.google.com_*.txt",
+                cmd = "set ft=python",
+            })
+            print("in firenvim")
             vim.api.nvim_create_autocmd("UIEnter", {
                 callback = function()
                     vim.g.gui_font_size = 12
@@ -74,8 +79,30 @@ require("lazy").setup({
             })
         end,
     },
+    -- { "dccsillag/magma-nvim", build = ":UpdateRemotePlugins" },
+    -- { "untitled-ai/jupyter_ascending.vim" },
+    -- {
+    --     "bfredl/nvim-ipy",
+    --     config = function()
+    --         require("config.nvim-ipy")
+    --     end,
+    -- },
+    -- {
+    --     "hkupty/iron.nvim",
+    --     config = function()
+    --         require("config.iron")
+    --     end,
+    -- },
+    -- { "GCBallesteros/jupytext.vim" },
+    -- {
+    --     "GCBallesteros/vim-textobj-hydrogen",
+    --     dependencies = {
+    --         "kana/vim-textobj-line",
+    --         "kana/vim-textobj-user",
+    --     },
+    -- },
 
-    { "tpope/vim-fugitive",                              dependencies = { "tpope/vim-rhubarb" } },
+    { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
     "kdheepak/lazygit.nvim",
     "earthly/earthly.vim",
@@ -294,7 +321,7 @@ require("lazy").setup({
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
-            { "L3MON4D3/LuaSnip",         version = "1.*" },
+            { "L3MON4D3/LuaSnip", version = "1.*" },
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
@@ -309,7 +336,7 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lua", -- Optional
             "dmitmel/cmp-cmdline-history",
             "petertriho/cmp-git",
-            { "tzachar/cmp-fuzzy-path",   dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
+            { "tzachar/cmp-fuzzy-path", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             { "tzachar/cmp-fuzzy-buffer", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             "saadparwaiz1/cmp_luasnip",
 
@@ -424,7 +451,7 @@ require("lazy").setup({
         dependencies = {
             "kyazdani42/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly",                    -- optional, updated every week. (see issue #1193)
+        tag = "nightly", -- optional, updated every week. (see issue #1193)
         config = {
             open_on_setup = false,
             sync_root_with_cwd = true,
@@ -437,7 +464,7 @@ require("lazy").setup({
             hijack_directories = { enable = false },
         },
     },
-    { "akinsho/bufferline.nvim",   version = "2.*", dependencies = { "kyazdani42/nvim-web-devicons" } },
+    { "akinsho/bufferline.nvim", version = "2.*", dependencies = { "kyazdani42/nvim-web-devicons" } },
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",

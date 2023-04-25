@@ -6,6 +6,8 @@ if wezterm.config_builder then
 end
 -- append to config
 
+config.window_background_opacity = 0.95
+
 config.adjust_window_size_when_changing_font_size = false
 
 config.default_prog = { "cached-nix-shell", "--run", "zsh" }

@@ -5,6 +5,7 @@ let
     "hatchling"
     "pynvim"
     "ipython"
+    "nbconvert"
     "numpy"
     "pandas"
   ];
