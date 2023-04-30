@@ -17,16 +17,9 @@ def main():
         install_requests()
         import requests
 
-        res = requests.get("https://nixos.org/nix/install").raise_for_status()
-        with tempfile.NamedTemporaryFile() as tmp:
-            Path(tmp.name).write_text(res.text)
-            sp.check_call(
-                [
-                    "sh",
-                    tmp.name,
-                    "--daemon",
-                ]
-            )
+        res = requests.get("https://nixos.org/nix/install")
+        res.raise_for_status()
+        sp.check_call(["sh", "-c", res.text, "--daemon"])
 
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
