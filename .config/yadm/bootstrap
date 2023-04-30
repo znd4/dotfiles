@@ -152,9 +152,10 @@ def guarantee_yadm():
 
 
 def nix_shell_run(*args: str):
+    nix_bin = Path.home() / ".nix-profile" / "bin"
     sp.check_call(
         [
-            "nix-shell",
+            str(nix_bin / "nix-shell"),
             "--run",
             shlex.join(["bash", "-c", shlex.join(args)]),
         ]
