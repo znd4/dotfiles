@@ -60,6 +60,8 @@ HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = []
 UBUNTU_PACKAGES.append("libgmp-dev")  # for haskell stack
+INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
+INSTALL_KMONAD = os.getenv("INSTALL_KMONAD", "true").lower() == "true"
 
 nix_bin = Path.home() / ".nix-profile" / "bin"
 
@@ -75,6 +77,10 @@ def haskell_stack():
 
 @gui_only
 def kmonad():
+    if not INSTALL_KMONAD:
+        print("Skipping kmonad setup")
+        return
+
     print("running kmonad setup")
     haskell_stack()
     # create uinput group if it doesn't already exist
