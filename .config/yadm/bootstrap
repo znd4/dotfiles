@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
+import getpass
 import os
-import tempfile
+import shlex
+import shutil
 import subprocess as sp
+import sys
+import tempfile
 from pathlib import Path
 
-import sys
-import getpass
-import shutil
-import shlex
 
 def main():
+    guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
 
     if not shutil.which("nix-env"):
         sp.check_call(
-            shlex.split(
-            "sh <(curl -L https://nixos.org/nix/install) --daemon"
-            ),
+            "sh <(curl -L https://nixos.org/nix/install) --daemon",
             shell=True,
             stdin=sys.stdin,
         )
@@ -24,13 +23,13 @@ def main():
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
 
-    sp.check_call(["nix-env", "-iA", "nixpkgs.myPackages"]) # mostly installs fonts
+    sp.check_call(["nix-env", "-iA", "nixpkgs.myPackages"])  # mostly installs fonts
 
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
 
     kmonad()
-    
+
     nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
     sp.check_call(
         f"echo '{nix_shell}' | sudo bash -c 'cat >> /etc/shells'",
@@ -40,31 +39,30 @@ def main():
     )
 
 
-
-    
-
 def gui_only(func):
     def wrapper(*args, **kwargs):
         if HEADLESS:
             print("Skipping GUI-only command")
             return
         return func(*args, **kwargs)
+
     return wrapper
 
-HEADLESS = False
+
+HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = []
-UBUNTU_PACKAGES.append("libgmp-dev") # for haskell stack
-    
+UBUNTU_PACKAGES.append("libgmp-dev")  # for haskell stack
+
+
 def haskell_stack():
     if shutil.which("stack"):
         print("Stack already installed, skipping")
         return
     sp.check_call(
-        "curl -sSL https://get.haskellstack.org/ | sh",
-        shell=True,
-        stdin=sys.stdin
+        "curl -sSL https://get.haskellstack.org/ | sh", shell=True, stdin=sys.stdin
     )
+
 
 @gui_only
 def kmonad():
@@ -74,45 +72,54 @@ def kmonad():
     sp.check_call(["sudo", "groupadd", "uinput", "--force"], stdin=sys.stdin)
     # add current user to uinput group and input group
     for group in ["uinput", "input"]:
-        sp.check_call([
-            "sudo",
-            "usermod",
-            "-aG",
-            group,
-            getpass.getuser(),
-        ], stdin=sys.stdin)
+        sp.check_call(
+            [
+                "sudo",
+                "usermod",
+                "-aG",
+                group,
+                getpass.getuser(),
+            ],
+            stdin=sys.stdin,
+        )
 
     # add to udev rules
     # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
     # then reload udev rules
     sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"], stdin=sys.stdin)
-    sp.check_call([
-        "sudo",
-        "cp",
-        Path.home() / ".config/kmonad/udev.rules",
-        "/etc/udev/rules.d/99-kmonad.rules",
-    ], stdin=sys.stdin)
+    sp.check_call(
+        [
+            "sudo",
+            "cp",
+            Path.home() / ".config/kmonad/udev.rules",
+            "/etc/udev/rules.d/99-kmonad.rules",
+        ],
+        stdin=sys.stdin,
+    )
     sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
 
     # clone https://github.com/kmonad/kmonad into temporary directory
     with tempfile.TemporaryDirectory() as tmpdir:
         build_and_install_kmonad(Path(tmpdir))
 
-
     sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
     sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
+
 
 def build_and_install_kmonad(dir_: Path):
     if shutil.which("kmonad"):
         print("kmonad already installed, skipping")
         return
 
-    sp.check_call([
-        "git",
-        "clone",
-        "https://github.com/kmonad/kmonad",
-        str(dir_),
-    ], stdin=sys.stdin)
+    sp.check_call(
+        [
+            "git",
+            "clone",
+            "https://github.com/kmonad/kmonad",
+            str(dir_),
+        ],
+        stdin=sys.stdin,
+    )
 
     os.chdir(dir_)
     sp.check_call(["stack", "setup"], stdin=sys.stdin)
@@ -120,6 +127,27 @@ def build_and_install_kmonad(dir_: Path):
     sp.check_call(["stack", "install"], stdin=sys.stdin)
 
 
+def guarantee_yadm():
+    """
+    Install yadm if it doesn't exist.
+    This is useful when we need to invoke this script directly, such as in a brev.dev environment.
+    """
+    if shutil.which("yadm"):
+        print("yadm already installed, skipping")
+        return
+    yadm_path = Path.home() / ".local" / "bin" / "yadm"
+    sp.check_call(
+        [
+            "curl",
+            "-fLo",
+            yadm_path,
+            "https://github.com/TheLocehiliosan/yadm/raw/master/yadm",
+            "&&",
+            "chmod",
+            "a+x",
+            yadm_path,
+        ]
+    )
 
 
 def nix_shell_run(*args: str):
@@ -127,12 +155,10 @@ def nix_shell_run(*args: str):
         [
             "nix-shell",
             "--run",
-            shlex.join([
-                "bash",
-                "-c",
-                shlex.join(args)
-            ]),
-        ])
+            shlex.join(["bash", "-c", shlex.join(args)]),
+        ]
+    )
+
 
 def install_ubuntu_packages(*pkgs: str):
     if not shutil.which("apt-get"):
