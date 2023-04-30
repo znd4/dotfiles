@@ -24,7 +24,13 @@ def main():
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
 
-    sp.check_call(["nix-env", "-iA", "nixpkgs.myPackages"])  # mostly installs fonts
+    sp.check_call(
+        [
+            nix_bin / "nix-env",
+            "-iA",
+            "nixpkgs.myPackages",
+        ]
+    )  # mostly installs fonts
 
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
@@ -54,6 +60,8 @@ HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = []
 UBUNTU_PACKAGES.append("libgmp-dev")  # for haskell stack
+
+nix_bin = Path.home() / ".nix-profile" / "bin"
 
 
 def haskell_stack():
@@ -152,7 +160,6 @@ def guarantee_yadm():
 
 
 def nix_shell_run(*args: str):
-    nix_bin = Path.home() / ".nix-profile" / "bin"
     sp.check_call(
         [
             str(nix_bin / "nix-shell"),
