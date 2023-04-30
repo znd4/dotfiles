@@ -14,11 +14,19 @@ def main():
     install_ubuntu_packages(*UBUNTU_PACKAGES)
 
     if not shutil.which("nix-env"):
-        sp.check_call(
-            "sh <(curl -L https://nixos.org/nix/install) --daemon",
-            shell=True,
-            stdin=sys.stdin,
-        )
+        install_requests()
+        import requests
+
+        res = requests.get("https://nixos.org/nix/install").raise_for_status()
+        with tempfile.NamedTemporaryFile() as tmp:
+            Path(tmp.name).write_text(res.text)
+            sp.check_call(
+                [
+                    "sh",
+                    tmp.name,
+                    "--daemon",
+                ]
+            )
 
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
@@ -156,6 +164,19 @@ def nix_shell_run(*args: str):
             "nix-shell",
             "--run",
             shlex.join(["bash", "-c", shlex.join(args)]),
+        ]
+    )
+
+
+def install_requests():
+    sp.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--user",
+            "requests",
         ]
     )
 
