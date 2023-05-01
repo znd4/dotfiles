@@ -6,10 +6,11 @@
     },
     {
       "class": "Alacritty"
+    },
+    {
+      "class": "org.wezfurlong.wezterm"
     }
   ],
   "skiptaskbarhidden": [],
-  "log_on_focus": false,
-  "move_pointer_on_switch": false,
-  "default_pointer_position": "TOP_LEFT"
+  "log_on_focus": false
 }
