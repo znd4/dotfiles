@@ -51,6 +51,7 @@ let
     gum
     hatch
     httpie
+    hugo
     joplin
     lazygit
     libstdcxx5
@@ -58,6 +59,7 @@ let
     openssl
     pdd
     pkgconfig
+    pre-commit
     ripgrep
     starship
     stylua
