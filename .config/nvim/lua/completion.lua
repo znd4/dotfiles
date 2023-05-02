@@ -91,7 +91,8 @@ local cmp_setup = function()
         end
     end
 
-    local mappings = { -- Preset: ^n, ^p, ^y, ^e, you know the drill..
+    local mappings = {
+        -- Preset: ^n, ^p, ^y, ^e, you know the drill..
         ["<Down>"] = { i = cmp.mapping.select_next_item({ behavior = select_behavior }) },
         ["<Up>"] = { i = cmp.mapping.select_prev_item({ behavior = select_behavior }) },
         ["<C-n>"] = {
@@ -157,8 +158,12 @@ local cmp_setup = function()
             { name = "nvim_lua" },
         },
         window = {
-            completion = cmp.config.window.bordered(),
-            documentation = cmp.config.window.bordered(),
+            completion = {
+                border = "rounded",
+            },
+            documentation = {
+                border = "rounded",
+            },
         },
         mapping = cmp.mapping.preset.insert(mappings),
         -- completion = { autocomplete = true },
