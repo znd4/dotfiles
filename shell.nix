@@ -59,6 +59,7 @@ let
     openssl
     pdd
     pkgconfig
+    pre-commit
     ripgrep
     starship
     stylua
