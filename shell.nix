@@ -51,6 +51,7 @@ let
     gum
     hatch
     httpie
+    hugo
     joplin
     lazygit
     libstdcxx5
