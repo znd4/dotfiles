@@ -80,6 +80,7 @@ check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
 check_path jira && znap fpath _jira 'jira completion zsh'
 check_path pack && znap fpath _pack 'cat ~/.pack/completion.zsh'
 check_path pdm && znap fpath _pdm 'pdm completion zsh'
+check_path hugo && znap fpath _hugo 'hugo completion zsh'
 check_path cdktf && . `cdktf completion`
 
 
@@ -87,6 +88,10 @@ znap eval direnv "direnv hook zsh"
 znap eval fnm "fnm env --use-on-cd"
 
 znap eval nx "http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh"
+
+if which vivaldi &>/dev/null; then
+    export BROWSER=`which vivaldi`
+fi
 
 
 complete -C `which aws_completer` aws
