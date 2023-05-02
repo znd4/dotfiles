@@ -57,7 +57,7 @@ function zvm_after_init() {
 znap source jeffreytse/zsh-vi-mode
 
 # `znap prompt` makes your prompt visible in just 15-40ms!
-znap eval starship "starship init zsh"
+znap eval starship "starship init zsh --print-full-init"
 
 znap source zsh-users/zsh-autosuggestions
 znap source zsh-users/zsh-completions
@@ -98,6 +98,8 @@ setopt completealiases # so that gh works when aliased by op plugin
 znap source zsh-users/zsh-syntax-highlighting
 
 
+znap prompt
+eval "$(zoxide init zsh)"
 
 #####################
 ### volta
