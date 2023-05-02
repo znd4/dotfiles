@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import functools
 import getpass
+from functools import lru_cache
 import os
 import shlex
 import shutil
@@ -7,13 +9,18 @@ import subprocess as sp
 import sys
 import tempfile
 from pathlib import Path
+from typing import Callable
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
-UBUNTU_PACKAGES = []
-UBUNTU_PACKAGES.append("libgmp-dev")  # for haskell stack
+UBUNTU_PACKAGES = [
+    "libgmp-dev", # for haskell stack
+    "python3-pip",
+]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
-INSTALL_KMONAD = os.getenv("INSTALL_KMONAD", "true").lower() == "true"
+
+INSTALL_KMONAD = (not HEADLESS) and os.getenv("INSTALL_KMONAD", "true").lower() == "true"
+    
 
 nix_bin = Path.home() / ".nix-profile" / "bin"
 
@@ -23,7 +30,7 @@ def main():
     install_ubuntu_packages(*UBUNTU_PACKAGES)
 
     if not shutil.which("nix-env"):
-        install_requests()
+        pip_install("requests")
         import requests
 
         res = requests.get("https://nixos.org/nix/install")
@@ -35,7 +42,7 @@ def main():
 
     sp.check_call(
         [
-            nix_bin / "nix-env",
+            full_nix_cmd_path("nix-env"),
             "-iA",
             "nixpkgs.myPackages",
         ]
@@ -44,7 +51,11 @@ def main():
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
 
+    if INSTALL_KMONAD:
+        os.environ["LD_LIBRARY_PATH"] = "/usr/lib/x86_64-linux-gnu"
+
     kmonad()
+    print("done with kmonad")
 
     nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
     sp.check_call(
@@ -56,6 +67,7 @@ def main():
 
 
 def gui_only(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if HEADLESS:
             print("Skipping GUI-only command")
@@ -73,12 +85,33 @@ def haskell_stack():
         "curl -sSL https://get.haskellstack.org/ | sh", shell=True, stdin=sys.stdin
     )
 
+def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
+    def decorator(func: Callable):
+        @functools.wraps(func)
+        def wrapped(*args, **kwargs):
+            original = os.environ.get(key, None)
+            os.environ[key] = val
+            try:
+                func(*args, **kwargs)
+            finally:
+                if original is None:
+                    os.environ.pop(key)
+                    return
+                os.environ = original
 
+        return wrapped
+    return decorator
+
+
+@env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
+@env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @gui_only
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
         return
+    print(f"{os.environ['LD_LIBRARY_PATH']=}")
+
 
     print("running kmonad setup")
     haskell_stack()
@@ -135,10 +168,37 @@ def build_and_install_kmonad(dir_: Path):
         stdin=sys.stdin,
     )
 
-    os.chdir(dir_)
-    sp.check_call(["stack", "setup"], stdin=sys.stdin)
-    sp.check_call(["stack", "build"], stdin=sys.stdin)
-    sp.check_call(["stack", "install"], stdin=sys.stdin)
+    # here because it won't be installed when we first start the script
+    pip_install("ruamel.yaml")
+    from ruamel.yaml import YAML
+
+    stack_yaml_path = dir_ / "stack.yaml"
+    yaml = YAML()
+    stack_config = {}
+
+    # Check if stack.yaml already exists and load its content
+    if stack_yaml_path.is_file():
+        with open(stack_yaml_path, "r") as stack_yaml:
+            stack_config = yaml.load(stack_yaml)
+
+    extra_lib_dirs = "extra-lib-dirs"
+
+    stack_config[extra_lib_dirs] = [
+        *stack_config.get(extra_lib_dirs, []),
+        "/usr/lib/x86_64-linux-gnu",
+    ]
+
+    
+    # Save the modified stack.yaml file
+    with open(stack_yaml_path, "w") as stack_yaml:
+        yaml.dump(stack_config, stack_yaml)
+
+
+
+    check_call = lambda args: sp.check_call(args, stdin=sys.stdin, cwd=dir_)
+    check_call(["stack", "setup"])
+    check_call(["stack", "build"])
+    check_call(["stack", "install"])
 
 
 def guarantee_yadm():
@@ -164,17 +224,45 @@ def guarantee_yadm():
     )
 
 
+def full_nix_cmd_path(cmd: str) -> Path:
+    bin_path = nix_bin / cmd
+    if bin_path.is_file():
+        return bin_path
+    fallback = shutil.which(cmd)
+    if fallback:
+        return Path(fallback)
+    raise EnvironmentError(f"Couldn't find {cmd} on PATH or in {nix_bin}")
+
+
 def nix_shell_run(*args: str):
     sp.check_call(
         [
-            str(nix_bin / "nix-shell"),
+            full_nix_cmd_path("nix-shell"),
             "--run",
             shlex.join(["bash", "-c", shlex.join(args)]),
+            str(Path.home() / "shell.nix"),
         ]
     )
 
+@lru_cache
+def install_pip():
+    try:
+        sp.check_call([sys.executable, "-m", "pip", "--version"])
+    except:
+        pass
+    else:
+        return
 
-def install_requests():
+    try:
+        import ensurepip
+        ensurepip.bootstrap(user=True)
+    except:
+        raise Exception("failed to get pip")
+
+
+def pip_install(*packages: str):
+    install_pip()
+    print(f"pip installing {', '.join(packages)}")
     sp.check_call(
         [
             sys.executable,
@@ -182,9 +270,10 @@ def install_requests():
             "pip",
             "install",
             "--user",
-            "requests",
+            *packages,
         ]
     )
+
 
 
 def install_ubuntu_packages(*pkgs: str):
