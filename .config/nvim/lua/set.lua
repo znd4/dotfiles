@@ -4,6 +4,12 @@ vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.expandtab = true
 
+-- linux-specific settings
+local uname_output = vim.fn.system("uname")
+if uname_output:match("Linux") then
+    vim.g.netrw_browsex_viewer = "xdg-open"
+end
+
 --enable editorconfig
 vim.g.editorconfig = true
 
