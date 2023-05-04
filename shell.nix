@@ -52,6 +52,10 @@ let
     hatch
     httpie
     hugo
+
+    bundler
+    jekyll
+
     joplin
     lazygit
     libstdcxx5
