@@ -89,9 +89,9 @@ znap eval fnm "fnm env --use-on-cd"
 
 znap eval nx "http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh"
 
-if which vivaldi &>/dev/null; then
-    export BROWSER=`which vivaldi`
-fi
+# if which vivaldi &>/dev/null; then
+#     export BROWSER=`which vivaldi`
+# fi
 
 
 complete -C `which aws_completer` aws
