@@ -58,7 +58,8 @@ let
 
     joplin
     lazygit
-    libstdcxx5
+    # libstdcxx5
+    libcxx
     nodejs
     openssl
     pdd
