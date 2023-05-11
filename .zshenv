@@ -40,3 +40,5 @@ else
 	add_to_path /opt/local/sbin
 fi
 
+
+if [ -e /home/znd4/.nix-profile/etc/profile.d/nix.sh ]; then . /home/znd4/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
