@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
 import functools
 import getpass
-from functools import lru_cache
 import os
 import shlex
 import shutil
 import subprocess as sp
 import sys
 import tempfile
+from functools import lru_cache
 from pathlib import Path
 from typing import Callable
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = [
-    "libgmp-dev", # for haskell stack
+    "libgmp-dev",  # for haskell stack
     "python3-pip",
+    "fonts-firacode",
 ]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
-INSTALL_KMONAD = (not HEADLESS) and os.getenv("INSTALL_KMONAD", "true").lower() == "true"
-    
+INSTALL_KMONAD = (not HEADLESS) and os.getenv(
+    "INSTALL_KMONAD", "true"
+).lower() == "true"
+
 
 nix_bin = Path.home() / ".nix-profile" / "bin"
 
@@ -85,6 +88,7 @@ def haskell_stack():
         "curl -sSL https://get.haskellstack.org/ | sh", shell=True, stdin=sys.stdin
     )
 
+
 def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
     def decorator(func: Callable):
         @functools.wraps(func)
@@ -100,6 +104,7 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
                 os.environ = original
 
         return wrapped
+
     return decorator
 
 
@@ -111,7 +116,6 @@ def kmonad():
         print("Skipping kmonad setup")
         return
     print(f"{os.environ['LD_LIBRARY_PATH']=}")
-
 
     print("running kmonad setup")
     haskell_stack()
@@ -188,12 +192,9 @@ def build_and_install_kmonad(dir_: Path):
         "/usr/lib/x86_64-linux-gnu",
     ]
 
-    
     # Save the modified stack.yaml file
     with open(stack_yaml_path, "w") as stack_yaml:
         yaml.dump(stack_config, stack_yaml)
-
-
 
     check_call = lambda args: sp.check_call(args, stdin=sys.stdin, cwd=dir_)
     check_call(["stack", "setup"])
@@ -244,6 +245,7 @@ def nix_shell_run(*args: str):
         ]
     )
 
+
 @lru_cache
 def install_pip():
     try:
@@ -255,6 +257,7 @@ def install_pip():
 
     try:
         import ensurepip
+
         ensurepip.bootstrap(user=True)
     except:
         raise Exception("failed to get pip")
@@ -273,7 +276,6 @@ def pip_install(*packages: str):
             *packages,
         ]
     )
-
 
 
 def install_ubuntu_packages(*pkgs: str):

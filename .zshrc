@@ -80,6 +80,7 @@ check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
 check_path jira && znap fpath _jira 'jira completion zsh'
 check_path pack && znap fpath _pack 'cat ~/.pack/completion.zsh'
 check_path pdm && znap fpath _pdm 'pdm completion zsh'
+check_path register-python-argcomplete && check_path pipx && znap eval pipx 'register-python-argcomplete pipx'
 check_path hugo && znap fpath _hugo 'hugo completion zsh'
 check_path cdktf && . `cdktf completion`
 

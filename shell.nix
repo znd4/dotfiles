@@ -47,6 +47,7 @@ let
     gcc
     gfortran # needed for scipy and numpy
     github-cli
+    git-lfs
     go
     gum
     hatch
@@ -58,10 +59,13 @@ let
 
     joplin
     lazygit
-    libstdcxx5
+    # libstdcxx5
+    libcxx
+    neovim
     nodejs
     openssl
     pdd
+    pipx
     pkgconfig
     pre-commit
     ripgrep
