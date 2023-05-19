@@ -66,6 +66,7 @@ let
     openssl
     pdd
     pipx
+
     pkgconfig
     pre-commit
     ripgrep
@@ -73,6 +74,7 @@ let
     stylua
     texlive.combined.scheme-full
     thefuck
+    tmux
     zoxide
     zsh
   ];
