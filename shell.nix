@@ -8,7 +8,6 @@ let
     "nbconvert"
     "numpy"
     "pandas"
-    "torch-bin"
     "matplotlib"
   ];
 
@@ -20,6 +19,7 @@ let
   python310Packages = createPythonEnv {
     packages = [
       "pandas"
+      "torch-bin"
     ];
     withPackagesFn = pkgs.python310.withPackages;
   };
