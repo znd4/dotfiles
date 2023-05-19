@@ -8,6 +8,8 @@ let
     "nbconvert"
     "numpy"
     "pandas"
+    "torch-bin"
+    "matplotlib"
   ];
 
   # Define function to create Python environment with specified packages and universal packages
@@ -39,7 +41,9 @@ let
     brev-cli
     clippy
     cookiecutter
+    micromamba
     copier
+    delta
     direnv
     fd
     fnm # faster node version manager
@@ -60,7 +64,8 @@ let
     joplin
     lazygit
     # libstdcxx5
-    libcxx
+    # libcxx
+
     neovim
     nodejs
     openssl
