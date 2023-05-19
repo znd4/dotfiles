@@ -8,9 +8,11 @@ end
 
 config.window_background_opacity = 0.95
 
+-- config.exit_behavior = "CloseOnCleanExit"
+
 config.adjust_window_size_when_changing_font_size = false
 
-config.default_prog = { "cached-nix-shell", "--run", "zsh" }
+config.default_prog = { "cached-nix-shell", "--run", "zsh", wezterm.home_dir .. "/shell.nix" }
 
 config.adjust_window_size_when_changing_font_size = false
 config.color_scheme = "neon-night (Gogh)"
