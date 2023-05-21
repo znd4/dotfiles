@@ -12,13 +12,16 @@ config.window_background_opacity = 0.95
 
 config.adjust_window_size_when_changing_font_size = false
 
-config.default_prog = { "cached-nix-shell", "--run", "zsh", wezterm.home_dir .. "/shell.nix" }
+-- config.default_prog = { "cached-nix-shell", "--run", "zsh", wezterm.home_dir .. "/shell.nix" }
+config.default_prog = { "cached-nix-shell", "--run", "tmux", wezterm.home_dir .. "/shell.nix" }
+-- config.default_prog = { "tmux" }
 
 config.adjust_window_size_when_changing_font_size = false
 config.color_scheme = "neon-night (Gogh)"
 -- set font size to 14
 config.font_size = 14
 -- set default font to Fira Code
+-- config.font = wezterm.font_with_fallback({ "Fira Code", "Symbols Nerd Font" })
 config.font = wezterm.font({ family = "Fira Code" })
 -- Set italic fonts to Victor Mono
 config.font_rules = {

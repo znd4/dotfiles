@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 import functools
 import getpass
+import io
 import os
 import shlex
 import shutil
 import subprocess as sp
 import sys
 import tempfile
+import zipfile
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable
@@ -18,6 +20,7 @@ UBUNTU_PACKAGES = [
     "python3-pip",
     "fonts-firacode",
 ]
+NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
 INSTALL_KMONAD = (not HEADLESS) and os.getenv(
@@ -31,6 +34,8 @@ nix_bin = Path.home() / ".nix-profile" / "bin"
 def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
+    install_nerd_font_symbols()
+    install_clipboard()
 
     if not shutil.which("nix-env"):
         pip_install("requests")
@@ -43,13 +48,7 @@ def main():
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
 
-    sp.check_call(
-        [
-            full_nix_cmd_path("nix-env"),
-            "-iA",
-            "nixpkgs.myPackages",
-        ]
-    )  # mostly installs fonts
+    install_nix_env_packages(*NIX_ENV_PACKAGES)
 
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
@@ -66,6 +65,14 @@ def main():
         shell=True,
         text=True,
         stdin=sys.stdin,
+    )
+
+    install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
+
+
+def install_nix_env_packages(*packages: str):
+    sp.check_call(
+        [full_nix_cmd_path("nix-env"), "-iA", *(f"nixpkgs.{p}" for p in packages)]
     )
 
 
@@ -101,11 +108,38 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
                 if original is None:
                     os.environ.pop(key)
                     return
-                os.environ = original
+                os.environ[key] = original
 
         return wrapped
 
     return decorator
+
+
+@gui_only
+def install_nerd_font_symbols():
+    if "nerd" in sp.check_output(["fc-list"], text=True).lower():
+        return
+
+    pip_install("requests")
+    import requests
+
+    url = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/NerdFontsSymbolsOnly.zip"
+    res = requests.get(url)
+    res.raise_for_status()
+    # Define the fonts directory
+    fonts_dir = Path.home() / ".local" / "share" / "fonts"
+
+    # Create the fonts directory if it doesn't exist
+    fonts_dir.mkdir(parents=True, exist_ok=True)
+    # Extract all files into the fonts directory
+
+    print("Extracting fonts...")
+    zip_file = zipfile.ZipFile(io.BytesIO(res.content))
+    for filename in zip_file.namelist():
+        with open(fonts_dir / filename, "wb") as f:
+            f.write(zip_file.read(filename))
+
+    sp.check_call(["fc-cache", "-f", "-v"], stdin=sys.stdin)
 
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
@@ -250,7 +284,7 @@ def nix_shell_run(*args: str):
 def install_pip():
     try:
         sp.check_call([sys.executable, "-m", "pip", "--version"])
-    except:
+    except Exception:
         pass
     else:
         return
@@ -263,6 +297,7 @@ def install_pip():
         raise Exception("failed to get pip")
 
 
+@functools.lru_cache()
 def pip_install(*packages: str):
     install_pip()
     print(f"pip installing {', '.join(packages)}")
@@ -283,6 +318,56 @@ def install_ubuntu_packages(*pkgs: str):
         print("Not on Ubuntu, skipping apt installation")
         return
     sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
+
+
+def install_clipboard():
+    """See https://github.com/Slackadays/clipboard"""
+    if shutil.which("cb"):
+        return
+
+    pip_install("requests")
+    import requests
+
+    r = requests.get(
+        "https://github.com/Slackadays/Clipboard/releases/download/0.7.1/clipboard-linux-amd64.zip"
+    )
+    r.raise_for_status()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
+            zf.extractall(tmpdir)
+        shutil.copy(Path(tmpdir) / "bin" / "cb", Path.home() / ".local" / "bin" / "cb")
+        sp.check_call(["sudo", "cp", Path(tmpdir) / "bin" / "cb", "/usr/local/bin/cb"])
+        sp.check_call(shlex.split("sudo chmod +x /usr/local/bin/cb"))
+        sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
+
+
+def install_tpm(*plugins: str):
+    plugins_dir = Path.home() / ".tmux" / "plugins"
+    plugins_dir.mkdir(parents=True, exist_ok=True)
+
+    for plugin in plugins:
+        target_dir = plugins_dir / plugin.split("/")[-1]
+
+        if target_dir.exists() and not sp.call(
+            ["git", "rev-parse", "--is-inside-work-tree"], cwd=target_dir
+        ):
+            print(f"{plugin} already installed, skipping")
+            continue
+
+        if target_dir.exists():
+            shutil.rmtree(target_dir)
+
+        pip_install("furl")
+        import furl
+
+        sp.check_call(
+            [
+                "git",
+                "clone",
+                (furl.furl("https://github.com") / plugin).url,
+                str(target_dir),
+            ]
+        )
 
 
 if __name__ == "__main__":
