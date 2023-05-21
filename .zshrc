@@ -175,6 +175,8 @@ source_if_exists "$HOME/.hishtory/config.zsh"
 
 export PATH="$PATH:$HOME/.aido"
 
+export PYTHONPATH=$(python3 -m site --user-site):$PYTHONPATH
+
 # TODO - get this working on new desktop
 # source_if_exists "$HOME/.config/op/plugins.sh"
 
