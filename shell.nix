@@ -8,6 +8,7 @@ let
     "nbconvert"
     "numpy"
     "pandas"
+    "pip"
     "matplotlib"
   ];
 
