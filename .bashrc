@@ -2,11 +2,10 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+*i*) ;;
+*) return ;;
 esac
 
 eval "$(starship init bash)"
@@ -21,14 +20,13 @@ export PAGER=bat
 # These are the environment variables we set the same everywhere (e.g. EDITOR=nvim)
 . ~/.dotfiles/global_environment_variables.sh
 
-eval `thefuck --alias`
+eval $(thefuck --alias)
 
 ########################
 # Completions
 ########################
 
-eval "`pip completion --bash`"
-
+eval "$(pip completion --bash)"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -50,7 +48,7 @@ shopt -s checkwinsize
 #shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
@@ -59,7 +57,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+xterm-color | *-256color) color_prompt=yes ;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -153,11 +151,10 @@ fi
 
 # bat, but just for linux
 if ! which bat; then
-	alias bat=batcat
+    alias bat=batcat
 fi
 
 export SSH_AUTH_SOCK=~/.1password/agent.sock
-
 
 # Created by `pipx` on 2021-10-23 17:39:24
 export PATH="$PATH:$HOME/.local/bin"
@@ -170,7 +167,7 @@ export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
 export PATH="$NPM_PACKAGES/bin:$PATH"
 # Unset manpath so we can inherit from /etc/manpath via the `manpath`
 # command
-unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
+unset MANPATH # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
 # Hishtory Config:
