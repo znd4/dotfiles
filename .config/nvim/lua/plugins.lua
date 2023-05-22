@@ -16,7 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     -- load scrollbar before gitsigns
-    { "petertriho/nvim-scrollbar", priority = 102,              config = true },
+    { "petertriho/nvim-scrollbar", priority = 102, config = true },
     {
         "lewis6991/gitsigns.nvim",
         config = function()
@@ -29,12 +29,12 @@ require("lazy").setup({
         priority = 101,
     },
     -- smooth scrolling
-    { "declancm/cinnamon.nvim",    config = { centered = true } },
+    { "declancm/cinnamon.nvim", config = { centered = true } },
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
     -- split and join treesitter
-    { "Wansmer/treesj",    config = true },
+    { "Wansmer/treesj", config = true },
     -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
@@ -102,7 +102,7 @@ require("lazy").setup({
     --     },
     -- },
 
-    { "tpope/vim-fugitive",                              dependencies = { "tpope/vim-rhubarb" } },
+    { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
     "kdheepak/lazygit.nvim",
     "earthly/earthly.vim",
@@ -126,22 +126,31 @@ require("lazy").setup({
         end,
     },
 
-    "folke/tokyonight.nvim",
+    {
+        "folke/tokyonight.nvim",
+        lazy = true,
+        config = { transparent = true, style = "night" },
+    },
     "shaunsingh/moonlight.nvim",
     "bluz71/vim-moonfly-colors",
     "marko-cerovac/material.nvim",
     "rmehri01/onenord.nvim",
-    {
-        "bluz71/vim-nightfly-guicolors",
-        priority = 9001,
-        lazy = false,
-        config = function()
-            vim.cmd.colorscheme("nightfly")
-        end,
-    },
+    -- {
+    --     "bluz71/vim-nightfly-guicolors",
+    --     priority = 9001,
+    --     lazy = false,
+    --     config = function()
+    --         vim.cmd.colorscheme("nightfly")
+    --     end,
+    -- },
 
     "honza/vim-snippets",
     "rafamadriz/friendly-snippets",
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = true,
+    },
     {
         "stevearc/oil.nvim",
         config = function()
@@ -329,7 +338,7 @@ require("lazy").setup({
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
-            { "L3MON4D3/LuaSnip",         version = "1.*" },
+            { "L3MON4D3/LuaSnip", version = "1.*" },
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
@@ -344,7 +353,7 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lua", -- Optional
             "dmitmel/cmp-cmdline-history",
             "petertriho/cmp-git",
-            { "tzachar/cmp-fuzzy-path",   dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
+            { "tzachar/cmp-fuzzy-path", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             { "tzachar/cmp-fuzzy-buffer", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             "saadparwaiz1/cmp_luasnip",
 
@@ -455,11 +464,11 @@ require("lazy").setup({
     },
     { "nvim-treesitter/playground" },
     {
-        "nvim-tree/nvim-web-devicons",
+        "nvim-tree/nvim-tree.lua",
         dependencies = {
             "nvim-tree/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly",                   -- optional, updated every week. (see issue #1193)
+        tag = "nightly", -- optional, updated every week. (see issue #1193)
         config = {
             open_on_setup = false,
             sync_root_with_cwd = true,
@@ -472,7 +481,7 @@ require("lazy").setup({
             hijack_directories = { enable = false },
         },
     },
-    { "akinsho/bufferline.nvim",   version = "2.*", dependencies = { "nvim-tree/nvim-web-devicons" } },
+    { "akinsho/bufferline.nvim", version = "2.*", dependencies = { "nvim-tree/nvim-web-devicons" } },
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
@@ -518,6 +527,6 @@ require("lazy").setup({
 }, {
     concurrency = 20,
     install = {
-        colorscheme = { "nightfly" },
+        colorscheme = { "tokyonight" },
     },
 })

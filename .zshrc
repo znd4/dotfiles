@@ -3,6 +3,8 @@
 . ~/.aliasrc
 . ~/.dotfiles/path_functions.sh
 
+export SHELL=$(which zsh)
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/go/bin" ]; then
     PATH="$HOME/go/bin:$PATH"

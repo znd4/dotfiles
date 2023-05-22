@@ -16,6 +16,7 @@ end
 require("colorscheme")
 
 require("plugins")
+vim.cmd.colorscheme("tokyonight")
 
 require("neovide")
 require("fonts")
