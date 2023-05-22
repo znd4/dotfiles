@@ -53,9 +53,6 @@ def main():
     if shutil.which("fc-cache"):
         sp.check_call(["fc-cache"])
 
-    if INSTALL_KMONAD:
-        os.environ["LD_LIBRARY_PATH"] = "/usr/lib/x86_64-linux-gnu"
-
     kmonad()
     print("done with kmonad")
 
