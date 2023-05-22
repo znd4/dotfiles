@@ -99,3 +99,4 @@ add_to_path "/usr/local/bin"
 
 [[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
 
+add_to_path "$HOME/.nix-profile/bin"
