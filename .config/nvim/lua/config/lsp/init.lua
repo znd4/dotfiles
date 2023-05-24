@@ -86,14 +86,15 @@ local lsp = require("lsp-zero").preset({
 
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
--- lsp.skip_server_setup({ "marksman" })
 lsp.skip_server_setup({ "ltex" })
 require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
--- lsp.nvim_workspace({
---     library = lua_library,
--- })
 
-lsp.on_attach(function(client, bufnr)
+local attached_to_buffer = {}
+
+local function set_keymaps_for_buffer(bufnr)
+    if attached_to_buffer[bufnr] then
+        return
+    end
     lsp.default_keymaps({ buffer = bufnr, preserve_mappings = false })
 
     -- Mappings.
@@ -106,7 +107,6 @@ lsp.on_attach(function(client, bufnr)
         -- LSP actions
         nnoremap("<C-k>", vim.lsp.buf.signature_help)
         vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
-
         vimp.xnoremap({ "silent" }, "<F4>", vim.lsp.buf.range_code_action)
 
         -- Diagnostics
@@ -123,8 +123,12 @@ lsp.on_attach(function(client, bufnr)
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end)
     end)
+    attached_to_buffer[bufnr] = true
+end
 
+lsp.on_attach(function(client, bufnr)
     enable_formatting(client, bufnr)
+    set_keymaps_for_buffer(bufnr)
 end)
 
 lsp.ensure_installed(ensure_installed)

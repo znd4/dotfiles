@@ -129,7 +129,7 @@ require("lazy").setup({
     {
         "folke/tokyonight.nvim",
         lazy = true,
-        config = { transparent = true, style = "night" },
+        config = { transparent = false, style = "night" },
     },
     "shaunsingh/moonlight.nvim",
     "bluz71/vim-moonfly-colors",
@@ -490,7 +490,6 @@ require("lazy").setup({
         end,
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects", "HiPhish/nvim-ts-rainbow2" },
     },
-
     {
         "nvim-orgmode/orgmode",
         config = function()

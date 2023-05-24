@@ -21,6 +21,7 @@ let
     packages = [
       "pandas"
       "torch-bin"
+      "scikit-learn"
     ];
     withPackagesFn = pkgs.python310.withPackages;
   };
