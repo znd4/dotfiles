@@ -109,8 +109,5 @@ pkgs.mkShell rec {
     ];
   shellHook = ''
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.stdenv.cc.cc.lib}/lib"
-    if [ "$0" != "zsh" ]; then
-      exec zsh
-    fi
   '';
 }
