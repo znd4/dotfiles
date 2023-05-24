@@ -9,7 +9,7 @@ end
 config.window_background_opacity = 0.95
 config.window_background_opacity = 1
 
--- config.exit_behavior = "CloseOnCleanExit"
+config.exit_behavior = "CloseOnCleanExit"
 
 config.adjust_window_size_when_changing_font_size = false
 
