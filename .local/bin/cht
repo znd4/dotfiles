@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+http cht.sh/:list | fzf | xargs -r -I{} curl cht.sh/{} | xargs tmux

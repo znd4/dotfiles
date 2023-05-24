@@ -67,6 +67,9 @@ let
     # libstdcxx5
     # libcxx
 
+    # hoping that manpages show up
+    man
+
     neovim
     nodejs
     openssl
@@ -81,6 +84,8 @@ let
     texlive.combined.scheme-full
     thefuck
     tmux
+    tmux.man
+
     zoxide
     zsh
   ];
