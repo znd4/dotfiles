@@ -47,6 +47,7 @@ def main():
 
     nix_shell_run("rustup", "default", "stable")
     nix_shell_run("cargo", "install", *GLOBAL_CRATES)
+    install_py_launcher()
 
     install_nix_env_packages(*NIX_ENV_PACKAGES)
 
@@ -117,24 +118,26 @@ def install_nerd_font_symbols():
     if "nerd" in sp.check_output(["fc-list"], text=True).lower():
         return
 
-    pip_install("requests")
-    import requests
+    proc = sp.Popen(
+        nix_shell_cmd(
+            "gh",
+            "release",
+            "download",
+            "--repo=ryanoasis/nerd-fonts",
+            "--pattern=*SymbolsOnly.tar.xz",
+            "--output=-",
+        ),
+        stdout=sp.PIPE,
+    )
 
-    url = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/NerdFontsSymbolsOnly.zip"
-    res = requests.get(url)
-    res.raise_for_status()
     # Define the fonts directory
     fonts_dir = Path.home() / ".local" / "share" / "fonts"
 
     # Create the fonts directory if it doesn't exist
     fonts_dir.mkdir(parents=True, exist_ok=True)
-    # Extract all files into the fonts directory
 
-    print("Extracting fonts...")
-    zip_file = zipfile.ZipFile(io.BytesIO(res.content))
-    for filename in zip_file.namelist():
-        with open(fonts_dir / filename, "wb") as f:
-            f.write(zip_file.read(filename))
+    # Extract all files into the fonts directory
+    sp.check_call(["tar", "--xz", "-xf", "-", "-C", str(fonts_dir)], stdin=proc.stdout)
 
     sp.check_call(["fc-cache", "-f", "-v"], stdin=sys.stdin)
 
@@ -241,19 +244,7 @@ def guarantee_yadm():
     if shutil.which("yadm"):
         print("yadm already installed, skipping")
         return
-    yadm_path = Path.home() / ".local" / "bin" / "yadm"
-    sp.check_call(
-        [
-            "curl",
-            "-fLo",
-            yadm_path,
-            "https://github.com/TheLocehiliosan/yadm/raw/master/yadm",
-            "&&",
-            "chmod",
-            "a+x",
-            yadm_path,
-        ]
-    )
+    gh_install("TheLocehiliosan/yadm")
 
 
 def full_nix_cmd_path(cmd: str) -> Path:
@@ -266,14 +257,19 @@ def full_nix_cmd_path(cmd: str) -> Path:
     raise EnvironmentError(f"Couldn't find {cmd} on PATH or in {nix_bin}")
 
 
-def nix_shell_run(*args: str):
+def nix_shell_cmd(*args: str) -> list[str | Path]:
+    return [
+        full_nix_cmd_path("nix-shell"),
+        "--run",
+        shlex.join(["bash", "-c", shlex.join(args)]),
+        str(Path.home() / "shell.nix"),
+    ]
+
+
+def nix_shell_run(*args: str, **kwargs):
     sp.check_call(
-        [
-            full_nix_cmd_path("nix-shell"),
-            "--run",
-            shlex.join(["bash", "-c", shlex.join(args)]),
-            str(Path.home() / "shell.nix"),
-        ]
+        nix_shell_cmd(*args),
+        **kwargs,
     )
 
 
@@ -290,7 +286,7 @@ def install_pip():
         import ensurepip
 
         ensurepip.bootstrap(user=True)
-    except:
+    except Exception:
         raise Exception("failed to get pip")
 
 
@@ -365,6 +361,31 @@ def install_tpm(*plugins: str):
                 str(target_dir),
             ]
         )
+
+
+@functools.lru_cache()
+def install_gh_install():
+    nix_shell_run(
+        "gh",
+        "extension",
+        "install",
+        "--force",
+        "--pin=patch-1",
+        "znd4/gh-install",
+        stdin=sys.stdin,
+    )
+
+
+def gh_install(repo: str):
+    install_gh_install()
+    nix_shell_run("gh", "install", repo, stdin=sys.stdin)
+
+
+def install_py_launcher():
+    if shutil.which("py"):
+        return
+
+    gh_install("brettcannon/python-launcher")
 
 
 if __name__ == "__main__":
