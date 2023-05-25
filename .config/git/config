@@ -1,12 +1,11 @@
 [alias]
     a = add
     pl = pull
-    p = pull
     c = commit
     cm = commit
     co = checkout
     s = status
-    P = push
+    ps = push
     d = diff
 
     cedit = config --global --edit
