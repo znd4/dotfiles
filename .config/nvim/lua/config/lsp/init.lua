@@ -127,6 +127,10 @@ local function set_keymaps_for_buffer(bufnr)
 end
 
 lsp.on_attach(function(client, bufnr)
+    if client.name == "copilot" then
+        return
+    end
+    print("attaching " .. client.name .. " to buffer " .. bufnr)
     enable_formatting(client, bufnr)
     set_keymaps_for_buffer(bufnr)
 end)

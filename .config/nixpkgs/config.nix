@@ -14,6 +14,7 @@ let
 in
 {
   allowUnfree = true;
+  cudaSupport = true;
   packageOverrides = pkgs: {
     myPackages = myPackages;
   };

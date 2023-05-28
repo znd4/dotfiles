@@ -3,6 +3,7 @@ import functools
 import getpass
 import io
 import os
+import platform
 import shlex
 import shutil
 import subprocess as sp
@@ -36,6 +37,7 @@ def main():
     install_ubuntu_packages(*UBUNTU_PACKAGES)
     install_nerd_font_symbols()
     install_clipboard()
+    install_docker_compose()
 
     if not shutil.which("nix-env"):
         pip_install("requests")
@@ -374,6 +376,32 @@ def install_gh_install():
         "znd4/gh-install",
         stdin=sys.stdin,
     )
+
+
+def linux_only(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if platform.system() != "Linux":
+            print(f"Skipping {func.__name__} on non-Linux platform")
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+DOCKER_PLUGINS_DIR = Path.home() / ".docker" / "cli-plugins"
+
+
+@linux_only
+@env_patch("GH_BINPATH", str(DOCKER_PLUGINS_DIR))
+def install_docker_compose():
+    if (DOCKER_PLUGINS_DIR / "docker-compose").is_file():
+        print("not installing docker compose")
+        return
+
+    print("installing docker compose")
+    DOCKER_PLUGINS_DIR.mkdir(parents=True, exist_ok=True)
+    gh_install("docker/compose")
 
 
 def gh_install(repo: str):
