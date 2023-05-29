@@ -68,10 +68,9 @@ else
 	add_to_path /opt/local/sbin
 fi
 
-# export PYENV_ROOT="$HOME/.pyenv"
-# add_to_path "$PYENV_ROOT/bin"
-#
-# eval `pyenv init --path`
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # use 1password for ssh
 export SSH_AUTH_SOCK=~/.1password/agent.sock
@@ -100,3 +99,6 @@ add_to_path "/usr/local/bin"
 [[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
 
 add_to_path "$HOME/.nix-profile/bin"
+
+if [ -e /home/zanedufour/.nix-profile/etc/profile.d/nix.sh ]; then . /home/zanedufour/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+. "$HOME/.cargo/env"

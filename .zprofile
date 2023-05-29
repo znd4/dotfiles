@@ -23,3 +23,5 @@ export PATH=/Applications/SnowSQL.app/Contents/MacOS:$PATH
 export MANPATH="/opt/local/share/man:$MANPATH"
 # Finished adapting your MANPATH environment variable for use with MacPorts.
 
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

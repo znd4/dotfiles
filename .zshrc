@@ -122,7 +122,9 @@ then
 fi
 
 
-
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # POETRY VIRTUALENVS IN PROJECT
 export POETRY_VIRTUALENVS_IN_PROJECT=true

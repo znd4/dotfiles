@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import functools
+from contextlib import contextmanager
 import getpass
 import io
 import os
@@ -21,6 +22,43 @@ UBUNTU_PACKAGES = [
     "python3-pip",
     "fonts-firacode",
 ]
+BREW_PACKAGES = [
+    "bat",
+    "brevdev/homebrew-brev/brev",
+    "cookiecutter",
+    "copier",
+    "git-delta",
+    "direnv",
+    "distrobox",
+    "fd",
+    "fnm",
+    "fzf",
+    "gh",
+    "git-lfs",
+    "go",
+    "gum",
+    "hatch",
+    "httpie",
+    # "bundler",
+    # "jekyll",
+    "joplin-cli",
+    "lazygit",
+    "neovim",
+    "nodejs",
+    "pipx",
+    "pipenv",
+    "podman",
+    "pre-commit",
+    "ripgrep",
+
+    "starship",
+    "stylua",
+    "texlive",
+    "thefuck",
+    "tmux",
+    "zoxide",
+    "zsh",
+]
 NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
@@ -29,32 +67,26 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 ).lower() == "true"
 
 
-nix_bin = Path.home() / ".nix-profile" / "bin"
 
 
 def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
+    brew_install(*BREW_PACKAGES)
     install_nerd_font_symbols()
     install_clipboard()
     install_docker_compose()
+    install_pyenv()
 
-    if not shutil.which("nix-env"):
-        pip_install("requests")
-        import requests
+    install_rustup()
 
-        res = requests.get("https://nixos.org/nix/install")
-        res.raise_for_status()
-        sp.check_call(["sh", "-c", res.text, "--daemon"])
 
-    nix_shell_run("rustup", "default", "stable")
-    nix_shell_run("cargo", "install", *GLOBAL_CRATES)
+    sp.check_call(["rustup", "default", "stable"])
+    sp.check_call(["cargo", "install", *GLOBAL_CRATES])
     install_py_launcher()
 
-    install_nix_env_packages(*NIX_ENV_PACKAGES)
+    # install_nix_env_packages(*NIX_ENV_PACKAGES)
 
-    if shutil.which("fc-cache"):
-        sp.check_call(["fc-cache"])
 
     kmonad()
     print("done with kmonad")
@@ -70,10 +102,37 @@ def main():
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
 
 
-def install_nix_env_packages(*packages: str):
-    sp.check_call(
-        [full_nix_cmd_path("nix-env"), "-iA", *(f"nixpkgs.{p}" for p in packages)]
-    )
+
+def install_homebrew():
+    if shutil.which("brew"):
+        return
+    with download_script(
+        "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+    ) as installer:
+        sp.check_call(["bash", installer])
+    os.environ["PATH"] = "/home/linuxbrew/.linuxbrew/bin:" + os.environ["PATH"]
+
+def install_rustup():
+    if shutil.which("rustup"):
+        return
+    with download_script("https://sh.rustup.rs") as installer:
+        sp.check_call(["sh", installer], stdin=sys.stdin)
+
+@contextmanager
+def download_script(url: str) -> Path:
+    pip_install("requests")
+    import requests
+    with tempfile.TemporaryDirectory() as td:
+        
+
+        resp = requests.get(url)
+        resp.raise_for_status()
+
+        target = Path(td) / "installer"
+        target.write_text(resp.text)
+
+        yield target
+
 
 
 def gui_only(func):
@@ -121,14 +180,14 @@ def install_nerd_font_symbols():
         return
 
     proc = sp.Popen(
-        nix_shell_cmd(
+        [
             "gh",
             "release",
             "download",
             "--repo=ryanoasis/nerd-fonts",
             "--pattern=*SymbolsOnly.tar.xz",
             "--output=-",
-        ),
+        ],
         stdout=sp.PIPE,
     )
 
@@ -249,30 +308,10 @@ def guarantee_yadm():
     gh_install("TheLocehiliosan/yadm")
 
 
-def full_nix_cmd_path(cmd: str) -> Path:
-    bin_path = nix_bin / cmd
-    if bin_path.is_file():
-        return bin_path
-    fallback = shutil.which(cmd)
-    if fallback:
-        return Path(fallback)
-    raise EnvironmentError(f"Couldn't find {cmd} on PATH or in {nix_bin}")
 
 
-def nix_shell_cmd(*args: str) -> list[str | Path]:
-    return [
-        full_nix_cmd_path("nix-shell"),
-        "--run",
-        shlex.join(["bash", "-c", shlex.join(args)]),
-        str(Path.home() / "shell.nix"),
-    ]
 
 
-def nix_shell_run(*args: str, **kwargs):
-    sp.check_call(
-        nix_shell_cmd(*args),
-        **kwargs,
-    )
 
 
 @lru_cache
@@ -367,13 +406,15 @@ def install_tpm(*plugins: str):
 
 @functools.lru_cache()
 def install_gh_install():
-    nix_shell_run(
-        "gh",
-        "extension",
-        "install",
-        "--force",
-        "--pin=patch-1",
-        "znd4/gh-install",
+    sp.check_call(
+        [
+            "gh",
+            "extension",
+            "install",
+            # "--force",
+            "--pin=patch-1",
+            "znd4/gh-install",
+        ],
         stdin=sys.stdin,
     )
 
@@ -406,8 +447,25 @@ def install_docker_compose():
 
 def gh_install(repo: str):
     install_gh_install()
-    nix_shell_run("gh", "install", repo, stdin=sys.stdin)
+    sp.check_call(["gh", "install", repo], stdin=sys.stdin)
 
+
+def install_pyenv():
+    pyenv_root = Path.home() / ".pyenv"
+    if not pyenv_root.is_dir():
+        sp.check_call([
+            "git",
+            "clone",
+            "https://github.com/pyenv/pyenv.git",
+            pyenv_root,
+        ])
+
+def path_to_brew():
+    Path("/home") / "linuxbrew" / ".linuxbrew" / "bin" / "brew"
+
+def brew_install(*pkgs: str):
+    install_homebrew()
+    sp.check_call(["brew", "install", *pkgs])
 
 def install_py_launcher():
     if shutil.which("py"):

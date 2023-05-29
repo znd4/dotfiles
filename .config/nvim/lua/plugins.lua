@@ -163,7 +163,16 @@ require("lazy").setup({
 
     "svermeulen/vimpeccable",
 
-    { "https://codeberg.org/esensar/nvim-dev-container", config = true },
+    {
+        "https://codeberg.org/esensar/nvim-dev-container",
+        config = true,
+        build = function()
+            vim.cmd.TSInstall("jsonc")
+        end,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+    },
 
     {
         "folke/which-key.nvim",
