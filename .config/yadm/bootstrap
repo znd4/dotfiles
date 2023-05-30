@@ -28,6 +28,7 @@ if not HEADLESS:
 
 BREW_PACKAGES = [
     "bat",
+    "black",
     "brevdev/homebrew-brev/brev",
     "cookiecutter",
     "copier",
@@ -45,6 +46,7 @@ BREW_PACKAGES = [
     "httpie",
     # "bundler",
     # "jekyll",
+    "isort",
     "joplin-cli",
     "lazygit",
     "neovim",
@@ -106,6 +108,19 @@ def main():
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
 
 
+def skip_if(cond: bool | Callable[[], bool]):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if cond is True:
+                return
+
+            if callable(cond) and cond():
+                return
+
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 def install_homebrew():
     if shutil.which("brew"):
@@ -178,7 +193,7 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
     return decorator
 
 
-@gui_only
+@skip_if(lambda: HEADLESS)
 def install_nerd_font_symbols():
     if "nerd" in sp.check_output(["fc-list"], text=True).lower():
         return
@@ -209,7 +224,7 @@ def install_nerd_font_symbols():
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
-@gui_only
+@skip_if(lambda: HEADLESS)
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
@@ -310,13 +325,6 @@ def guarantee_yadm():
         print("yadm already installed, skipping")
         return
     gh_install("TheLocehiliosan/yadm")
-
-
-
-
-
-
-
 
 @lru_cache
 def install_pip():
@@ -423,15 +431,7 @@ def install_gh_install():
     )
 
 
-def linux_only(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        if platform.system() != "Linux":
-            print(f"Skipping {func.__name__} on non-Linux platform")
-            return
-        return func(*args, **kwargs)
-
-    return wrapper
+linux_only = skip_if(lambda: platform.system() != "Linux")
 
 
 DOCKER_PLUGINS_DIR = Path.home() / ".docker" / "cli-plugins"
@@ -449,6 +449,7 @@ def install_docker_compose():
     gh_install("docker/compose")
 
 
+@skip_if(not sys.stdout.isatty())
 def gh_install(repo: str):
     install_gh_install()
     sp.check_call(["gh", "install", repo], stdin=sys.stdin)
