@@ -177,14 +177,6 @@ lsp.configure("yamlls", {
     filetypes = yamlls_filetypes,
 })
 
-if not not vim.g.started_by_firenvim then
-    lsp.configure("pyright", {
-        python = {
-            python = "/home/zanedufour/Projects/um_eecs498/.venv/bin/python",
-        },
-    })
-end
-
 lsp.configure("tsserver", {
     on_init = disableFormatting,
 })

@@ -96,9 +96,9 @@ fi
 add_to_path "$HOME/.rd/bin"
 add_to_path "/usr/local/bin"
 
-[[ -s "/Users/zdufour/.gvm/scripts/gvm" ]] && source "/Users/zdufour/.gvm/scripts/gvm"
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
 add_to_path "$HOME/.nix-profile/bin"
 
-if [ -e /home/zanedufour/.nix-profile/etc/profile.d/nix.sh ]; then . /home/zanedufour/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 . "$HOME/.cargo/env"

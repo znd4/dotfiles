@@ -18,10 +18,14 @@ from typing import Callable
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = [
-    "libgmp-dev",  # for haskell stack
     "python3-pip",
-    "fonts-firacode",
 ]
+if not HEADLESS:
+    UBUNTU_PACKAGES.extend([
+        "libgmp-dev",
+        "fonts-firacode",
+    ])
+
 BREW_PACKAGES = [
     "bat",
     "brevdev/homebrew-brev/brev",
