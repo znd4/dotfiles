@@ -364,6 +364,7 @@ def pip_install(*packages: str):
     )
     sitepackages = Path(site.getusersitepackages())
     print(f"{list(sitepackages.glob('*'))=}")
+    print(f"{sys.path=}")
 
 
 def install_ubuntu_packages(*pkgs: str):
