@@ -13,7 +13,7 @@ import tempfile
 import zipfile
 from functools import lru_cache
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Generator, Iterable, Iterator
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
@@ -47,7 +47,6 @@ BREW_PACKAGES = [
     # "bundler",
     # "jekyll",
     "isort",
-    "joplin-cli",
     "lazygit",
     "neovim",
     "nodejs",
@@ -65,6 +64,11 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
+if not HEADLESS:
+    BREW_PACKAGES.extend([
+        "joplin-cli",
+
+    ])
 NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
@@ -138,7 +142,7 @@ def install_rustup():
         sp.check_call(["sh", installer], stdin=sys.stdin)
 
 @contextmanager
-def download_script(url: str) -> Path:
+def download_script(url: str) -> Iterator[Path]:
     pip_install("requests")
     import requests
     with tempfile.TemporaryDirectory() as td:
@@ -465,12 +469,18 @@ def install_pyenv():
             pyenv_root,
         ])
 
-def path_to_brew():
-    Path("/home") / "linuxbrew" / ".linuxbrew" / "bin" / "brew"
+def path_to_brew() -> Path:
+    return Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin" / "brew"
 
 def brew_install(*pkgs: str):
     install_homebrew()
-    sp.check_call(["brew", "install", *pkgs])
+
+    pip_install("more-itertools")
+    import more_itertools as mi
+
+    for chunk in mi.chunked(pkgs, 10):
+        sp.check_call([path_to_brew(), "install", *chunk])
+
 
 def install_py_launcher():
     if shutil.which("py"):
