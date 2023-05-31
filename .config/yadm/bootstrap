@@ -24,6 +24,23 @@ HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = [
     "python3-pip",
+
+    # for pyenv
+    "libedit-dev",
+    "build-essential",
+    "libssl-dev",
+    "zlib1g-dev",
+    "libbz2-dev",
+    "libreadline-dev",
+    "libsqlite3-dev",
+    "curl",
+    "libncursesw5-dev",
+    "xz-utils",
+    "tk-dev",
+    "libxml2-dev",
+    "libxmlsec1-dev",
+    "libffi-dev",
+    "liblzma-dev",
 ]
 if not HEADLESS:
     UBUNTU_PACKAGES.extend([
@@ -475,6 +492,21 @@ def install_pyenv():
             "https://github.com/pyenv/pyenv.git",
             pyenv_root,
         ])
+    pyenv = pyenv_root / "bin" / "pyenv"
+    versions = ["3.10", "3.11"]
+    for version in versions:
+        if any(
+            line.strip().startswith(version)
+            for line in sp.check_output(
+                [pyenv, "versions"],
+                text=True,
+                ).split("\n")
+        ):
+            continue
+        sp.check_call([pyenv, "install", version])
+
+    sp.check_call([pyenv, "global", *versions])
+
 
 def path_to_brew() -> Path:
     return Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin" / "brew"
