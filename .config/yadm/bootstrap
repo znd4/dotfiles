@@ -63,7 +63,6 @@ BREW_PACKAGES = [
 
     "starship",
     "stylua",
-    "texlive",
     "thefuck",
     "tmux",
     "zoxide",
@@ -72,7 +71,7 @@ BREW_PACKAGES = [
 if not HEADLESS:
     BREW_PACKAGES.extend([
         "joplin-cli",
-
+        "texlive",
     ])
 NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
