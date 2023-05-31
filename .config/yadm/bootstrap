@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import functools
+import site
 from contextlib import contextmanager
 import getpass
 import io
@@ -361,6 +362,8 @@ def pip_install(*packages: str):
             *packages,
         ]
     )
+    sitepackages = Path(site.getusersitepackages())
+    print(f"{list(sitepackages.glob('*'))=}")
 
 
 def install_ubuntu_packages(*pkgs: str):
