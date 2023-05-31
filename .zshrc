@@ -2,6 +2,7 @@
 # Add aliases
 . ~/.aliasrc
 . ~/.dotfiles/path_functions.sh
+ulimit -n 8096
 
 export SHELL=$(which zsh)
 
