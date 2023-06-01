@@ -382,9 +382,6 @@ def pip_install(*packages: str):
             *packages,
         ]
     )
-    sitepackages = Path(site.getusersitepackages())
-    print(f"{list(sitepackages.glob('*'))=}")
-    print(f"{sys.path=}")
 
 
 def install_ubuntu_packages(*pkgs: str):
@@ -494,8 +491,9 @@ def install_pyenv():
         ])
     pyenv = pyenv_root / "bin" / "pyenv"
     versions = ["3.10", "3.11"]
+    globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
     for version in versions:
-        if any(
+        if version in globals or any(
             line.strip().startswith(version)
             for line in sp.check_output(
                 [pyenv, "versions"],
