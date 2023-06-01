@@ -182,7 +182,7 @@ export PATH="$PATH:$HOME/.aido"
 
 
 # TODO - get this working on new desktop
-# source_if_exists "$HOME/.config/op/plugins.sh"
+source_if_exists "$HOME/.config/op/plugins.sh"
 
 
 # tabtab source for packages
