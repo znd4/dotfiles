@@ -13,18 +13,7 @@ config.exit_behavior = "CloseOnCleanExit"
 
 config.adjust_window_size_when_changing_font_size = false
 
-config.keys = {
-    {
-        key = "Tab",
-        mods = "SHIFT|CTRL",
-        action = wezterm.action.DisableDefaultAssignment,
-    },
-    {
-        key = "Tab",
-        mods = "CTRL",
-        action = wezterm.action.DisableDefaultAssignment,
-    },
-}
+config.keys = {}
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
 config.default_prog = { "tmux" }
