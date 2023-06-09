@@ -105,8 +105,8 @@ local function set_keymaps_for_buffer(bufnr)
         end
 
         -- LSP actions
-        nnoremap("<C-k>", vim.lsp.buf.signature_help)
-        vimp.inoremap({ "silent" }, "<C-k>", vim.lsp.buf.signature_help)
+        nnoremap("<C-K>", vim.lsp.buf.signature_help)
+        vimp.inoremap({ "silent" }, "<C-K>", vim.lsp.buf.signature_help)
         vimp.xnoremap({ "silent" }, "<F4>", vim.lsp.buf.range_code_action)
 
         -- Diagnostics
@@ -130,7 +130,6 @@ lsp.on_attach(function(client, bufnr)
     if client.name == "copilot" then
         return
     end
-    print("attaching " .. client.name .. " to buffer " .. bufnr)
     enable_formatting(client, bufnr)
     set_keymaps_for_buffer(bufnr)
 end)
