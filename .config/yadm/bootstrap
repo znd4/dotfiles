@@ -98,8 +98,6 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 ).lower() == "true"
 
 
-
-
 def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
@@ -111,13 +109,11 @@ def main():
 
     install_rustup()
 
-
     sp.check_call(["rustup", "default", "stable"])
     sp.check_call(["cargo", "install", *GLOBAL_CRATES])
     install_py_launcher()
 
     # install_nix_env_packages(*NIX_ENV_PACKAGES)
-
 
     kmonad()
     print("done with kmonad")
@@ -131,6 +127,7 @@ def main():
     )
 
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
+    pipx_install("pre-commit", "black", "isort", "ruff")
 
 
 def skip_if(cond: bool | Callable[[], bool]):
@@ -147,6 +144,7 @@ def skip_if(cond: bool | Callable[[], bool]):
         return wrapper
     return decorator
 
+
 def install_homebrew():
     if shutil.which("brew"):
         return
@@ -156,18 +154,19 @@ def install_homebrew():
         sp.check_call(["bash", installer])
     os.environ["PATH"] = "/home/linuxbrew/.linuxbrew/bin:" + os.environ["PATH"]
 
+
 def install_rustup():
     if shutil.which("rustup"):
         return
     with download_script("https://sh.rustup.rs") as installer:
         sp.check_call(["sh", installer], stdin=sys.stdin)
 
+
 @contextmanager
 def download_script(url: str) -> Iterator[Path]:
     pip_install("requests")
     import requests
     with tempfile.TemporaryDirectory() as td:
-        
 
         resp = requests.get(url)
         resp.raise_for_status()
@@ -176,7 +175,6 @@ def download_script(url: str) -> Iterator[Path]:
         target.write_text(resp.text)
 
         yield target
-
 
 
 def gui_only(func):
@@ -242,7 +240,8 @@ def install_nerd_font_symbols():
     fonts_dir.mkdir(parents=True, exist_ok=True)
 
     # Extract all files into the fonts directory
-    sp.check_call(["tar", "--xz", "-xf", "-", "-C", str(fonts_dir)], stdin=proc.stdout)
+    sp.check_call(["tar", "--xz", "-xf", "-", "-C",
+                  str(fonts_dir)], stdin=proc.stdout)
 
     sp.check_call(["fc-cache", "-f", "-v"], stdin=sys.stdin)
 
@@ -276,7 +275,8 @@ def kmonad():
     # add to udev rules
     # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
     # then reload udev rules
-    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"], stdin=sys.stdin)
+    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"],
+                  stdin=sys.stdin)
     sp.check_call(
         [
             "sudo",
@@ -286,14 +286,17 @@ def kmonad():
         ],
         stdin=sys.stdin,
     )
-    sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
+    sp.check_call(["sudo", "udevadm", "control",
+                  "--reload-rules"], stdin=sys.stdin)
 
     # clone https://github.com/kmonad/kmonad into temporary directory
     with tempfile.TemporaryDirectory() as tmpdir:
         build_and_install_kmonad(Path(tmpdir))
 
-    sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
-    sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "enable",
+                  "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "restart",
+                  "kmonad.service"], stdin=sys.stdin)
 
 
 def build_and_install_kmonad(dir_: Path):
@@ -335,7 +338,7 @@ def build_and_install_kmonad(dir_: Path):
     with open(stack_yaml_path, "w") as stack_yaml:
         yaml.dump(stack_config, stack_yaml)
 
-    check_call = lambda args: sp.check_call(args, stdin=sys.stdin, cwd=dir_)
+    def check_call(args): return sp.check_call(args, stdin=sys.stdin, cwd=dir_)
     check_call(["stack", "setup"])
     check_call(["stack", "build"])
     check_call(["stack", "install"])
@@ -350,6 +353,7 @@ def guarantee_yadm():
         print("yadm already installed, skipping")
         return
     gh_install("TheLocehiliosan/yadm")
+
 
 @lru_cache
 def install_pip():
@@ -406,10 +410,13 @@ def install_clipboard():
     with tempfile.TemporaryDirectory() as tmpdir:
         with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
             zf.extractall(tmpdir)
-        shutil.copy(Path(tmpdir) / "bin" / "cb", Path.home() / ".local" / "bin" / "cb")
-        sp.check_call(["sudo", "cp", Path(tmpdir) / "bin" / "cb", "/usr/local/bin/cb"])
+        shutil.copy(Path(tmpdir) / "bin" / "cb",
+                    Path.home() / ".local" / "bin" / "cb")
+        sp.check_call(["sudo", "cp", Path(tmpdir)
+                      / "bin" / "cb", "/usr/local/bin/cb"])
         sp.check_call(shlex.split("sudo chmod +x /usr/local/bin/cb"))
-        sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
+        sp.check_call("sudo cp lib/*.so /usr/local/lib/",
+                      shell=True, cwd=tmpdir)
 
 
 def install_tpm(*plugins: str):
@@ -491,14 +498,15 @@ def install_pyenv():
         ])
     pyenv = pyenv_root / "bin" / "pyenv"
     versions = ["3.10", "3.11"]
-    globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
+    globals = set(sp.check_output(
+        [pyenv, "global"], text=True).strip().split("\n"))
     for version in versions:
         if version in globals or any(
             line.strip().startswith(version)
             for line in sp.check_output(
                 [pyenv, "versions"],
                 text=True,
-                ).split("\n")
+            ).split("\n")
         ):
             continue
         sp.check_call([pyenv, "install", version])
@@ -506,8 +514,16 @@ def install_pyenv():
     sp.check_call([pyenv, "global", *versions])
 
 
+BREW_BIN = Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin"
+
+
+def brew_path(exe: str) -> Path:
+    return BREW_BIN / exe
+
+
 def path_to_brew() -> Path:
-    return Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin" / "brew"
+    return BREW_BIN / "brew"
+
 
 def brew_install(*pkgs: str):
     install_homebrew()
@@ -524,6 +540,14 @@ def install_py_launcher():
         return
 
     gh_install("brettcannon/python-launcher")
+
+
+def pipx_install(*args):
+    sp.check_call([
+        brew_path("pipx"),
+        "install",
+        *args,
+    ])
 
 
 if __name__ == "__main__":

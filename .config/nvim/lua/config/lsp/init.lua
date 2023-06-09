@@ -6,7 +6,7 @@ local ensure_installed = {
     "jsonls",
     "ltex",
     "marksman",
-    "pyright",
+    "pylsp",
     "tsserver",
     "rnix",
     "rust_analyzer",
@@ -86,7 +86,7 @@ local lsp = require("lsp-zero").preset({
 
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
-lsp.skip_server_setup({ "ltex" })
+lsp.skip_server_setup({ "ltex", "pyright" })
 require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
 
 local attached_to_buffer = {}
@@ -174,6 +174,37 @@ lsp.configure("yamlls", {
     on_init = disableFormatting,
     settings = yamlls_settings,
     filetypes = yamlls_filetypes,
+})
+
+local function mason_package_path(package)
+    local path = vim.fn.resolve(vim.fn.stdpath("data") .. "/mason/packages/" .. package)
+    return path
+end
+
+-- depends on package manager / language
+local command = "./venv/bin/pip"
+local args = { "install", "pylsp-rope", "python-lsp-ruff", "pyls-isort", "python-lsp-black" }
+
+require("plenary.job")
+    :new({
+        command = command,
+        args = args,
+        cwd = mason_package_path("python-lsp-server"),
+    })
+    :start()
+
+-- code to be profiled
+
+lsp.configure("pylsp", {
+    settings = {
+        pylsp = {
+            plugins = {
+                ruff = {
+                    enabled = true,
+                },
+            },
+        },
+    },
 })
 
 lsp.configure("tsserver", {
