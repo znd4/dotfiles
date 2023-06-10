@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import asyncio
 import functools
 import site
 from contextlib import contextmanager
@@ -14,7 +15,7 @@ import tempfile
 import zipfile
 from functools import lru_cache
 from pathlib import Path
-from typing import Callable, Generator, Iterable, Iterator
+from typing import Callable, Iterator
 
 # ~/.local/lib/pythonX.Y/site-packages might not exist when script starts
 # So we need to manually add it to sys.path
@@ -24,7 +25,6 @@ HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 GLOBAL_CRATES = ["lolcate-rs"]
 UBUNTU_PACKAGES = [
     "python3-pip",
-
     # for pyenv
     "libedit-dev",
     "build-essential",
@@ -43,10 +43,12 @@ UBUNTU_PACKAGES = [
     "liblzma-dev",
 ]
 if not HEADLESS:
-    UBUNTU_PACKAGES.extend([
-        "libgmp-dev",
-        "fonts-firacode",
-    ])
+    UBUNTU_PACKAGES.extend(
+        [
+            "libgmp-dev",
+            "fonts-firacode",
+        ]
+    )
 
 BREW_PACKAGES = [
     "bat",
@@ -77,7 +79,6 @@ BREW_PACKAGES = [
     "podman",
     "pre-commit",
     "ripgrep",
-
     "starship",
     "stylua",
     "thefuck",
@@ -85,11 +86,18 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
+
+BREW_TAPS = []
+
 if not HEADLESS:
-    BREW_PACKAGES.extend([
-        "joplin-cli",
-        "texlive",
-    ])
+    BREW_TAPS.append("homebrew/linux-fonts")
+    BREW_PACKAGES.extend(
+        [
+            "joplin-cli",
+            "texlive",
+            "font-symbols-only-nerd-font",
+        ]
+    )
 NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
@@ -101,8 +109,8 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
+    brew_tap(*BREW_TAPS)
     brew_install(*BREW_PACKAGES)
-    install_nerd_font_symbols()
     install_clipboard()
     install_docker_compose()
     install_pyenv()
@@ -129,6 +137,8 @@ def main():
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
     pipx_install("pre-commit", "black", "isort", "ruff")
 
+    symlink_fonts()
+
 
 def skip_if(cond: bool | Callable[[], bool]):
     def decorator(func):
@@ -141,7 +151,9 @@ def skip_if(cond: bool | Callable[[], bool]):
                 return
 
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -166,8 +178,8 @@ def install_rustup():
 def download_script(url: str) -> Iterator[Path]:
     pip_install("requests")
     import requests
-    with tempfile.TemporaryDirectory() as td:
 
+    with tempfile.TemporaryDirectory() as td:
         resp = requests.get(url)
         resp.raise_for_status()
 
@@ -216,6 +228,11 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
     return decorator
 
 
+def brew_tap(*taps: str):
+    for tap in taps:
+        sp.check_call([brew_path("brew"), "tap", tap])
+
+
 @skip_if(lambda: HEADLESS)
 def install_nerd_font_symbols():
     if "nerd" in sp.check_output(["fc-list"], text=True).lower():
@@ -240,8 +257,7 @@ def install_nerd_font_symbols():
     fonts_dir.mkdir(parents=True, exist_ok=True)
 
     # Extract all files into the fonts directory
-    sp.check_call(["tar", "--xz", "-xf", "-", "-C",
-                  str(fonts_dir)], stdin=proc.stdout)
+    sp.check_call(["tar", "--xz", "-xf", "-", "-C", str(fonts_dir)], stdin=proc.stdout)
 
     sp.check_call(["fc-cache", "-f", "-v"], stdin=sys.stdin)
 
@@ -275,8 +291,7 @@ def kmonad():
     # add to udev rules
     # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
     # then reload udev rules
-    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"],
-                  stdin=sys.stdin)
+    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"], stdin=sys.stdin)
     sp.check_call(
         [
             "sudo",
@@ -286,17 +301,14 @@ def kmonad():
         ],
         stdin=sys.stdin,
     )
-    sp.check_call(["sudo", "udevadm", "control",
-                  "--reload-rules"], stdin=sys.stdin)
+    sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
 
     # clone https://github.com/kmonad/kmonad into temporary directory
     with tempfile.TemporaryDirectory() as tmpdir:
         build_and_install_kmonad(Path(tmpdir))
 
-    sp.check_call(["systemctl", "--user", "enable",
-                  "kmonad.service"], stdin=sys.stdin)
-    sp.check_call(["systemctl", "--user", "restart",
-                  "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
 
 
 def build_and_install_kmonad(dir_: Path):
@@ -338,7 +350,9 @@ def build_and_install_kmonad(dir_: Path):
     with open(stack_yaml_path, "w") as stack_yaml:
         yaml.dump(stack_config, stack_yaml)
 
-    def check_call(args): return sp.check_call(args, stdin=sys.stdin, cwd=dir_)
+    def check_call(args):
+        return sp.check_call(args, stdin=sys.stdin, cwd=dir_)
+
     check_call(["stack", "setup"])
     check_call(["stack", "build"])
     check_call(["stack", "install"])
@@ -347,7 +361,8 @@ def build_and_install_kmonad(dir_: Path):
 def guarantee_yadm():
     """
     Install yadm if it doesn't exist.
-    This is useful when we need to invoke this script directly, such as in a brev.dev environment.
+    This is useful when we need to invoke this script directly,
+    such as in a brev.dev environment.
     """
     if shutil.which("yadm"):
         print("yadm already installed, skipping")
@@ -410,13 +425,10 @@ def install_clipboard():
     with tempfile.TemporaryDirectory() as tmpdir:
         with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
             zf.extractall(tmpdir)
-        shutil.copy(Path(tmpdir) / "bin" / "cb",
-                    Path.home() / ".local" / "bin" / "cb")
-        sp.check_call(["sudo", "cp", Path(tmpdir)
-                      / "bin" / "cb", "/usr/local/bin/cb"])
+        shutil.copy(Path(tmpdir) / "bin" / "cb", Path.home() / ".local" / "bin" / "cb")
+        sp.check_call(["sudo", "cp", Path(tmpdir) / "bin" / "cb", "/usr/local/bin/cb"])
         sp.check_call(shlex.split("sudo chmod +x /usr/local/bin/cb"))
-        sp.check_call("sudo cp lib/*.so /usr/local/lib/",
-                      shell=True, cwd=tmpdir)
+        sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
 
 
 def install_tpm(*plugins: str):
@@ -490,16 +502,17 @@ def gh_install(repo: str):
 def install_pyenv():
     pyenv_root = Path.home() / ".pyenv"
     if not pyenv_root.is_dir():
-        sp.check_call([
-            "git",
-            "clone",
-            "https://github.com/pyenv/pyenv.git",
-            pyenv_root,
-        ])
+        sp.check_call(
+            [
+                "git",
+                "clone",
+                "https://github.com/pyenv/pyenv.git",
+                pyenv_root,
+            ]
+        )
     pyenv = pyenv_root / "bin" / "pyenv"
     versions = ["3.10", "3.11"]
-    globals = set(sp.check_output(
-        [pyenv, "global"], text=True).strip().split("\n"))
+    globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
     for version in versions:
         if version in globals or any(
             line.strip().startswith(version)
@@ -542,12 +555,33 @@ def install_py_launcher():
     gh_install("brettcannon/python-launcher")
 
 
+@skip_if(HEADLESS)
+def symlink_fonts():
+    fonts_dir = Path.home() / ".local" / "share" / "fonts"
+    if not fonts_dir.is_dir():
+        os.symlink(
+            "/home/linuxbrew/.linuxbrew/share/fonts",
+            str(fonts_dir),
+        )
+
+    sp.check_call(["fc-cache", "-fv"])
+
+
+async def pipx_install_async(*packages):
+    await asyncio.gather(
+        *[
+            asyncio.create_subprocess_exec(
+                str(brew_path("pipx")),
+                "install",
+                package,
+            )
+            for package in packages
+        ]
+    )
+
+
 def pipx_install(*args):
-    sp.check_call([
-        brew_path("pipx"),
-        "install",
-        *args,
-    ])
+    asyncio.run(pipx_install_async(*args))
 
 
 if __name__ == "__main__":
