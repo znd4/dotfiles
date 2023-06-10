@@ -311,6 +311,8 @@ local lspkind = require("lspkind")
 
 local cmp = require("cmp")
 
+require("mason").setup()
+
 lsp.setup()
 
 require("luasnip.loaders.from_vscode").lazy_load()
