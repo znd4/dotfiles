@@ -46,7 +46,6 @@ if not HEADLESS:
     UBUNTU_PACKAGES.extend(
         [
             "libgmp-dev",
-            "fonts-firacode",
         ]
     )
 
@@ -96,6 +95,7 @@ if not HEADLESS:
             "joplin-cli",
             "texlive",
             "font-symbols-only-nerd-font",
+            "font-victor-mono",
         ]
     )
 NIX_ENV_PACKAGES = ["myPackages"]

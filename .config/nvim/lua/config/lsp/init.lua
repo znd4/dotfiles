@@ -185,23 +185,27 @@ end
 local command = "./venv/bin/pip"
 local args = { "install", "pylsp-rope", "python-lsp-ruff", "pyls-isort", "python-lsp-black" }
 
-require("plenary.job")
-    :new({
+local uv = vim.loop
+uv.new_work(function()
+    local job = require("plenary.job")
+    job:new({
         command = command,
         args = args,
         cwd = mason_package_path("python-lsp-server"),
-    })
-    :start()
+    }):sync()
+end, function() end)
 
 -- code to be profiled
+local enabled = { enabled = true }
 
 lsp.configure("pylsp", {
     settings = {
         pylsp = {
             plugins = {
-                ruff = {
-                    enabled = true,
-                },
+                ruff = enabled,
+                rope = enabled,
+                isort = enabled,
+                black = enabled,
             },
         },
     },
@@ -312,6 +316,7 @@ local lspkind = require("lspkind")
 local cmp = require("cmp")
 
 require("mason").setup()
+require("mason-lspconfig").setup()
 
 lsp.setup()
 
