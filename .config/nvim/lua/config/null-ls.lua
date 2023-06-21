@@ -54,6 +54,9 @@ null_ls.setup({
             extra_args = { "--dialect", "postgres" },
         }),
 
+        -- rust
+        null_ls.builtins.formatting.rustfmt,
+
         -- retab
         {
             filetypes = { "lua", "python" },
