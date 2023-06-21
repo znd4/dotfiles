@@ -184,6 +184,7 @@ lsp.configure("pylsp", {
             plugins = {
                 ruff = enabled,
                 rope = enabled,
+                rope_autoimport = enabled,
                 isort = enabled,
                 black = enabled,
             },
