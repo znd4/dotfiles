@@ -6,7 +6,6 @@ local ensure_installed = {
     "jsonls",
     "ltex",
     "marksman",
-    "pylsp",
     "tsserver",
     "rnix",
     "rust_analyzer",
@@ -175,25 +174,6 @@ lsp.configure("yamlls", {
     settings = yamlls_settings,
     filetypes = yamlls_filetypes,
 })
-
-local function mason_package_path(package)
-    local path = vim.fn.resolve(vim.fn.stdpath("data") .. "/mason/packages/" .. package)
-    return path
-end
-
--- depends on package manager / language
-local command = "./venv/bin/pip"
-local args = { "install", "pylsp-rope", "python-lsp-ruff", "pyls-isort", "python-lsp-black" }
-
-local uv = vim.loop
-uv.new_work(function()
-    local job = require("plenary.job")
-    job:new({
-        command = command,
-        args = args,
-        cwd = mason_package_path("python-lsp-server"),
-    }):sync()
-end, function() end)
 
 -- code to be profiled
 local enabled = { enabled = true }

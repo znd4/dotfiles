@@ -135,7 +135,17 @@ def main():
     )
 
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
-    pipx_install("pre-commit", "black", "isort", "ruff")
+    pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server")
+    sp.check_call(
+        pipx_cmd(
+            "inject",
+            "python-lsp-server",
+            "pylsp-rope",
+            "python-lsp-ruff",
+            "pyls-isort",
+            "python-lsp-black",
+        )
+    )
 
     symlink_fonts()
 
@@ -567,15 +577,23 @@ def symlink_fonts():
     sp.check_call(["fc-cache", "-fv"])
 
 
+def pipx_cmd(*args: str) -> list[str]:
+    return [str(brew_path("pipx")), *args]
+
+
 async def pipx_install_async(*packages):
+    cmds = [
+        pipx_cmd("install", package)
+        if isinstance(package, str)
+        else pipx_cmd("install", *package)
+        for package in packages
+    ]
     await asyncio.gather(
         *[
             asyncio.create_subprocess_exec(
-                str(brew_path("pipx")),
-                "install",
-                package,
+                *cmd,
             )
-            for package in packages
+            for cmd in cmds
         ]
     )
 
