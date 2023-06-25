@@ -135,7 +135,7 @@ def main():
     )
 
     install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
-    pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server")
+    pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
     sp.check_call(
         pipx_cmd(
             "inject",
