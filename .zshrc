@@ -37,19 +37,8 @@ fdf() {
 ### znap
 #####################
 
-# [[ -f ~/Git/zsh-snap/znap.zsh ]] ||
-#     git clone --depth 1 -- \
-#         https://github.com/marlonrichert/zsh-snap.git ~/Git/zsh-snap
-#
-# source ~/Git/zsh-snap/znap.zsh  # Start Znap
 
-if [[ ! -f ~/.zpm/zpm.zsh ]]; then
-  git clone --recursive https://github.com/zpm-zsh/zpm ~/.zpm
-fi
-source ~/.zpm/zpm.zsh
-
-zpm load TheLocehiliosan/yadm,path:/completion/zsh/_yadm
-compdef _yadm y
+source ~/.zplugrc
 
 # https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
 
@@ -62,26 +51,21 @@ compdef _yadm y
 function zvm_after_init() {
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 }
-zpm load jeffreytse/zsh-vi-mode
-zpm load mroth/evalcache
+
 
 _evalcache starship init zsh --print-full-init
 # eval "$(starship init zsh --print-full-init)"
 
-zpm load zsh-users/zsh-autosuggestions
-zpm load zsh-users/zsh-completions
-
-zpm load Aloxaf/fzf-tab
-zpm load ryutok/rust-zsh-completions,fpath:/src
 
 _evalcache zoxide init zsh
 
 _evalcache thefuck --alias
 
 
+# set -x
 check_path kubectl && _evalcache kubectl completion zsh
 check_path op && _evalcache      op completion zsh
-check_path fnm && _evalcache    fnm completions --shell zsh
+# check_path fnm && _evalcache    fnm completions --shell zsh
 check_path gh && _evalcache gh completion --shell zsh
 check_path circleci && _evalcache circleci completion zsh
 check_path wezterm && _evalcache wezterm shell-completion --shell zsh
@@ -98,18 +82,11 @@ _evalcache fnm env --use-on-cd
 
 _evalcache http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh
 
-# if which vivaldi &>/dev/null; then
-#     export BROWSER=`which vivaldi`
-# fi
-
-
 
 setopt completealiases # so that gh works when aliased by op plugin
 
 # e.g., zsh-syntax-highlighting must be loaded
 # after executing compinit command and sourcing other plugins
-zpm load  zsh-users/zsh-syntax-highlighting
-
 
 _evalcache zoxide init zsh
 

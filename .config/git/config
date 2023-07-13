@@ -79,3 +79,5 @@ rebase = false
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/env gh auth git-credential
+[credential "https://git.vwoa.na.vwg"]
+	provider = generic
