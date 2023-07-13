@@ -35,17 +35,15 @@ add_to_path "/usr/local/go/bin"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # MacOS
-  echo "Running MacOS code"
+  eval `/opt/homebrew/bin/brew shellenv`
+  add_to_path /opt/local/bin
+  add_to_path /opt/local/sbin
   # Insert your MacOS specific code here.
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Linux
-	eval `/opt/homebrew/bin/brew shellenv`
-	add_to_path /opt/local/bin
-	add_to_path /opt/local/sbin
   # Insert your Linux specific code here.
 elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
   # Windows
-  echo "Running Windows code"
   # Insert your Windows specific code here.
 else
   # Unknown.

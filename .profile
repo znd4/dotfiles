@@ -14,9 +14,6 @@
 ##########################################################################
 # set -x
 
-# export PIPENV_VENV_IN_PROJECT=1
-echo "Running .profile"
-
 export HOME=${HOME:-/c/Users/dufourz}
 
 unset CURL_CA_BUNDLE
@@ -59,14 +56,7 @@ add_to_path "/usr/local/go/bin"
 
 if [ "$(uname -s)" != 'Darwin' ]; then
 	# Start all of my after-login systemd services
-	check_path systemctl && systemctl --user start autostart.service
-	#
-	# make capslock behave like ctrl when held
-	check_path setxkbmap && setxkbmap -option 'caps:ctrl_modifier'
-
-	# make capslock behave like esc when tapped
-	check_path xcape && xcape -e 'Caps_Lock=Escape;Control_L=Escape;Control_R=Escape'
-
+	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service
 else
 	eval "$(/opt/homebrew/bin/brew shellenv)"
 	add_to_path /opt/local/bin
@@ -84,7 +74,7 @@ setup_pyenv() {
 
 	# setup pyenv
 
-	check_path pyenv || add_to_path "$PYENV_ROOT/bin"
+	add_to_path "$PYENV_ROOT/bin"
 	check_path pyenv && eval "$(pyenv init -)"
 }
 setup_pyenv

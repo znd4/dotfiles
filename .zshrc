@@ -62,6 +62,8 @@ _evalcache zoxide init zsh
 _evalcache thefuck --alias
 
 
+autoload -U bashcompinit && bashcompinit
+
 # set -x
 check_path kubectl && _evalcache kubectl completion zsh
 check_path op && _evalcache      op completion zsh
@@ -89,6 +91,7 @@ setopt completealiases # so that gh works when aliased by op plugin
 # after executing compinit command and sourcing other plugins
 
 _evalcache zoxide init zsh
+
 
 autoload -U compinit && compinit
 
