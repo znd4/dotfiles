@@ -1,8 +1,9 @@
 #!/usr/bin/env zsh
 # Add aliases
-. ~/.aliasrc
-. ~/.dotfiles/path_functions.sh
-ulimit -n 8096
+. "$HOME/.aliasrc"
+. "$HOME/.dotfiles/path_functions.sh"
+
+is_windows || ulimit -n 8096
 
 export SHELL=$(which zsh)
 
@@ -36,15 +37,8 @@ fdf() {
 ### znap
 #####################
 
-[[ -f ~/Git/zsh-snap/znap.zsh ]] ||
-    git clone --depth 1 -- \
-        https://github.com/marlonrichert/zsh-snap.git ~/Git/zsh-snap
 
-source ~/Git/zsh-snap/znap.zsh  # Start Znap
-
-znap source ohmyzsh/ohmyzsh plugins/{git,zsh-navigation-tools,zsh-interactive-cd}
-znap source TheLocehiliosan/yadm completion/zsh/_yadm
-compdef _yadm y
+source ~/.zplugrc
 
 # https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
 
@@ -57,58 +51,49 @@ compdef _yadm y
 function zvm_after_init() {
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 }
-znap source jeffreytse/zsh-vi-mode
-
-# `znap prompt` makes your prompt visible in just 15-40ms!
-znap eval starship "starship init zsh --print-full-init"
-
-znap source zsh-users/zsh-autosuggestions
-znap source zsh-users/zsh-completions
-
-znap source Aloxaf/fzf-tab
-
-znap eval z "zoxide init zsh"
-
-znap eval thefuck "thefuck --alias"
 
 
-check_path kubectl && znap fpath _kubectl 'kubectl completion zsh'
-check_path op && znap fpath _op      "op completion zsh"
-check_path fnm && znap fpath _fnm    'fnm completions --shell zsh'
-check_path rustup && znap fpath _rustup  'rustup  completions zsh'
-check_path cargo && znap fpath _cargo   'rustup  completions zsh cargo'
-check_path gh && znap fpath _gh 'gh completion --shell zsh'
-check_path circleci && znap fpath _circleci 'circleci completion zsh'
-check_path wezterm && znap fpath _wezterm 'wezterm shell-completion --shell zsh'
-check_path jira && znap fpath _jira 'jira completion zsh'
-check_path pack && znap fpath _pack 'cat ~/.pack/completion.zsh'
-check_path pdm && znap fpath _pdm 'pdm completion zsh'
-check_path register-python-argcomplete && check_path pipx && znap eval pipx 'register-python-argcomplete pipx'
-check_path hugo && znap fpath _hugo 'hugo completion zsh'
+_evalcache starship init zsh --print-full-init
+# eval "$(starship init zsh --print-full-init)"
+
+
+_evalcache zoxide init zsh
+
+_evalcache thefuck --alias
+
+
+autoload -U bashcompinit && bashcompinit
+
+# set -x
+check_path kubectl && _evalcache kubectl completion zsh
+check_path op && _evalcache      op completion zsh
+# check_path fnm && _evalcache    fnm completions --shell zsh
+check_path gh && _evalcache gh completion --shell zsh
+check_path circleci && _evalcache circleci completion zsh
+check_path wezterm && _evalcache wezterm shell-completion --shell zsh
+check_path jira && _evalcache jira completion zsh
+check_path pack && _evalcache cat ~/.pack/completion.zsh
+check_path pdm && _evalcache pdm completion zsh
+check_path register-python-argcomplete && check_path pipx && _evalcache register-python-argcomplete pipx
+check_path hugo && _evalcache hugo completion zsh
 check_path cdktf && . `cdktf completion`
 
 
-znap eval direnv "direnv hook zsh"
-znap eval fnm "fnm env --use-on-cd"
+_evalcache direnv hook zsh
+_evalcache fnm env --use-on-cd
 
-znap eval nx "http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh"
+_evalcache http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh
 
-# if which vivaldi &>/dev/null; then
-#     export BROWSER=`which vivaldi`
-# fi
-
-
-complete -C `which aws_completer` aws
 
 setopt completealiases # so that gh works when aliased by op plugin
 
 # e.g., zsh-syntax-highlighting must be loaded
 # after executing compinit command and sourcing other plugins
-znap source zsh-users/zsh-syntax-highlighting
+
+_evalcache zoxide init zsh
 
 
-znap prompt
-eval "$(zoxide init zsh)"
+autoload -U compinit && compinit
 
 #####################
 ### volta
@@ -124,8 +109,8 @@ fi
 
 
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+check_path pyenv || export PATH="$PYENV_ROOT/bin:$PATH"
+check_path pyenv && eval "$(pyenv init -)"
 
 # POETRY VIRTUALENVS IN PROJECT
 export POETRY_VIRTUALENVS_IN_PROJECT=true
@@ -138,18 +123,6 @@ if type nvim >/dev/null; then
     export PAGER="$MANPAGER"
     export ZVM_VI_EDITOR=$EDITOR
 fi
-
-
-# Omni-completion
-bindkey '^P' history-beginning-search-backward
-bindkey '^N' history-beginning-search-forward
-bindkey '^ ' complete-word
-bindkey '^Y' autosuggest-accept
-
-zle -N expand-or-complete-prefix
-bindkey '^X^E' expand-or-complete-prefix
-
-zvm_bindkey -i '^F' '<esc>-vv'
 
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"

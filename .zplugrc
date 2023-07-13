@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+if [[ ! -f ~/.zplug/init.zsh ]]; then
+  git clone --recursive https://github.com/zplug/zplug ~/.zplug
+fi
+source ~/.zplug/init.zsh
+
+zplug "TheLocehiliosan/yadm", use:"completion/zsh/_yadm", as:"command"
+compdef _yadm y
+
+zplug "jeffreytse/zsh-vi-mode"
+zplug "mroth/evalcache"
+
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions"
+zplug "Aloxaf/fzf-tab"
+
+zplug "ryutok/rust-zsh-completions"
+
+zplug "zsh-users/zsh-syntax-highlighting"
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# zplug load --verbose
+zplug load

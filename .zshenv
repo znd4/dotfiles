@@ -33,15 +33,22 @@ GOPATH="$GOROOT/bin"
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
-if [ `uname -s` != 'Darwin' ]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # MacOS
+  eval `/opt/homebrew/bin/brew shellenv`
+  add_to_path /opt/local/bin
+  add_to_path /opt/local/sbin
+  # Insert your MacOS specific code here.
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  # Linux
+  # Insert your Linux specific code here.
+elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+  # Windows
+  # Insert your Windows specific code here.
 else
-	eval `/opt/homebrew/bin/brew shellenv`
-	add_to_path /opt/local/bin
-	add_to_path /opt/local/sbin
+  # Unknown.
+  echo "Unknown OS: $OSTYPE"
 fi
 
 
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-. "$HOME/.cargo/env"

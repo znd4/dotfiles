@@ -34,6 +34,7 @@ UBUNTU_PACKAGES = [
     "libreadline-dev",
     "libsqlite3-dev",
     "curl",
+    "man-db",
     "libncursesw5-dev",
     "xz-utils",
     "tk-dev",
@@ -75,6 +76,7 @@ BREW_PACKAGES = [
     "nodejs",
     "pipx",
     "pipenv",
+    "python-launcher",
     "podman",
     "pre-commit",
     "ripgrep",
@@ -117,14 +119,10 @@ def main():
 
     install_rustup()
 
-    sp.check_call(["rustup", "default", "stable"])
-    sp.check_call(["cargo", "install", *GLOBAL_CRATES])
-    install_py_launcher()
-
-    # install_nix_env_packages(*NIX_ENV_PACKAGES)
+    sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
+    sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
 
     kmonad()
-    print("done with kmonad")
 
     nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
     sp.check_call(
@@ -239,6 +237,7 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
 
 
 def brew_tap(*taps: str):
+    install_homebrew()
     for tap in taps:
         sp.check_call([brew_path("brew"), "tap", tap])
 
@@ -274,7 +273,7 @@ def install_nerd_font_symbols():
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
-@skip_if(lambda: HEADLESS)
+@skip_if(HEADLESS)
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
@@ -401,6 +400,18 @@ def install_pip():
 def pip_install(*packages: str):
     install_pip()
     print(f"pip installing {', '.join(packages)}")
+    if platform.system().lower() == "linux" and sys.executable in {"/usr/bin/python3"}:
+        sp.check_call(
+            [
+                "sudo",
+                "apt-get",
+                "install",
+                "-y",
+                *(f"python3-{package}" for package in packages),
+            ]
+        )
+        return
+
     sp.check_call(
         [
             sys.executable,
@@ -470,8 +481,15 @@ def install_tpm(*plugins: str):
         )
 
 
+def gh_auth_login():
+    if not os.system("gh auth status"):
+        return
+    sp.check_call(["gh", "auth", "login"])
+
+
 @functools.lru_cache()
 def install_gh_install():
+    gh_auth_login()
     sp.check_call(
         [
             "gh",
@@ -556,13 +574,6 @@ def brew_install(*pkgs: str):
 
     for chunk in mi.chunked(pkgs, 10):
         sp.check_call([path_to_brew(), "install", *chunk])
-
-
-def install_py_launcher():
-    if shutil.which("py"):
-        return
-
-    gh_install("brettcannon/python-launcher")
 
 
 @skip_if(HEADLESS)

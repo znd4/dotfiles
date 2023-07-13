@@ -10,24 +10,25 @@ case $- in
 esac
 
 eval "$(starship init bash)"
+eval "$(fnm env --use-on-cd)"
 
 ###environment variables
 export PAGER=bat
 
 # Aliasrc is where  we put a bunch of our aliases
-. ~/.aliasrc
+. "$HOME/.aliasrc"
 
 # Global environment variables
 # These are the environment variables we set the same everywhere (e.g. EDITOR=nvim)
-. ~/.dotfiles/global_environment_variables.sh
+source "$HOME/.dotfiles/global_environment_variables.sh"
 
-eval $(thefuck --alias)
+check_path thefuck && eval "$(thefuck --alias)"
 
 ########################
 # Completions
 ########################
 
-eval "$(pip completion --bash)"
+check_path pip && eval "$(pip completion --bash)"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -136,31 +137,15 @@ if ! shopt -oq posix; then
     fi
 fi
 
-# pyenv configuration
-if [ -d $HOME/.pyenv ]; then
-    export PYENV_ROOT=$HOME/.pyenv
-elif [ -d /home/linuxbrew/bin/.pyenv ]; then
-    export PYENV_ROOT=/home/linuxbrew/bin/.pyenv
-fi
-if [ -z $PYENV_ROOT ]; then
-    echo "pyenv isn't installed" >>/dev/stderr
-else
-    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-fi
-
 # bat, but just for linux
-if ! which bat; then
-    alias bat=batcat
-fi
+check_path bat || alias bat=batcat
 
 # export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 # Created by `pipx` on 2021-10-23 17:39:24
-export PATH="$PATH:$HOME/.local/bin"
-eval "$(register-python-argcomplete pipx)"
+check_path register-python-argcomplete && eval "$(register-python-argcomplete pipx)"
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.fzf.bash ] && source "$HOME/.fzf.bash"
 
 export NPM_PACKAGES="$HOME/.npm-packages"
 export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
@@ -170,11 +155,7 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 unset MANPATH # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
-# Hishtory Config:
-export PATH="$PATH:$HOME/.hishtory"
-source $HOME/.hishtory/config.sh
-
 export PATH=$PATH:$HOME/.aido
-. "$HOME/.cargo/env"
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
+eval "$(zoxide init bash)"

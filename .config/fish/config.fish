@@ -47,7 +47,7 @@ function setup_direnv
 end
 
 function setup_starship
-    source (/usr/local/bin/starship init fish --print-full-init | psub)
+    source (starship init fish --print-full-init | psub)
 end
 
 function setup_brew
