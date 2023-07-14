@@ -1,4 +1,134 @@
 #!/usr/bin/env zsh
+# Start configuration added by Zim install {{{
+#
+# User configuration sourced by interactive shells
+#
+
+# -----------------
+# Zsh configuration
+# -----------------
+
+#
+# History
+#
+
+# Remove older command from the history if a duplicate is to be added.
+setopt HIST_IGNORE_ALL_DUPS
+
+#
+# Input/output
+#
+
+# Set editor default keymap to emacs (`-e`) or vi (`-v`)
+bindkey -v
+
+# Prompt for spelling correction of commands.
+#setopt CORRECT
+
+# Customize spelling correction prompt.
+#SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+
+# Remove path separator from WORDCHARS.
+WORDCHARS=${WORDCHARS//[\/]}
+
+# -----------------
+# Zim configuration
+# -----------------
+
+# Use degit instead of git as the default tool to install and update modules.
+#zstyle ':zim:zmodule' use 'degit'
+
+# --------------------
+# Module configuration
+# --------------------
+
+#
+# git
+#
+
+# Set a custom prefix for the generated aliases. The default prefix is 'G'.
+#zstyle ':zim:git' aliases-prefix 'g'
+
+#
+# input
+#
+
+# Append `../` to your input for each `.` you type after an initial `..`
+#zstyle ':zim:input' double-dot-expand yes
+
+#
+# termtitle
+#
+
+# Set a custom terminal title format using prompt expansion escape sequences.
+# See http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Simple-Prompt-Escapes
+# If none is provided, the default '%n@%m: %~' is used.
+#zstyle ':zim:termtitle' format '%1~'
+
+#
+# zsh-autosuggestions
+#
+
+# Disable automatic widget re-binding on each precmd. This can be set when
+# zsh-users/zsh-autosuggestions is the last module in your ~/.zimrc.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+# Customize the style that the suggestions are shown with.
+# See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
+#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+
+#
+# zsh-syntax-highlighting
+#
+
+# Set what highlighters will be used.
+# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+# Customize the main highlighter styles.
+# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
+#typeset -A ZSH_HIGHLIGHT_STYLES
+#ZSH_HIGHLIGHT_STYLES[comment]='fg=242'
+
+# ------------------
+# Initialize modules
+# ------------------
+
+ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
+# Download zimfw plugin manager if missing.
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+  if (( ${+commands[curl]} )); then
+    curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
+        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+  else
+    mkdir -p ${ZIM_HOME} && wget -nv -O ${ZIM_HOME}/zimfw.zsh \
+        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+  fi
+fi
+# Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
+  source ${ZIM_HOME}/zimfw.zsh init -q
+fi
+# Initialize modules.
+source ${ZIM_HOME}/init.zsh
+
+# ------------------------------
+# Post-init module configuration
+# ------------------------------
+
+#
+# zsh-history-substring-search
+#
+
+zmodload -F zsh/terminfo +p:terminfo
+# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
+for key ('^[[A' '^P' ${terminfo[kcuu1]}) bindkey ${key} history-substring-search-up
+for key ('^[[B' '^N' ${terminfo[kcud1]}) bindkey ${key} history-substring-search-down
+for key ('k') bindkey -M vicmd ${key} history-substring-search-up
+for key ('j') bindkey -M vicmd ${key} history-substring-search-down
+unset key
+# }}} End configuration added by Zim install
+
 # Add aliases
 . "$HOME/.aliasrc"
 . "$HOME/.dotfiles/path_functions.sh"
@@ -22,78 +152,51 @@ unset NODE_EXTRA_CA_CERTS
 setopt HIST_IGNORE_SPACE
 setopt interactivecomments
 
-get_aws_secret() {
-    setopt local_options pipefail
-    aws secretsmanager get-secret-value \
-        --secret-id "${1?}" \
-    | jq -r '.SecretString|fromjson|.'${2?}
-}
 
-fdf() {
-    find . -type d -print | fzf
-}
 
 #####################
 ### znap
 #####################
 
-
-source ~/.zplugrc
-
-# https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands
-
-[[ -f ~/.fzf.zsh ]] || (
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
-        ~/.fzf/install
-    )
-
-# The plugin will auto execute this zvm_after_init function
-function zvm_after_init() {
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-}
-
-
-_evalcache starship init zsh --print-full-init
-# eval "$(starship init zsh --print-full-init)"
-
-
-_evalcache zoxide init zsh
-
-_evalcache thefuck --alias
-
-
-autoload -U bashcompinit && bashcompinit
-
-# set -x
-check_path kubectl && _evalcache kubectl completion zsh
-check_path op && _evalcache      op completion zsh
-# check_path fnm && _evalcache    fnm completions --shell zsh
-check_path gh && _evalcache gh completion --shell zsh
-check_path circleci && _evalcache circleci completion zsh
-check_path wezterm && _evalcache wezterm shell-completion --shell zsh
-check_path jira && _evalcache jira completion zsh
-check_path pack && _evalcache cat ~/.pack/completion.zsh
-check_path pdm && _evalcache pdm completion zsh
-check_path register-python-argcomplete && check_path pipx && _evalcache register-python-argcomplete pipx
-check_path hugo && _evalcache hugo completion zsh
-check_path cdktf && . `cdktf completion`
-
-
-_evalcache direnv hook zsh
-_evalcache fnm env --use-on-cd
-
-_evalcache http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh
-
-
-setopt completealiases # so that gh works when aliased by op plugin
-
-# e.g., zsh-syntax-highlighting must be loaded
-# after executing compinit command and sourcing other plugins
-
-_evalcache zoxide init zsh
-
-
-autoload -U compinit && compinit
+#
+#
+# _evalcache zoxide init zsh
+#
+# _evalcache thefuck --alias
+#
+#
+# autoload -U bashcompinit && bashcompinit
+#
+# # set -x
+# check_path kubectl && _evalcache kubectl completion zsh
+# check_path op && _evalcache      op completion zsh
+# # check_path fnm && _evalcache    fnm completions --shell zsh
+# check_path gh && _evalcache gh completion --shell zsh
+# check_path circleci && _evalcache circleci completion zsh
+# check_path wezterm && _evalcache wezterm shell-completion --shell zsh
+# check_path jira && _evalcache jira completion zsh
+# check_path pack && _evalcache cat ~/.pack/completion.zsh
+# check_path pdm && _evalcache pdm completion zsh
+# check_path register-python-argcomplete && check_path pipx && _evalcache register-python-argcomplete pipx
+# check_path hugo && _evalcache hugo completion zsh
+# check_path cdktf && . `cdktf completion`
+#
+#
+# _evalcache direnv hook zsh
+# _evalcache fnm env --use-on-cd
+#
+# _evalcache http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh
+#
+#
+# setopt completealiases # so that gh works when aliased by op plugin
+#
+# # e.g., zsh-syntax-highlighting must be loaded
+# # after executing compinit command and sourcing other plugins
+#
+# _evalcache zoxide init zsh
+#
+#
+# autoload -U compinit && compinit
 
 #####################
 ### volta
@@ -108,12 +211,7 @@ then
 fi
 
 
-export PYENV_ROOT="$HOME/.pyenv"
-check_path pyenv || export PATH="$PYENV_ROOT/bin:$PATH"
-check_path pyenv && eval "$(pyenv init -)"
-
 # POETRY VIRTUALENVS IN PROJECT
-export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # Editor config
 export EDITOR=vi
@@ -156,6 +254,8 @@ export PATH="$PATH:$HOME/.aido"
 
 # TODO - get this working on new desktop
 source_if_exists "$HOME/.config/op/plugins.sh"
+
+add_to_path "$HOME/.local/bin"
 
 
 # tabtab source for packages

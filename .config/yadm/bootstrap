@@ -68,9 +68,8 @@ BREW_PACKAGES = [
     "gum",
     "hatch",
     "httpie",
-    # "bundler",
-    # "jekyll",
     "isort",
+    "kubectl",
     "lazygit",
     "neovim",
     "nodejs",
@@ -108,7 +107,7 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 ).lower() == "true"
 
 
-def main():
+async def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
     brew_tap(*BREW_TAPS)
@@ -116,6 +115,15 @@ def main():
     install_clipboard()
     install_docker_compose()
     install_pyenv()
+
+    async_jobs = map(
+        asyncio.create_task,
+        [
+            install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
+        ],
+    )
+    # gather all async_jobs
+    await asyncio.gather(*async_jobs)
 
     install_rustup()
 
@@ -132,7 +140,6 @@ def main():
         stdin=sys.stdin,
     )
 
-    install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
     pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
     sp.check_call(
         pipx_cmd(
@@ -428,7 +435,27 @@ def install_ubuntu_packages(*pkgs: str):
     if not shutil.which("apt-get"):
         print("Not on Ubuntu, skipping apt installation")
         return
+    # get all apt installed packages as a set
+    installed = set(
+        line.split()[0]
+        for line in sp.check_output(["apt", "list", "--installed"])
+        .decode()
+        .splitlines()
+    )
+    # filter out already installed packages
+    pkgs = set(pkgs) - installed
     sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
+
+
+def install_tpm_packages():
+    sp.check_call(["tmux", "new", "-d", "-s", "tmp"])
+    tmux_session = "tmp"
+    try:
+        # send prefix + I to install plugins
+        sp.check_call(["tmux", "send-keys", "-t", tmux_session, "C-a", "I"])
+    finally:
+        # kill the session
+        sp.check_call(["tmux", "kill-session", "-t", tmux_session])
 
 
 def install_clipboard():
@@ -452,7 +479,7 @@ def install_clipboard():
         sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
 
 
-def install_tpm(*plugins: str):
+async def install_tpm(*plugins: str):
     plugins_dir = Path.home() / ".tmux" / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
 
@@ -479,6 +506,7 @@ def install_tpm(*plugins: str):
                 str(target_dir),
             ]
         )
+    install_tpm_packages()
 
 
 def gh_auth_login():
@@ -592,7 +620,7 @@ def pipx_cmd(*args: str) -> list[str]:
     return [str(brew_path("pipx")), *args]
 
 
-async def pipx_install_async(*packages):
+async def pipx_install(*packages):
     cmds = [
         pipx_cmd("install", package)
         if isinstance(package, str)
@@ -609,9 +637,5 @@ async def pipx_install_async(*packages):
     )
 
 
-def pipx_install(*args):
-    asyncio.run(pipx_install_async(*args))
-
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

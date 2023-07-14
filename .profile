@@ -17,6 +17,7 @@
 export HOME=${HOME:-/c/Users/dufourz}
 
 unset CURL_CA_BUNDLE
+export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
@@ -44,9 +45,6 @@ add_to_path "$HOME/bin"
 add_to_path "$HOME/.cargo/bin"
 add_to_path /mingw64/bin
 add_to_path "$HOME/scoop/shims"
-
-# set PATH so it includes user's private bin if it exists
-add_to_path "$HOME/.local/bin"
 
 GOROOT="$HOME/go"
 GOPATH="$GOROOT/bin"
@@ -100,9 +98,6 @@ if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-add_to_path "$HOME/.rd/bin"
 add_to_path "/usr/local/bin"
 
 source_if_exists "$HOME/.gvm/scripts/gvm"
-
-add_to_path "$HOME/.nix-profile/bin"

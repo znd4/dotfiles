@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 export LANG=en_US.UTF-8
-export EDITOR=nvim
-# export PIPENV_VENV_IN_PROJECT=1
 
 unset CURL_CA_BUNDLE
 
@@ -12,8 +10,6 @@ export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 export PAGER='nvim -R'
 
 # use neovim as manpager
-export MANPAGER='nvim +Man!'
-export MANWIDTH=999
 add_to_path() {
     directory=$1
 	# todo: if not -d $directory; then mkdir --parents $directory
