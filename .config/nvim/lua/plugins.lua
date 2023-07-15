@@ -224,7 +224,8 @@ require("lazy").setup({
             },
             {
                 "S",
-                mode = { "n", "o", "x" },
+                mode = "n",
+                -- mode = { "n", "o", "x" },
                 function()
                     require("flash").treesitter()
                 end,
