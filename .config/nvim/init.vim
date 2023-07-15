@@ -31,27 +31,6 @@ vmap <C-c> "+y
 vmap <C-x> "+c
 
 
-
-" open current file in github
-function! GHOpen()
-	let cmd = "gh browse " . expand("%") . ":" . line(".")
-	echo system(cmd)
-endfunction
-
-command! GHOpen :call GHOpen()
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" markdown
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh', 'golang', 'go=golang', 'sql', 'js']
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" https://github.com/ruanyl/vim-gh-line
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:gh_use_canonical = 1 " open permalink, not branch
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 "    FISH
 """"""""""""""""""""""""""""""""""""""""""""""""""""""

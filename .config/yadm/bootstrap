@@ -34,6 +34,7 @@ UBUNTU_PACKAGES = [
     "libreadline-dev",
     "libsqlite3-dev",
     "curl",
+    "man-db",
     "libncursesw5-dev",
     "xz-utils",
     "tk-dev",
@@ -55,6 +56,7 @@ BREW_PACKAGES = [
     "brevdev/homebrew-brev/brev",
     "cookiecutter",
     "copier",
+    "glab",
     "git-delta",
     "direnv",
     "distrobox",
@@ -67,14 +69,14 @@ BREW_PACKAGES = [
     "gum",
     "hatch",
     "httpie",
-    # "bundler",
-    # "jekyll",
     "isort",
+    "kubectl",
     "lazygit",
     "neovim",
     "nodejs",
     "pipx",
     "pipenv",
+    "python-launcher",
     "podman",
     "pre-commit",
     "ripgrep",
@@ -106,7 +108,7 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 ).lower() == "true"
 
 
-def main():
+async def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
     brew_tap(*BREW_TAPS)
@@ -115,16 +117,21 @@ def main():
     install_docker_compose()
     install_pyenv()
 
+    async_jobs = map(
+        asyncio.create_task,
+        [
+            install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
+        ],
+    )
+    # gather all async_jobs
+    await asyncio.gather(*async_jobs)
+
     install_rustup()
 
-    sp.check_call(["rustup", "default", "stable"])
-    sp.check_call(["cargo", "install", *GLOBAL_CRATES])
-    install_py_launcher()
-
-    # install_nix_env_packages(*NIX_ENV_PACKAGES)
+    sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
+    sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
 
     kmonad()
-    print("done with kmonad")
 
     nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
     sp.check_call(
@@ -134,7 +141,6 @@ def main():
         stdin=sys.stdin,
     )
 
-    install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible")
     pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
     sp.check_call(
         pipx_cmd(
@@ -239,6 +245,7 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
 
 
 def brew_tap(*taps: str):
+    install_homebrew()
     for tap in taps:
         sp.check_call([brew_path("brew"), "tap", tap])
 
@@ -274,7 +281,7 @@ def install_nerd_font_symbols():
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
-@skip_if(lambda: HEADLESS)
+@skip_if(HEADLESS)
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
@@ -401,6 +408,18 @@ def install_pip():
 def pip_install(*packages: str):
     install_pip()
     print(f"pip installing {', '.join(packages)}")
+    if platform.system().lower() == "linux" and sys.executable in {"/usr/bin/python3"}:
+        sp.check_call(
+            [
+                "sudo",
+                "apt-get",
+                "install",
+                "-y",
+                *(f"python3-{package}" for package in packages),
+            ]
+        )
+        return
+
     sp.check_call(
         [
             sys.executable,
@@ -417,7 +436,27 @@ def install_ubuntu_packages(*pkgs: str):
     if not shutil.which("apt-get"):
         print("Not on Ubuntu, skipping apt installation")
         return
+    # get all apt installed packages as a set
+    installed = set(
+        line.split()[0]
+        for line in sp.check_output(["apt", "list", "--installed"])
+        .decode()
+        .splitlines()
+    )
+    # filter out already installed packages
+    pkgs = set(pkgs) - installed
     sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
+
+
+def install_tpm_packages():
+    sp.check_call(["tmux", "new", "-d", "-s", "tmp"])
+    tmux_session = "tmp"
+    try:
+        # send prefix + I to install plugins
+        sp.check_call(["tmux", "send-keys", "-t", tmux_session, "C-a", "I"])
+    finally:
+        # kill the session
+        sp.check_call(["tmux", "kill-session", "-t", tmux_session])
 
 
 def install_clipboard():
@@ -441,7 +480,7 @@ def install_clipboard():
         sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
 
 
-def install_tpm(*plugins: str):
+async def install_tpm(*plugins: str):
     plugins_dir = Path.home() / ".tmux" / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
 
@@ -468,10 +507,18 @@ def install_tpm(*plugins: str):
                 str(target_dir),
             ]
         )
+    install_tpm_packages()
+
+
+def gh_auth_login():
+    if not os.system("gh auth status"):
+        return
+    sp.check_call(["gh", "auth", "login"])
 
 
 @functools.lru_cache()
 def install_gh_install():
+    gh_auth_login()
     sp.check_call(
         [
             "gh",
@@ -558,13 +605,6 @@ def brew_install(*pkgs: str):
         sp.check_call([path_to_brew(), "install", *chunk])
 
 
-def install_py_launcher():
-    if shutil.which("py"):
-        return
-
-    gh_install("brettcannon/python-launcher")
-
-
 @skip_if(HEADLESS)
 def symlink_fonts():
     fonts_dir = Path.home() / ".local" / "share" / "fonts"
@@ -581,7 +621,7 @@ def pipx_cmd(*args: str) -> list[str]:
     return [str(brew_path("pipx")), *args]
 
 
-async def pipx_install_async(*packages):
+async def pipx_install(*packages):
     cmds = [
         pipx_cmd("install", package)
         if isinstance(package, str)
@@ -598,9 +638,5 @@ async def pipx_install_async(*packages):
     )
 
 
-def pipx_install(*args):
-    asyncio.run(pipx_install_async(*args))
-
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
