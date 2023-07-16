@@ -46,6 +46,8 @@ zmodule joke/zim-starship
 
 zmodule jeffreytse/zsh-vi-mode
 
+zmodule Aloxaf/fzf-tab
+
 #
 # Completion
 #

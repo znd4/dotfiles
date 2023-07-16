@@ -136,12 +136,14 @@ async def main():
 
     kmonad()
 
-
-
     symlink_fonts()
 
+
 async def pipx_stuff():
-    pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
+    pylsp = pipx_install("python-lsp-server[rope]")
+
+    rest = pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
+    await pylsp
     sp.check_call(
         pipx_cmd(
             "inject",
@@ -152,6 +154,8 @@ async def pipx_stuff():
             "python-lsp-black",
         )
     )
+    await rest
+
 
 def skip_if(cond: bool | Callable[[], bool]):
     def decorator(func):
@@ -621,9 +625,9 @@ async def pipx_install(*packages):
     await run_multiple_cmds(
         pipx_cmd("install", package)
         if isinstance(package, str)
-            else pipx_cmd("install", *package)
-            for package in packages
-        )
+        else pipx_cmd("install", *package)
+        for package in packages
+    )
 
 
 async def run_multiple_cmds(cmds: list[str]):
@@ -642,7 +646,12 @@ async def asdf_install():
         "direnv",
     } - set(
         line.strip()
-        for line in sp.check_output(["asdf", "plugin-list"], text=True)
+        for line in sp.run(
+            ["asdf", "plugin-list"],
+            text=True,
+            capture_output=True,
+        )
+        .stdout
         .strip()
         .split("\n")
     )
