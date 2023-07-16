@@ -20,8 +20,8 @@ zmodule termtitle
 zmodule asdf
 # kubectl alias
 zmodule k
+
 # direnv
-zmodule ohmyzsh/ohmyzsh --root plugins/direnv
 # some nice commands
 zmodule fzf
 zmodule kiesman99/zim-zoxide	

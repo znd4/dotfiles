@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
+import re
 import functools
 import site
 from contextlib import contextmanager
@@ -51,6 +52,7 @@ if not HEADLESS:
     )
 
 BREW_PACKAGES = [
+    "asdf",
     "bat",
     "black",
     "brevdev/homebrew-brev/brev",
@@ -58,7 +60,6 @@ BREW_PACKAGES = [
     "copier",
     "glab",
     "git-delta",
-    "direnv",
     "distrobox",
     "fd",
     "fnm",
@@ -113,16 +114,18 @@ async def main():
     install_ubuntu_packages(*UBUNTU_PACKAGES)
     brew_tap(*BREW_TAPS)
     brew_install(*BREW_PACKAGES)
-    install_clipboard()
-    install_docker_compose()
-    install_pyenv()
-
     async_jobs = map(
         asyncio.create_task,
         [
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
+            asdf_install(),
         ],
     )
+    install_clipboard()
+    install_docker_compose()
+    install_pyenv()
+    async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
+
     # gather all async_jobs
     await asyncio.gather(*async_jobs)
 
@@ -133,14 +136,11 @@ async def main():
 
     kmonad()
 
-    nix_shell = Path.home() / ".local" / "bin" / "nix-zsh"
-    sp.check_call(
-        f"echo '{nix_shell}' | sudo bash -c 'cat >> /etc/shells'",
-        shell=True,
-        text=True,
-        stdin=sys.stdin,
-    )
 
+
+    symlink_fonts()
+
+async def pipx_stuff():
     pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
     sp.check_call(
         pipx_cmd(
@@ -152,9 +152,6 @@ async def main():
             "python-lsp-black",
         )
     )
-
-    symlink_fonts()
-
 
 def skip_if(cond: bool | Callable[[], bool]):
     def decorator(func):
@@ -436,15 +433,14 @@ def install_ubuntu_packages(*pkgs: str):
     if not shutil.which("apt-get"):
         print("Not on Ubuntu, skipping apt installation")
         return
-    # get all apt installed packages as a set
-    installed = set(
-        line.split()[0]
-        for line in sp.check_output(["apt", "list", "--installed"])
-        .decode()
-        .splitlines()
-    )
+    # get all apt-get installed packages as a set (use regex)
+    out = sp.check_output(["dpkg", "--get-selections"]).decode()
+    installed = set(re.findall(r"^(\S+?)\s+?install$", out, flags=re.MULTILINE))
     # filter out already installed packages
     pkgs = set(pkgs) - installed
+
+    if not pkgs:
+        return
     sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
 
 
@@ -622,20 +618,37 @@ def pipx_cmd(*args: str) -> list[str]:
 
 
 async def pipx_install(*packages):
-    cmds = [
+    await run_multiple_cmds(
         pipx_cmd("install", package)
         if isinstance(package, str)
-        else pipx_cmd("install", *package)
-        for package in packages
-    ]
+            else pipx_cmd("install", *package)
+            for package in packages
+        )
+
+
+async def run_multiple_cmds(cmds: list[str]):
     await asyncio.gather(
-        *[
+        *(
             asyncio.create_subprocess_exec(
                 *cmd,
             )
             for cmd in cmds
-        ]
+        )
     )
+
+
+async def asdf_install():
+    plugins = {
+        "direnv",
+    } - set(
+        line.strip()
+        for line in sp.check_output(["asdf", "plugin-list"], text=True)
+        .strip()
+        .split("\n")
+    )
+    # direnv
+    await run_multiple_cmds(["asdf", "plugin-add", plugin] for plugin in plugins)
+    sp.check_call(["asdf", "install"])
 
 
 if __name__ == "__main__":
