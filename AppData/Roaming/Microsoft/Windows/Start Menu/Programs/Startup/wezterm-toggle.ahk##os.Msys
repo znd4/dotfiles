@@ -1,5 +1,6 @@
 appTitle := "ahk_exe wezterm-gui.exe"
-appPath := "C:\\Program Files\\WezTerm\\wezterm-gui.exe"
+; appPath := "C:\\Program Files\\WezTerm\\wezterm-gui.exe"
+appPath := "C:Users\\dufourz\\AppData\\Local\\Programs\\Tabby\\Tabby.exe"
 
 ^`::
 {
