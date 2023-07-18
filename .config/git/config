@@ -25,7 +25,8 @@
 	email = zane@znd4.me
 	# email = zdufour@aspiration.com
 
-
+[push]
+    autoSetupRemote = true
 [pull]
 rebase = false
 
