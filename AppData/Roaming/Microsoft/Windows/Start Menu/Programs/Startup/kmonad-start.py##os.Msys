@@ -1,0 +1,10 @@
+import subprocess as sp
+from pathlib import Path
+
+sp.Popen(
+    [ Path.home() / ".local" / "bin"/ "kmonad.exe", 
+        Path.home() / ".config" / "kmonad" / "vw-dell.kbd",
+    ],
+    creationflags=sp.DETACHED_PROCESS | sp.CREATE_NEW_PROCESS_GROUP
+)
+
