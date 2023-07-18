@@ -1,0 +1,18 @@
+appTitle := "ahk_exe wezterm-gui.exe"
+appPath := "C:\\Program Files\\WezTerm\\wezterm-gui.exe"
+
+^`::
+{
+    if (!WinExist(appTitle))
+    {
+        Run(appPath)
+        return
+    }
+
+    if (WinActive(appTitle))
+    {
+        WinMinimize
+        return
+    }
+    WinActivate(appTitle)
+}
