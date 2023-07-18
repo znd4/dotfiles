@@ -16,7 +16,13 @@ config.adjust_window_size_when_changing_font_size = false
 config.keys = {}
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
-config.default_prog = { "tmux" }
+-- check if windows
+wezterm.log_error("target_triple: " .. wezterm.target_triple)
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+    config.default_prog = { "wsl.exe", "-e", "tmux -a" }
+else
+    config.default_prog = { "tmux" }
+end
 
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
