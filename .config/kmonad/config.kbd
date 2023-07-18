@@ -312,7 +312,7 @@
   xcp (tap-hold-next 400 esc ctl)
   ;; mvmt (tap-hold-next-release 1000 semicolon (layer-toggle movement))
   mvmt (tap-next-release semicolon (layer-toggle movement))
-  ssft (sticky-key 400 lsft)
+  ssft (lsft)
   ;; mvmt (tap-hold-next 500 semicolon (layer-toggle movement))
 )
 
