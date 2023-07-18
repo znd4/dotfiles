@@ -24,6 +24,7 @@ zmodule k
 # direnv
 # some nice commands
 zmodule fzf
+zmodule paulirish/git-open
 zmodule kiesman99/zim-zoxide	
 zmodule joke/zim-github-cli
 zmodule joke/zim-kubectl
