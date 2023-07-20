@@ -113,15 +113,16 @@ async def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
     brew_tap(*BREW_TAPS)
-    brew_install(*BREW_PACKAGES)
+    await brew_install(*BREW_PACKAGES)
     async_jobs = map(
         asyncio.create_task,
         [
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
+            add_to_fpath_dir(),
+            install_clipboard(),
         ],
     )
-    install_clipboard()
     install_docker_compose()
     install_pyenv()
     async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
@@ -142,7 +143,9 @@ async def main():
 async def pipx_stuff():
     pylsp = pipx_install("python-lsp-server[rope]")
 
-    rest = pipx_install("pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]")
+    rest = pipx_install(
+        "pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]"
+    )
     await pylsp
     sp.check_call(
         pipx_cmd(
@@ -155,6 +158,32 @@ async def pipx_stuff():
         )
     )
     await rest
+
+
+COMPLETIONS = [
+    (["pdm", "completion", "zsh"], "_pdm"),
+]
+
+
+async def add_to_fpath_dir():
+    local_fpath = Path.home() / ".local" / "fpath"
+    local_fpath.mkdir(exist_ok=True)
+    await pip_install("atomicwrites")
+
+    import atomicwrites
+
+    # pipe pdm completion zsh to local_fpath / _pdm
+    async def pipe(cmd: list[str], fp: Path):
+        with atomicwrites.atomic_write(fp, overwrite=True) as f:
+            proc = await asyncio.create_subprocess_exec(
+                *cmd, stdout=f, stderr=asyncio.subprocess.PIPE
+            )
+            await proc.wait()
+            assert proc.returncode == 0, proc.stderr.read()
+
+    await asyncio.gather(
+        *(pipe(cmd, local_fpath / fname) for cmd, fname in COMPLETIONS)
+    )
 
 
 def skip_if(cond: bool | Callable[[], bool]):
@@ -192,8 +221,8 @@ def install_rustup():
 
 
 @contextmanager
-def download_script(url: str) -> Iterator[Path]:
-    pip_install("requests")
+async def download_script(url: str) -> Iterator[Path]:
+    await pip_install("requests")
     import requests
 
     with tempfile.TemporaryDirectory() as td:
@@ -329,7 +358,7 @@ def kmonad():
     sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
 
 
-def build_and_install_kmonad(dir_: Path):
+async def build_and_install_kmonad(dir_: Path):
     if shutil.which("kmonad"):
         print("kmonad already installed, skipping")
         return
@@ -345,7 +374,7 @@ def build_and_install_kmonad(dir_: Path):
     )
 
     # here because it won't be installed when we first start the script
-    pip_install("ruamel.yaml")
+    await pip_install("ruamel.yaml")
     from ruamel.yaml import YAML
 
     stack_yaml_path = dir_ / "stack.yaml"
@@ -406,7 +435,7 @@ def install_pip():
 
 
 @functools.lru_cache()
-def pip_install(*packages: str):
+async def pip_install(*packages: str):
     install_pip()
     print(f"pip installing {', '.join(packages)}")
     if platform.system().lower() == "linux" and sys.executable in {"/usr/bin/python3"}:
@@ -459,12 +488,12 @@ def install_tpm_packages():
         sp.check_call(["tmux", "kill-session", "-t", tmux_session])
 
 
-def install_clipboard():
+async def install_clipboard():
     """See https://github.com/Slackadays/clipboard"""
     if shutil.which("cb"):
         return
 
-    pip_install("requests")
+    await pip_install("requests")
     import requests
 
     r = requests.get(
@@ -496,7 +525,7 @@ async def install_tpm(*plugins: str):
         if target_dir.exists():
             shutil.rmtree(target_dir)
 
-        pip_install("furl")
+        await pip_install("furl")
         import furl
 
         sp.check_call(
@@ -595,10 +624,10 @@ def path_to_brew() -> Path:
     return BREW_BIN / "brew"
 
 
-def brew_install(*pkgs: str):
+async def brew_install(*pkgs: str):
     install_homebrew()
 
-    pip_install("more-itertools")
+    await pip_install("more-itertools")
     import more_itertools as mi
 
     for chunk in mi.chunked(pkgs, 10):
@@ -651,8 +680,7 @@ async def asdf_install():
             text=True,
             capture_output=True,
         )
-        .stdout
-        .strip()
+        .stdout.strip()
         .split("\n")
     )
     # direnv

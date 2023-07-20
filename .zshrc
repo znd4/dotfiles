@@ -9,6 +9,11 @@
 # -----------------
 
 #
+# fpath
+#
+export fpath=("$HOME/.local/fpath" $fpath)
+
+#
 # History
 #
 
@@ -157,6 +162,7 @@ setopt interactivecomments
 #####################
 ### znap
 #####################
+#
 
 #
 #
