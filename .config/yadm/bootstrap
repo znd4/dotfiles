@@ -17,6 +17,7 @@ import zipfile
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Iterator
+import json
 
 # ~/.local/lib/pythonX.Y/site-packages might not exist when script starts
 # So we need to manually add it to sys.path
@@ -75,6 +76,7 @@ BREW_PACKAGES = [
     "lazygit",
     "neovim",
     "nodejs",
+    "pdm",
     "pipx",
     "pipenv",
     "python-launcher",
@@ -128,7 +130,7 @@ async def main():
     async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
 
     # gather all async_jobs
-    await asyncio.gather(*async_jobs)
+    await gather(*async_jobs)
 
     install_rustup()
 
@@ -140,24 +142,73 @@ async def main():
     symlink_fonts()
 
 
+async def run(
+    cmd: list[str], check=True, timeout=60 * 5, stdout=None
+) -> asyncio.subprocess.Process:
+    stderr = asyncio.subprocess.PIPE if check else None
+
+    if not shutil.which(cmd[0]):
+        raise RuntimeError(f"{cmd[0]} not found")
+
+    try:
+        proc = await asyncio.create_subprocess_exec(*cmd, stderr=stderr, stdout=stdout)
+    except Exception as e:
+        print(f"Failed to start {cmd}")
+        raise e
+
+    try:
+        # Wait for the subprocess to finish, with a timeout
+        await asyncio.wait_for(proc.wait(), timeout)
+    except asyncio.TimeoutError:
+        # If the process doesn't finish before the timeout, kill it
+        print(f"Process timed out: {cmd}")
+        proc.kill()
+        await proc.wait()
+        raise
+    except Exception as e:
+        print(f"got another error, Failed to wait for {cmd}")
+        raise e
+
+    if not check:
+        return proc
+    if proc.returncode == 0:
+        return proc
+
+    raise RuntimeError(
+        (await proc.stderr.read()).decode()
+        if proc.stderr
+        else f"Unknown error, {proc.returncode=}"
+    )
+
+
 async def pipx_stuff():
     pylsp = pipx_install("python-lsp-server[rope]")
 
-    rest = pipx_install(
-        "pre-commit", "black", "isort", "ruff", "python-lsp-server[rope]"
-    )
+    rest = pipx_install("pre-commit", "black", "isort", "ruff", "nox")
     await pylsp
-    sp.check_call(
-        pipx_cmd(
-            "inject",
-            "python-lsp-server",
-            "pylsp-rope",
-            "python-lsp-ruff",
-            "pyls-isort",
-            "python-lsp-black",
-        )
+
+    await gather(
+        run(
+            pipx_cmd(
+                "inject",
+                "python-lsp-server",
+                "pylsp-rope",
+                "python-lsp-ruff",
+                "pyls-isort",
+                "python-lsp-black",
+            ),
+            check=True,
+        ),
+        rest,
     )
-    await rest
+
+
+async def gather(*tasks: asyncio.Task):
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    exceptions = [r for r in results if isinstance(r, Exception)]
+    if not exceptions:
+        return
+    raise ExceptionGroup("errors: ", exceptions)
 
 
 COMPLETIONS = [
@@ -175,15 +226,9 @@ async def add_to_fpath_dir():
     # pipe pdm completion zsh to local_fpath / _pdm
     async def pipe(cmd: list[str], fp: Path):
         with atomicwrites.atomic_write(fp, overwrite=True) as f:
-            proc = await asyncio.create_subprocess_exec(
-                *cmd, stdout=f, stderr=asyncio.subprocess.PIPE
-            )
-            await proc.wait()
-            assert proc.returncode == 0, proc.stderr.read()
+            await run(cmd, stdout=f, check=True)
 
-    await asyncio.gather(
-        *(pipe(cmd, local_fpath / fname) for cmd, fname in COMPLETIONS)
-    )
+    await gather(*(pipe(cmd, local_fpath / fname) for cmd, fname in COMPLETIONS))
 
 
 def skip_if(cond: bool | Callable[[], bool]):
@@ -626,9 +671,12 @@ def path_to_brew() -> Path:
 
 async def brew_install(*pkgs: str):
     install_homebrew()
+    installed = set(sp.check_output([path_to_brew(), "list"], text=True).split())
 
     await pip_install("more-itertools")
     import more_itertools as mi
+
+    pkgs = (pkg for pkg in pkgs if pkg not in installed)
 
     for chunk in mi.chunked(pkgs, 10):
         sp.check_call([path_to_brew(), "install", *chunk])
@@ -651,21 +699,28 @@ def pipx_cmd(*args: str) -> list[str]:
 
 
 async def pipx_install(*packages):
-    await run_multiple_cmds(
-        pipx_cmd("install", package)
-        if isinstance(package, str)
-        else pipx_cmd("install", *package)
-        for package in packages
+    installed = set(
+        json.loads(
+            (
+                await (
+                    await run(
+                        pipx_cmd("list", "--json"), stdout=asyncio.subprocess.PIPE
+                    )
+                ).stdout.read()
+            ).decode()
+        )["venvs"]
     )
 
+    def to_install_cmd(package):
+        if isinstance(package, str):
+            return pipx_cmd("install", package)
+        return pipx_cmd("install", *package)
 
-async def run_multiple_cmds(cmds: list[str]):
-    await asyncio.gather(
+    await gather(
         *(
-            asyncio.create_subprocess_exec(
-                *cmd,
-            )
-            for cmd in cmds
+            run(to_install_cmd(package))
+            for package in packages
+            if package.split("[")[0] not in installed
         )
     )
 
@@ -684,7 +739,7 @@ async def asdf_install():
         .split("\n")
     )
     # direnv
-    await run_multiple_cmds(["asdf", "plugin-add", plugin] for plugin in plugins)
+    await gather(*(run(["asdf", "plugin-add", plugin]) for plugin in plugins))
     sp.check_call(["asdf", "install"])
 
 
