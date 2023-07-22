@@ -3,7 +3,7 @@ import asyncio
 import re
 import functools
 import site
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 import getpass
 import io
 import os
@@ -123,6 +123,7 @@ async def main():
             asdf_install(),
             add_to_fpath_dir(),
             install_clipboard(),
+            install_rustup(),
         ],
     )
     install_docker_compose()
@@ -131,8 +132,6 @@ async def main():
 
     # gather all async_jobs
     await gather(*async_jobs)
-
-    install_rustup()
 
     sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
     sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
@@ -143,7 +142,11 @@ async def main():
 
 
 async def run(
-    cmd: list[str], check=True, timeout=60 * 5, stdout=None
+    cmd: list[str],
+    check=True,
+    timeout=60 * 5,
+    stdout=None,
+    stdin=None,
 ) -> asyncio.subprocess.Process:
     stderr = asyncio.subprocess.PIPE if check else None
 
@@ -151,7 +154,9 @@ async def run(
         raise RuntimeError(f"{cmd[0]} not found")
 
     try:
-        proc = await asyncio.create_subprocess_exec(*cmd, stderr=stderr, stdout=stdout)
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, stderr=stderr, stdout=stdout, stdin=stdin
+        )
     except Exception as e:
         print(f"Failed to start {cmd}")
         raise e
@@ -248,24 +253,24 @@ def skip_if(cond: bool | Callable[[], bool]):
     return decorator
 
 
-def install_homebrew():
+async def install_homebrew():
     if shutil.which("brew"):
         return
-    with download_script(
+    async with download_script(
         "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
     ) as installer:
-        sp.check_call(["bash", installer])
+        await run(["sh", installer], check=True, stdin=sys.stdin)
     os.environ["PATH"] = "/home/linuxbrew/.linuxbrew/bin:" + os.environ["PATH"]
 
 
-def install_rustup():
+async def install_rustup():
     if shutil.which("rustup"):
         return
-    with download_script("https://sh.rustup.rs") as installer:
-        sp.check_call(["sh", installer], stdin=sys.stdin)
+    async with download_script("https://sh.rustup.rs") as installer:
+        await run(["sh", installer], check=True, stdin=sys.stdin)
 
 
-@contextmanager
+@asynccontextmanager
 async def download_script(url: str) -> Iterator[Path]:
     await pip_install("requests")
     import requests
@@ -319,10 +324,10 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
     return decorator
 
 
-def brew_tap(*taps: str):
-    install_homebrew()
+async def brew_tap(*taps: str):
+    await install_homebrew()
     for tap in taps:
-        sp.check_call([brew_path("brew"), "tap", tap])
+        await run([brew_path("brew"), "tap", tap], check=True)
 
 
 @skip_if(lambda: HEADLESS)
@@ -670,7 +675,7 @@ def path_to_brew() -> Path:
 
 
 async def brew_install(*pkgs: str):
-    install_homebrew()
+    await install_homebrew()
     installed = set(sp.check_output([path_to_brew(), "list"], text=True).split())
 
     await pip_install("more-itertools")
