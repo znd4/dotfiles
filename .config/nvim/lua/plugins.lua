@@ -28,6 +28,10 @@ require("lazy").setup({
         end,
         priority = 101,
     },
+    {
+        "earthly/earthly.vim",
+        version = "main",
+    },
     -- smooth scrolling
     { "declancm/cinnamon.nvim", config = { centered = true } },
     "tpope/vim-dotenv",
@@ -398,7 +402,7 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lua", -- Optional
             "dmitmel/cmp-cmdline-history",
             "petertriho/cmp-git",
-            { "tzachar/cmp-fuzzy-path",   dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
+            { "tzachar/cmp-fuzzy-path", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             { "tzachar/cmp-fuzzy-buffer", dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
             "saadparwaiz1/cmp_luasnip",
 
