@@ -16,7 +16,43 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     -- load scrollbar before gitsigns
-    { "petertriho/nvim-scrollbar", priority = 102, config = true },
+    {
+        "epwalsh/obsidian.nvim",
+        lazy = true,
+        event = { "BufReadPre " .. vim.fn.expand("~") .. "/Documents/obsidian-vault/**.md" },
+        dependencies = {
+            -- Required.
+            "nvim-lua/plenary.nvim",
+
+            -- Optional, for completion.
+            "hrsh7th/nvim-cmp",
+
+            -- Optional, for search and quick-switch functionality.
+            "nvim-telescope/telescope.nvim",
+
+            -- Optional, alternative to nvim-treesitter for syntax highlighting.
+            "godlygeek/tabular",
+            "preservim/vim-markdown",
+        },
+        opts = {
+            dir = "~/Documents/obsidian-vault", -- no need to call 'vim.fn.expand' here
+            -- see below for full list of options 👇
+        },
+        config = function(_, opts)
+            require("obsidian").setup(opts)
+
+            -- Optional, override the 'gf' keymap to utilize Obsidian's search functionality.
+            -- see also: 'follow_url_func' config option below.
+            vim.keymap.set("n", "gf", function()
+                if require("obsidian").util.cursor_on_markdown_link() then
+                    return "<cmd>ObsidianFollowLink<CR>"
+                else
+                    return "gf"
+                end
+            end, { noremap = false, expr = true })
+        end,
+    },
+    { "petertriho/nvim-scrollbar", priority = 102,              config = true },
     {
         "lewis6991/gitsigns.nvim",
         config = function()
@@ -33,12 +69,12 @@ require("lazy").setup({
         version = "main",
     },
     -- smooth scrolling
-    { "declancm/cinnamon.nvim", config = { centered = true } },
+    { "declancm/cinnamon.nvim",    config = { centered = true } },
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
     -- split and join treesitter
-    { "Wansmer/treesj", config = true },
+    { "Wansmer/treesj",    config = true },
     -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
@@ -106,7 +142,7 @@ require("lazy").setup({
     --     },
     -- },
 
-    { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
+    { "tpope/vim-fugitive",    dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
     "kdheepak/lazygit.nvim",
     "earthly/earthly.vim",
@@ -387,7 +423,7 @@ require("lazy").setup({
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
-            { "L3MON4D3/LuaSnip", version = "1.*" },
+            { "L3MON4D3/LuaSnip",         version = "1.*" },
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
@@ -517,7 +553,7 @@ require("lazy").setup({
         dependencies = {
             "nvim-tree/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly", -- optional, updated every week. (see issue #1193)
+        tag = "nightly",                   -- optional, updated every week. (see issue #1193)
         config = {
             open_on_setup = false,
             sync_root_with_cwd = true,

@@ -250,6 +250,8 @@ source_if_exists "$HOME/.cargo/env"
 
 add_to_path "$HOME/.cargo/bin"
 
+eval $(thefuck --alias)
+
 
 # Hishtory Config:
 add_to_path "$HOME/.hishtory"
