@@ -114,7 +114,7 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 async def main():
     guarantee_yadm()
     install_ubuntu_packages(*UBUNTU_PACKAGES)
-    brew_tap(*BREW_TAPS)
+    await brew_tap(*BREW_TAPS)
     await brew_install(*BREW_PACKAGES)
     async_jobs = map(
         asyncio.create_task,
@@ -218,6 +218,7 @@ async def gather(*tasks: asyncio.Task):
 
 COMPLETIONS = [
     (["pdm", "completion", "zsh"], "_pdm"),
+    (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
 ]
 
 
