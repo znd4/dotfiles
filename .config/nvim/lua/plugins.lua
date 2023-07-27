@@ -52,7 +52,7 @@ require("lazy").setup({
             end, { noremap = false, expr = true })
         end,
     },
-    { "petertriho/nvim-scrollbar", priority = 102,              config = true },
+    { "petertriho/nvim-scrollbar", priority = 102, config = true },
     {
         "lewis6991/gitsigns.nvim",
         config = function()
@@ -69,12 +69,12 @@ require("lazy").setup({
         version = "main",
     },
     -- smooth scrolling
-    { "declancm/cinnamon.nvim",    config = { centered = true } },
+    -- { "declancm/cinnamon.nvim",    config = { centered = true } },
     "tpope/vim-dotenv",
     "norcalli/nvim_utils",
     "fladson/vim-kitty",
     -- split and join treesitter
-    { "Wansmer/treesj",    config = true },
+    { "Wansmer/treesj", config = true },
     -- "vimwiki/vimwiki",
     "ruanyl/vim-gh-line",
     { "direnv/direnv.vim", priority = 102 },
@@ -142,7 +142,7 @@ require("lazy").setup({
     --     },
     -- },
 
-    { "tpope/vim-fugitive",    dependencies = { "tpope/vim-rhubarb" } },
+    { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
     "wsdjeg/vim-fetch",
     "kdheepak/lazygit.nvim",
     "earthly/earthly.vim",
@@ -423,7 +423,7 @@ require("lazy").setup({
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
-            { "L3MON4D3/LuaSnip",         version = "1.*" },
+            { "L3MON4D3/LuaSnip", version = "1.*" },
             "hrsh7th/nvim-cmp",
             "onsails/lspkind.nvim",
             "nvim-treesitter/nvim-treesitter",
@@ -553,7 +553,7 @@ require("lazy").setup({
         dependencies = {
             "nvim-tree/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly",                   -- optional, updated every week. (see issue #1193)
+        tag = "nightly", -- optional, updated every week. (see issue #1193)
         config = {
             open_on_setup = false,
             sync_root_with_cwd = true,
