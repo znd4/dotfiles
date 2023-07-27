@@ -83,4 +83,4 @@ rebase = false
 [credential "https://git.vwoa.na.vwg"]
 	provider = generic
 	helper = 
-	helper = !/home/linuxbrew/.linuxbrew/Cellar/glab/1.31.0/bin/glab auth git-credential
+	helper = !/home/linuxbrew/.linuxbrew/bin/glab auth git-credential
