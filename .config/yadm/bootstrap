@@ -139,6 +139,7 @@ async def main():
     kmonad()
 
     symlink_fonts()
+    sp.check_call(["yadm", "enter", "pre-commit", "install"])
 
 
 async def run(
