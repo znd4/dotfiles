@@ -333,6 +333,7 @@ local cmp_config = lsp.defaults.cmp_config({
         { name = "git" },
         { name = "emoji" },
         { name = "fuzzy_buffer" },
+        { name = "latex_symbols" },
         { name = "luasnip" },
     }),
 })
