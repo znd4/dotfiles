@@ -1,5 +1,6 @@
 # very useful for monitoring WSL processes
 # sudo apt install gnome-system-monitor
+# systemctl --user enable --now gnome-system-monitor.service
 [Unit]
 Description=WSL process management
 After=network.target
