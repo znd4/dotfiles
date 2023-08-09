@@ -44,10 +44,12 @@ UBUNTU_PACKAGES = [
     "libxmlsec1-dev",
     "libffi-dev",
     "liblzma-dev",
+    "zsh",
 ]
 if not HEADLESS:
     UBUNTU_PACKAGES.extend(
         [
+            "fonts-firacode",
             "libgmp-dev",
         ]
     )
