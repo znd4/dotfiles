@@ -435,6 +435,7 @@ require("lazy").setup({
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-emoji",
+            "kdheepak/cmp-latex-symbols",
             "hrsh7th/cmp-nvim-lua", -- Optional
             "dmitmel/cmp-cmdline-history",
             "petertriho/cmp-git",
