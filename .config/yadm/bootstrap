@@ -220,6 +220,7 @@ async def gather(*tasks: asyncio.Task):
 COMPLETIONS = [
     (["pdm", "completion", "zsh"], "_pdm"),
     (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
+    (["podman", "completion", "zsh"], "_podman"),
 ]
 
 
