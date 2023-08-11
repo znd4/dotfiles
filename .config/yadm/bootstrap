@@ -223,6 +223,7 @@ COMPLETIONS = [
     (["pdm", "completion", "zsh"], "_pdm"),
     (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
     (["podman", "completion", "zsh"], "_podman"),
+    (["k3s", "completion", "zsh"], "_k3s"),
 ]
 
 
