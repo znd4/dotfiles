@@ -211,10 +211,6 @@ setopt interactivecomments
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-fi
 
 
 # POETRY VIRTUALENVS IN PROJECT

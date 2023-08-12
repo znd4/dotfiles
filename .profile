@@ -98,6 +98,10 @@ if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+if type brew &>/dev/null; then
+	FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
 add_to_path "/usr/local/bin"
 
 source_if_exists "$HOME/.gvm/scripts/gvm"
