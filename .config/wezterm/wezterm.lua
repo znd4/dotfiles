@@ -21,7 +21,11 @@ wezterm.log_error("target_triple: " .. wezterm.target_triple)
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     config.default_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asyadm" }
 else
-    config.default_prog = { "tmux", "new", "-Asyadm" }
+    config.default_prog = {
+        os.getenv("SHELL"),
+        "-c",
+        "tmux new -Asyadm",
+    }
 end
 
 config.hide_tab_bar_if_only_one_tab = true
