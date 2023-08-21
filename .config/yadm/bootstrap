@@ -124,10 +124,12 @@ async def main():
         [
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
-            add_to_fpath_dir(),
             install_rustup(),
+            install_k3s(),
         ],
     )
+    await add_to_fpath_dir(),
+
     install_docker_compose()
     install_pyenv()
     async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
@@ -297,13 +299,15 @@ async def install_rustup():
 
 @asynccontextmanager
 async def download_script(url: str) -> Iterator[Path]:
-    await pip_install("requests")
-    import requests
+    await pip_install("httpx")
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
+
+    resp.raise_for_status()
 
     with tempfile.TemporaryDirectory() as td:
-        resp = requests.get(url)
-        resp.raise_for_status()
-
         target = Path(td) / "installer"
         target.write_text(resp.text)
 
@@ -665,6 +669,9 @@ def install_pyenv():
             continue
         sp.check_call([pyenv, "install", version])
 
+    for version in versions:
+        sp.check_call([f"python{version}", "-m", "pip", "install", "pynvim"])
+
     sp.check_call([pyenv, "global", *versions])
 
 
@@ -737,6 +744,11 @@ async def pipx_install(*packages):
             if package.split("[")[0] not in installed
         )
     )
+
+
+async def install_k3s():
+    async with download_script("https://get.k3s.io") as f:
+        sp.check_call(["sh", f], stdin=sys.stdin)
 
 
 async def asdf_install():
