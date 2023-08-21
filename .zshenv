@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+export TERMINFO_DIRS=`find /usr/share/terminfo -type d | tr '\n' ':'`
 export LANG=en_US.UTF-8
 
 unset CURL_CA_BUNDLE
