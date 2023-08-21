@@ -159,3 +159,4 @@ export PATH=$PATH:$HOME/.aido
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 eval "$(zoxide init bash)"
+. "$HOME/.cargo/env"

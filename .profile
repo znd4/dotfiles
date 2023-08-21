@@ -56,7 +56,7 @@ if [ "$(uname -s)" != 'Darwin' ]; then
 	# Start all of my after-login systemd services
 	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service
 else
-	eval "$(/opt/homebrew/bin/brew shellenv)"
+	add_to_path "$HOME/homebrew/bin"
 	add_to_path /opt/local/bin
 	add_to_path /opt/local/sbin
 fi
@@ -73,6 +73,7 @@ setup_pyenv() {
 	# setup pyenv
 
 	add_to_path "$PYENV_ROOT/bin"
+	add_to_path "$PYENV_ROOT/shims"
 	check_path pyenv && eval "$(pyenv init -)"
 }
 setup_pyenv
@@ -103,5 +104,7 @@ if type brew &>/dev/null; then
 fi
 
 add_to_path "/usr/local/bin"
+source_if_exists "$HOME/local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/compose"
 
 source_if_exists "$HOME/.gvm/scripts/gvm"
+. "$HOME/.cargo/env"
