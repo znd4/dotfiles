@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
+import tarfile
 import re
 import functools
 import site
@@ -59,11 +60,11 @@ BREW_PACKAGES = [
     "bat",
     "black",
     "brevdev/homebrew-brev/brev",
+    "clipboard",
     "cookiecutter",
     "copier",
     "glab",
     "git-delta",
-    "distrobox",
     "fd",
     "fnm",
     "fzf",
@@ -77,7 +78,7 @@ BREW_PACKAGES = [
     "kubectl",
     "lazygit",
     "neovim",
-    "nodejs",
+    # "node",
     "pdm",
     "pipx",
     "pipenv",
@@ -124,7 +125,6 @@ async def main():
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
             add_to_fpath_dir(),
-            install_clipboard(),
             install_rustup(),
         ],
     )
@@ -142,6 +142,10 @@ async def main():
 
     symlink_fonts()
     sp.check_call(["yadm", "enter", "pre-commit", "install"])
+
+
+def is_macos():
+    return platform.system().lower() == "darwin"
 
 
 async def run(
@@ -224,6 +228,7 @@ COMPLETIONS = [
     (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
     (["podman", "completion", "zsh"], "_podman"),
     (["k3s", "completion", "zsh"], "_k3s"),
+    (["k3d", "completion", "zsh"], "_k3d"),
 ]
 
 
@@ -236,6 +241,9 @@ async def add_to_fpath_dir():
 
     # pipe pdm completion zsh to local_fpath / _pdm
     async def pipe(cmd: list[str], fp: Path):
+        if not shutil.which(cmd[0]):
+            print(f"{cmd[0]} not installed, not generating completions")
+            return
         with atomicwrites.atomic_write(fp, overwrite=True) as f:
             await run(cmd, stdout=f, check=True)
 
@@ -262,11 +270,22 @@ def skip_if(cond: bool | Callable[[], bool]):
 async def install_homebrew():
     if shutil.which("brew"):
         return
-    async with download_script(
-        "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
-    ) as installer:
-        await run(["sh", installer], check=True, stdin=sys.stdin)
-    os.environ["PATH"] = "/home/linuxbrew/.linuxbrew/bin:" + os.environ["PATH"]
+    homebrew = Path.home() / "homebrew"
+    homebrew.mkdir()
+
+    await pip_install("httpx")
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get("https://github.com/Homebrew/brew/tarball/master")
+
+    r.raise_for_status()
+
+    tar = tarfile.open(fileobj=r.raw)
+    tar.extractall(
+        homebrew,
+        filter="tar",
+    )
 
 
 async def install_rustup():
@@ -367,7 +386,7 @@ def install_nerd_font_symbols():
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
-@skip_if(HEADLESS)
+@skip_if(HEADLESS or is_macos())
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
@@ -475,6 +494,7 @@ def guarantee_yadm():
 
 @lru_cache
 def install_pip():
+    print(f"{sys.executable=}")
     try:
         sp.check_call([sys.executable, "-m", "pip", "--version"])
     except Exception:
@@ -542,27 +562,6 @@ def install_tpm_packages():
     finally:
         # kill the session
         sp.check_call(["tmux", "kill-session", "-t", tmux_session])
-
-
-async def install_clipboard():
-    """See https://github.com/Slackadays/clipboard"""
-    if shutil.which("cb"):
-        return
-
-    await pip_install("requests")
-    import requests
-
-    r = requests.get(
-        "https://github.com/Slackadays/Clipboard/releases/download/0.7.1/clipboard-linux-amd64.zip"
-    )
-    r.raise_for_status()
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
-            zf.extractall(tmpdir)
-        shutil.copy(Path(tmpdir) / "bin" / "cb", Path.home() / ".local" / "bin" / "cb")
-        sp.check_call(["sudo", "cp", Path(tmpdir) / "bin" / "cb", "/usr/local/bin/cb"])
-        sp.check_call(shlex.split("sudo chmod +x /usr/local/bin/cb"))
-        sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
 
 
 async def install_tpm(*plugins: str):
@@ -669,15 +668,19 @@ def install_pyenv():
     sp.check_call([pyenv, "global", *versions])
 
 
-BREW_BIN = Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin"
+def brew_bin() -> Path:
+    brew = shutil.which("brew")
+    if not brew:
+        return Path.home() / "homebrew" / "bin"
+    return Path(brew).resolve().parent
 
 
 def brew_path(exe: str) -> Path:
-    return BREW_BIN / exe
+    return brew_bin() / exe
 
 
 def path_to_brew() -> Path:
-    return BREW_BIN / "brew"
+    return brew_bin() / "brew"
 
 
 async def brew_install(*pkgs: str):
@@ -693,7 +696,7 @@ async def brew_install(*pkgs: str):
         sp.check_call([path_to_brew(), "install", *chunk])
 
 
-@skip_if(HEADLESS)
+@skip_if(HEADLESS or is_macos())
 def symlink_fonts():
     fonts_dir = Path.home() / ".local" / "share" / "fonts"
     if not fonts_dir.is_dir():
