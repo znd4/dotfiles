@@ -103,6 +103,7 @@ if type brew &>/dev/null; then
 	FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
+add_to_path "${KREW_ROOT:-$HOME/.krew}/bin"
 add_to_path "/usr/local/bin"
 source_if_exists "$HOME/local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/compose"
 
