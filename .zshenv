@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+export TERMINFO_DIRS=`find /usr/share/terminfo -type d | tr '\n' ':'`
 export LANG=en_US.UTF-8
 
 unset CURL_CA_BUNDLE
@@ -31,7 +32,8 @@ add_to_path "/usr/local/go/bin"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # MacOS
-  eval `/opt/homebrew/bin/brew shellenv`
+  add_to_path "$HOME/homebrew/bin"
+  add_to_path /opt/homebrew/bin
   add_to_path /opt/local/bin
   add_to_path /opt/local/sbin
   # Insert your MacOS specific code here.
@@ -48,3 +50,4 @@ fi
 
 
 
+. "$HOME/.cargo/env"

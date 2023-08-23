@@ -26,9 +26,6 @@ require("commands")
 if vim.fn.executable("fd") ~= 1 then
     print("please brew install fd")
 end
-if vim.fn.executable("lolcate") ~= 1 then
-    print("please cargo install lolcate-rs")
-end
 if vim.fn.executable("rg") ~= 1 then
     print("please brew install ripgrep")
 end

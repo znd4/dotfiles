@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.11
 import asyncio
+import tarfile
 import re
 import functools
 import site
@@ -63,11 +64,11 @@ BREW_PACKAGES = [
     "bat",
     "black",
     "brevdev/homebrew-brev/brev",
+    "clipboard",
     "cookiecutter",
     "copier",
     "glab",
     "git-delta",
-    "distrobox",
     "fd",
     "fnm",
     "fzf",
@@ -76,12 +77,13 @@ BREW_PACKAGES = [
     "go",
     "gum",
     "hatch",
+    "helm",
     "httpie",
     "isort",
     "kubectl",
     "lazygit",
     "neovim",
-    "nodejs",
+    # "node",
     "pdm",
     "pipx",
     "pipenv",
@@ -129,11 +131,12 @@ async def main():
         [
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
-            add_to_fpath_dir(),
-            install_clipboard(),
             install_rustup(),
+            install_krew(),
         ],
     )
+    await add_to_fpath_dir(),
+
     install_docker_compose()
     install_pyenv()
     async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
@@ -148,6 +151,10 @@ async def main():
 
     symlink_fonts()
     sp.check_call(["yadm", "enter", "pre-commit", "install"])
+
+
+def is_macos():
+    return platform.system().lower() == "darwin"
 
 
 async def run(
@@ -241,7 +248,7 @@ COMPLETIONS = [
     (["pdm", "completion", "zsh"], "_pdm"),
     (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
     (["podman", "completion", "zsh"], "_podman"),
-    (["k3s", "completion", "zsh"], "_k3s"),
+    (["k3d", "completion", "zsh"], "_k3d"),
 ]
 
 
@@ -254,6 +261,9 @@ async def add_to_fpath_dir():
 
     # pipe pdm completion zsh to local_fpath / _pdm
     async def pipe(cmd: list[str], fp: Path):
+        if not shutil.which(cmd[0]):
+            print(f"{cmd[0]} not installed, not generating completions")
+            return
         with atomicwrites.atomic_write(fp, overwrite=True) as f:
             await run(cmd, stdout=f, check=True)
 
@@ -280,11 +290,22 @@ def skip_if(cond: bool | Callable[[], bool]):
 async def install_homebrew():
     if shutil.which("brew"):
         return
-    async with download_script(
-        "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
-    ) as installer:
-        await run(["sh", installer], check=True, stdin=sys.stdin)
-    os.environ["PATH"] = "/home/linuxbrew/.linuxbrew/bin:" + os.environ["PATH"]
+    homebrew = Path.home() / "homebrew"
+    homebrew.mkdir()
+
+    await pip_install("httpx")
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get("https://github.com/Homebrew/brew/tarball/master")
+
+    r.raise_for_status()
+
+    tar = tarfile.open(fileobj=r.raw)
+    tar.extractall(
+        homebrew,
+        filter="tar",
+    )
 
 
 async def install_rustup():
@@ -296,13 +317,15 @@ async def install_rustup():
 
 @asynccontextmanager
 async def download_script(url: str) -> Iterator[Path]:
-    await pip_install("requests")
-    import requests
+    await pip_install("httpx")
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
+
+    resp.raise_for_status()
 
     with tempfile.TemporaryDirectory() as td:
-        resp = requests.get(url)
-        resp.raise_for_status()
-
         target = Path(td) / "installer"
         target.write_text(resp.text)
 
@@ -385,7 +408,7 @@ def install_nerd_font_symbols():
 
 @env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
-@skip_if(HEADLESS)
+@skip_if(HEADLESS or is_macos())
 def kmonad():
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
@@ -493,6 +516,7 @@ def guarantee_yadm():
 
 @lru_cache
 def install_pip():
+    print(f"{sys.executable=}")
     try:
         sp.check_call([sys.executable, "-m", "pip", "--version"])
     except Exception:
@@ -560,27 +584,6 @@ def install_tpm_packages():
     finally:
         # kill the session
         sp.check_call(["tmux", "kill-session", "-t", tmux_session])
-
-
-async def install_clipboard():
-    """See https://github.com/Slackadays/clipboard"""
-    if shutil.which("cb"):
-        return
-
-    await pip_install("requests")
-    import requests
-
-    r = requests.get(
-        "https://github.com/Slackadays/Clipboard/releases/download/0.7.1/clipboard-linux-amd64.zip"
-    )
-    r.raise_for_status()
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
-            zf.extractall(tmpdir)
-        shutil.copy(Path(tmpdir) / "bin" / "cb", Path.home() / ".local" / "bin" / "cb")
-        sp.check_call(["sudo", "cp", Path(tmpdir) / "bin" / "cb", "/usr/local/bin/cb"])
-        sp.check_call(shlex.split("sudo chmod +x /usr/local/bin/cb"))
-        sp.check_call("sudo cp lib/*.so /usr/local/lib/", shell=True, cwd=tmpdir)
 
 
 async def install_tpm(*plugins: str):
@@ -671,31 +674,56 @@ def install_pyenv():
             ]
         )
     pyenv = pyenv_root / "bin" / "pyenv"
-    versions = ["3.10", "3.11"]
+    versions = ["3.10.12", "3.11.4"]
     globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
+    print(f"{globals=}")
+    print(f"{versions=}")
+    installed = [
+        line.lstrip("*").strip()
+        for line in sp.check_output(
+            [pyenv, "versions"],
+            text=True,
+        )
+        .strip()
+        .split("\n")
+    ]
+    print(f"{installed=}")
+
     for version in versions:
-        if version in globals or any(
-            line.strip().startswith(version)
-            for line in sp.check_output(
-                [pyenv, "versions"],
-                text=True,
-            ).split("\n")
-        ):
+        if any(v.startswith(version) for v in installed):
             continue
         sp.check_call([pyenv, "install", version])
 
     sp.check_call([pyenv, "global", *versions])
 
+    for version in versions:
+        print(f"{version=}")
+        sp.check_call(
+            [
+                pyenv,
+                "exec",
+                "pip",
+                "install",
+                "--upgrade",
+                "pynvim",
+            ],
+            env={"PYENV_VERSION": version, **os.environ},
+        )
 
-BREW_BIN = Path("/") / "home" / "linuxbrew" / ".linuxbrew" / "bin"
+
+def brew_bin() -> Path:
+    brew = shutil.which("brew")
+    if not brew:
+        return Path.home() / "homebrew" / "bin"
+    return Path(brew).resolve().parent
 
 
 def brew_path(exe: str) -> Path:
-    return BREW_BIN / exe
+    return brew_bin() / exe
 
 
 def path_to_brew() -> Path:
-    return BREW_BIN / "brew"
+    return brew_bin() / "brew"
 
 
 async def brew_install(*pkgs: str):
@@ -711,7 +739,7 @@ async def brew_install(*pkgs: str):
         sp.check_call([path_to_brew(), "install", *chunk])
 
 
-@skip_if(HEADLESS)
+@skip_if(HEADLESS or is_macos())
 def symlink_fonts():
     fonts_dir = Path.home() / ".local" / "share" / "fonts"
     if not fonts_dir.is_dir():
@@ -770,6 +798,10 @@ async def asdf_install():
     # direnv
     await gather(*(run(["asdf", "plugin-add", plugin]) for plugin in plugins))
     sp.check_call(["asdf", "install"])
+
+
+async def install_krew():
+    sp.check_call([Path(__file__).parent.resolve() / "krew_install.sh"])
 
 
 if __name__ == "__main__":
