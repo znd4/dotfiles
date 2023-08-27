@@ -55,6 +55,10 @@ if not HEADLESS:
         ]
     )
 
+APT_OR_BREW = [
+    "podman",
+]
+
 BREW_PACKAGES = [
     "asdf",
     "argocd",
@@ -87,7 +91,6 @@ BREW_PACKAGES = [
     "pipx",
     "pipenv",
     "python-launcher",
-    "podman",
     "pre-commit",
     "ripgrep",
     "starship",
@@ -121,9 +124,12 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 
 async def main():
     guarantee_yadm()
-    install_ubuntu_packages(*UBUNTU_PACKAGES)
+    apt_pkgs, brew_pkgs = process_apt_or_brew(
+        APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
+    )
+    install_ubuntu_packages(*apt_pkgs)
     await brew_tap(*BREW_TAPS)
-    await brew_install(*BREW_PACKAGES)
+    await brew_install(*brew_pkgs)
     async_jobs = map(
         asyncio.create_task,
         [
@@ -220,6 +226,18 @@ async def pipx_stuff():
         ),
         rest,
     )
+
+
+def process_apt_or_brew(
+    apt_or_brew: list[str], apt: list[str], brew: list[str]
+) -> tuple[list[str], list[str]]:
+    if shutil.which("apt"):
+        apt = [*apt, *apt_or_brew]
+    elif shutil.which("brew"):
+        brew = [*brew, *apt_or_brew]
+    else:
+        raise RuntimeError("No apt or brew found")
+    return apt, brew
 
 
 async def gather(*tasks: asyncio.Task):
