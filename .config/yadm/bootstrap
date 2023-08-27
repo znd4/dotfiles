@@ -61,6 +61,7 @@ APT_OR_BREW = [
 
 BREW_PACKAGES = [
     "asdf",
+    "argocd",
     "bat",
     "black",
     "brevdev/homebrew-brev/brev",
@@ -80,6 +81,7 @@ BREW_PACKAGES = [
     "helm",
     "httpie",
     "isort",
+    "jq",
     "kubectl",
     "lazygit",
     "neovim",
@@ -94,6 +96,7 @@ BREW_PACKAGES = [
     "stylua",
     "thefuck",
     "tmux",
+    "yq",
     "zoxide",
     "zsh",
 ]
