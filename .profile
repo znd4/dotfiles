@@ -106,6 +106,7 @@ fi
 add_to_path "${KREW_ROOT:-$HOME/.krew}/bin"
 add_to_path "/usr/local/bin"
 add_to_path "$HOME/.local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/"
+add_to_path "$HOME/.rd/bin"
 
 source_if_exists "$HOME/.gvm/scripts/gvm"
 . "$HOME/.cargo/env"
