@@ -422,34 +422,36 @@ def kmonad():
     print("running kmonad setup")
     haskell_stack()
     # create uinput group if it doesn't already exist
-    sp.check_call(["sudo", "groupadd", "uinput", "--force"], stdin=sys.stdin)
+    sp.check_call(sudo(["groupadd", "uinput", "--force"]), stdin=sys.stdin)
     # add current user to uinput group and input group
     for group in ["uinput", "input"]:
         sp.check_call(
-            [
-                "sudo",
-                "usermod",
-                "-aG",
-                group,
-                getpass.getuser(),
-            ],
+            sudo(
+                [
+                    "usermod",
+                    "-aG",
+                    group,
+                    getpass.getuser(),
+                ]
+            ),
             stdin=sys.stdin,
         )
 
     # add to udev rules
     # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
     # then reload udev rules
-    sp.check_call(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"], stdin=sys.stdin)
+    sp.check_call(sudo(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"]), stdin=sys.stdin)
     sp.check_call(
-        [
-            "sudo",
-            "cp",
-            Path.home() / ".config/kmonad/udev.rules",
-            "/etc/udev/rules.d/99-kmonad.rules",
-        ],
+        sudo(
+            [
+                "cp",
+                Path.home() / ".config/kmonad/udev.rules",
+                "/etc/udev/rules.d/99-kmonad.rules",
+            ]
+        ),
         stdin=sys.stdin,
     )
-    sp.check_call(["sudo", "udevadm", "control", "--reload-rules"], stdin=sys.stdin)
+    sp.check_call(sudo(["udevadm", "control", "--reload-rules"]), stdin=sys.stdin)
 
     # clone https://github.com/kmonad/kmonad into temporary directory
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -457,6 +459,12 @@ def kmonad():
 
     sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
     sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
+
+
+def sudo(cmd: list[str]) -> list[str]:
+    if getpass.getuser() == "root":
+        return cmd
+    return ["sudo", *cmd]
 
 
 async def build_and_install_kmonad(dir_: Path):
@@ -542,13 +550,14 @@ async def pip_install(*packages: str):
     print(f"pip installing {', '.join(packages)}")
     if platform.system().lower() == "linux" and sys.executable in {"/usr/bin/python3"}:
         sp.check_call(
-            [
-                "sudo",
-                "apt-get",
-                "install",
-                "-y",
-                *(f"python3-{package}" for package in packages),
-            ]
+            sudo(
+                [
+                    "apt-get",
+                    "install",
+                    "-y",
+                    *(f"python3-{package}" for package in packages),
+                ]
+            )
         )
         return
 
@@ -576,7 +585,7 @@ def install_ubuntu_packages(*pkgs: str):
 
     if not pkgs:
         return
-    sp.check_call(["sudo", "apt-get", "install", "-y", *pkgs])
+    sp.check_call(sudo(["apt-get", "install", "-y", *pkgs]))
 
 
 def install_tpm_packages():
