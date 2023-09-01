@@ -440,7 +440,7 @@ def kmonad():
     # add to udev rules
     # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
     # then reload udev rules
-    sp.check_call(sudo(["sudo", "mkdir", "-p", "/etc/udev/rules.d/"]), stdin=sys.stdin)
+    sp.check_call(sudo(["mkdir", "-p", "/etc/udev/rules.d/"]), stdin=sys.stdin)
     sp.check_call(
         sudo(
             [
