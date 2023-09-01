@@ -209,6 +209,10 @@ lsp.configure("jsonls", {
                     url = "https://json.schemastore.org/prettierrc.json",
                 },
                 {
+                    fileMatch = { ".devcontainer.json", "devcontainer.json" },
+                    url = "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+                },
+                {
                     fileMatch = { ".eslintrc", ".eslintrc.json" },
                     url = "https://json.schemastore.org/eslintrc.json",
                 },
