@@ -463,6 +463,7 @@ def kmonad():
 
 def sudo(cmd: list[str]) -> list[str]:
     if getpass.getuser() == "root":
+        print("already root, not using sudo")
         return cmd
     return ["sudo", *cmd]
 
