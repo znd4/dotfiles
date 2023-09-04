@@ -307,7 +307,7 @@ async def install_homebrew():
 
     r.raise_for_status()
 
-    tar = tarfile.open(fileobj=r.raw)
+    tar = tarfile.open(fileobj=io.BytesIO(r.content))
     tar.extractall(
         homebrew,
         filter="tar",
