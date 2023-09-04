@@ -158,59 +158,12 @@ setopt HIST_IGNORE_SPACE
 setopt interactivecomments
 
 
-
-#####################
-### znap
-#####################
-#
-
-#
-#
-# _evalcache zoxide init zsh
-#
-# _evalcache thefuck --alias
-#
-#
-# autoload -U bashcompinit && bashcompinit
-#
-# # set -x
-# check_path kubectl && _evalcache kubectl completion zsh
-# check_path op && _evalcache      op completion zsh
-# # check_path fnm && _evalcache    fnm completions --shell zsh
-# check_path gh && _evalcache gh completion --shell zsh
-# check_path circleci && _evalcache circleci completion zsh
-# check_path wezterm && _evalcache wezterm shell-completion --shell zsh
-# check_path jira && _evalcache jira completion zsh
-# check_path pack && _evalcache cat ~/.pack/completion.zsh
-# check_path pdm && _evalcache pdm completion zsh
-# check_path register-python-argcomplete && check_path pipx && _evalcache register-python-argcomplete pipx
-# check_path hugo && _evalcache hugo completion zsh
-# check_path cdktf && . `cdktf completion`
-#
-#
-# _evalcache direnv hook zsh
-# _evalcache fnm env --use-on-cd
-#
-# _evalcache http https://raw.githubusercontent.com/zdog234/nx-completion/main/nx-completion.plugin.zsh
-#
-#
-# setopt completealiases # so that gh works when aliased by op plugin
-#
-# # e.g., zsh-syntax-highlighting must be loaded
-# # after executing compinit command and sourcing other plugins
-#
-# _evalcache zoxide init zsh
-#
-#
-# autoload -U compinit && compinit
-
 #####################
 ### volta
 #####################
 
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
-
 
 
 # POETRY VIRTUALENVS IN PROJECT
