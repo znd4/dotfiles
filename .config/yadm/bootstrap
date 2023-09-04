@@ -308,9 +308,14 @@ async def install_homebrew():
     r.raise_for_status()
 
     tar = tarfile.open(fileobj=io.BytesIO(r.content))
+    kwargs = {}
+
+    if sys.version_info >= (3, 11, 4):
+        kwargs["filter"] = "tar"
+
     tar.extractall(
         homebrew,
-        filter="tar",
+        **kwargs,
     )
 
 
