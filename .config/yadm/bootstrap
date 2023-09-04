@@ -587,7 +587,7 @@ def apt_install(*pkgs: str):
 
     if not pkgs:
         return
-    sp.check_call(sudo(["apt-get", "update"])
+    sp.check_call(sudo(["apt-get", "update"]))
     sp.check_call(sudo(["apt-get", "install", "-y", *pkgs]))
 
 
