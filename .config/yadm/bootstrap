@@ -301,7 +301,9 @@ async def install_homebrew():
     import httpx
 
     async with httpx.AsyncClient() as client:
-        r = await client.get("https://github.com/Homebrew/brew/tarball/master")
+        r = await client.get(
+            "https://github.com/Homebrew/brew/tarball/master", follow_redirects=True
+        )
 
     r.raise_for_status()
 
