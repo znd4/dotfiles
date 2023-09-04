@@ -550,7 +550,9 @@ def install_pip():
 async def pip_install(*packages: str):
     install_pip()
     print(f"pip installing {', '.join(packages)}")
-    if platform.system().lower() == "linux" and sys.executable in {"/usr/bin/python3"}:
+    if platform.system().lower() == "linux" and sys.executable.startswith(
+        "/usr/bin/python3"
+    ):
         sp.check_call(
             sudo(
                 [
