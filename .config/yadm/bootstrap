@@ -127,7 +127,7 @@ async def main():
     apt_pkgs, brew_pkgs = process_apt_or_brew(
         APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
     )
-    install_ubuntu_packages(*apt_pkgs)
+    apt_install(*apt_pkgs)
     await brew_tap(*BREW_TAPS)
     await brew_install(*brew_pkgs)
     async_jobs = map(
@@ -575,7 +575,7 @@ async def pip_install(*packages: str):
     )
 
 
-def install_ubuntu_packages(*pkgs: str):
+def apt_install(*pkgs: str):
     if not shutil.which("apt-get"):
         print("Not on Ubuntu, skipping apt installation")
         return
@@ -587,6 +587,7 @@ def install_ubuntu_packages(*pkgs: str):
 
     if not pkgs:
         return
+    sp.check_call(sudo(["apt-get", "update"])
     sp.check_call(sudo(["apt-get", "install", "-y", *pkgs]))
 
 
