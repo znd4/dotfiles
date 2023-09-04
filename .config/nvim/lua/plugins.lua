@@ -206,7 +206,18 @@ require("lazy").setup({
     {
         "https://codeberg.org/esensar/nvim-dev-container",
         config = {
-            container_runtime = "podman",
+            container_runtime = "docker",
+            attach_mounts = {
+                neovim_config = {
+                    enabled = true,
+                },
+                neovim_state = {
+                    enabled = false,
+                },
+                neovim_data = {
+                    enabled = false,
+                },
+            },
         },
         build = function()
             vim.cmd.TSInstall("jsonc")
