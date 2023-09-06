@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 parallel --verbose stow --adopt {} ::: <<EOF
+asdf
 bash
 git
 go
