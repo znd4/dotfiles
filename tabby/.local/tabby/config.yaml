@@ -169,26 +169,26 @@ terminal:
   searchOptions: {}
   colorScheme:
     name: Night Owl
-    foreground: '#d6deeb'
-    background: '#011627'
-    cursor: '#80a4c2'
+    foreground: "#d6deeb"
+    background: "#011627"
+    cursor: "#80a4c2"
     colors:
-      - '#011627'
-      - '#ef5350'
-      - '#22da6e'
-      - '#addb67'
-      - '#82aaff'
-      - '#c792ea'
-      - '#21c7a8'
-      - '#ffffff'
-      - '#969696'
-      - '#ef5350'
-      - '#22da6e'
-      - '#ffeb95'
-      - '#82aaff'
-      - '#c792ea'
-      - '#7fdbca'
-      - '#ffffff'
+      - "#011627"
+      - "#ef5350"
+      - "#22da6e"
+      - "#addb67"
+      - "#82aaff"
+      - "#c792ea"
+      - "#21c7a8"
+      - "#ffffff"
+      - "#969696"
+      - "#ef5350"
+      - "#22da6e"
+      - "#ffeb95"
+      - "#82aaff"
+      - "#c792ea"
+      - "#7fdbca"
+      - "#ffffff"
   font: VictorMono NF
   profile: local:wsl-Debian
   customColorSchemes: []
