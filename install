@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 stow --adopt xdg-config
 stow --adopt zsh
+stow --adopt bash
+stow --adopt git
