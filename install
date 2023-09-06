@@ -14,3 +14,4 @@ vscode
 xdg-config
 zsh
 EOF
+~/.config/yadm/bootstrap
