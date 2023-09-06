@@ -313,10 +313,12 @@ async def install_homebrew():
     if sys.version_info >= (3, 11, 4):
         kwargs["filter"] = "tar"
 
+    print("extracting homebrew")
     tar.extractall(
         homebrew,
         **kwargs,
     )
+    sp.check_call(f"ls {homebrew}")
 
 
 async def install_rustup():
