@@ -318,7 +318,7 @@ async def install_homebrew():
         homebrew,
         **kwargs,
     )
-    sp.check_call(f"ls {homebrew}")
+    sp.check_call(["ls", homebrew])
 
 
 async def install_rustup():
