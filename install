@@ -3,6 +3,7 @@ parallel --verbose stow --adopt {} ::: <<EOF
 bash
 git
 go
+macos
 vim
 vscode
 xdg-config
