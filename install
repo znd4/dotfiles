@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
-parallel --verbose stow --adopt {} ::: <<EOF
+set -xe
+xargs -I{} stow --adopt {} ::: <<EOF
 asdf
 autostart
 bash
