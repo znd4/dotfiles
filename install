@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
-stow --adopt xdg-config
-stow --adopt zsh
-stow --adopt bash
-stow --adopt git
+parallel --verbose stow --adopt {} ::: <<EOF
+bash
+git
+go
+vim
+xdg-config
+zsh
+EOF
