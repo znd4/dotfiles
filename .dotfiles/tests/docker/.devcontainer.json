@@ -1,4 +1,12 @@
 {
+  "containerEnv": { "PIP_CACHE_DIR": "/pip-cache" },
+  "mounts": [
+    {
+      "type": "volume",
+      "target": "/pip-cache"
+      "source": "pip-cache"
+    }
+  ],
   "build": {
     "dockerfile": "Dockerfile"
   }
