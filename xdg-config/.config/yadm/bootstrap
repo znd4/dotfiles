@@ -307,18 +307,10 @@ async def install_homebrew():
 
     r.raise_for_status()
 
-    tar = tarfile.open(fileobj=io.BytesIO(r.content))
-    kwargs = {}
-
-    if sys.version_info >= (3, 11, 4):
-        kwargs["filter"] = "tar"
-
-    print("extracting homebrew")
-    tar.extractall(
-        homebrew,
-        **kwargs,
+    sp.check_call(
+        ["tar", "-xvzf", "-", "-C", str(homebrew), "--strip-components=1"],
+        stdin=io.BytesIO(r.content),
     )
-    sp.check_call(["ls", homebrew])
 
 
 async def install_rustup():
