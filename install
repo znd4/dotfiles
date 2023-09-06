@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 set -xe
-xargs -I{} stow --adopt {} ::: <<EOF
+
+# run `apt-get update` iff `apt-get` is a valid command
+command -v apt-get && apt-get update && apt-get install -y \
+	parallel \
+	stow
+parallel --verbose stow --adopt {} ::: <<EOF
 asdf
 autostart
 bash
