@@ -285,27 +285,6 @@ def skip_if(cond: bool | Callable[[], bool]):
     return decorator
 
 
-async def install_homebrew():
-    if shutil.which("brew"):
-        return
-    homebrew = Path.home() / "homebrew"
-    homebrew.mkdir(exist_ok=True)
-
-    await pip_install("httpx")
-    import httpx
-
-    async with httpx.AsyncClient() as client:
-        r = await client.get(
-            "https://github.com/Homebrew/brew/tarball/master", follow_redirects=True
-        )
-
-    r.raise_for_status()
-    with sp.check_call(
-        ["tar", "zxf", "-", "-C", str(homebrew), "--strip-components=1"],
-        stdin=sp.PIPE,
-    ) as proc:
-        proc.stdin.write(r.content)
-
 
 async def install_rustup():
     if shutil.which("rustup"):
@@ -371,7 +350,6 @@ def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
 
 
 async def brew_tap(*taps: str):
-    await install_homebrew()
     for tap in taps:
         await run([brew_path("brew"), "tap", tap], check=True)
 
@@ -726,7 +704,6 @@ def path_to_brew() -> Path:
 
 
 async def brew_install(*pkgs: str):
-    await install_homebrew()
     installed = set(sp.check_output([path_to_brew(), "list"], text=True).split())
 
     await pip_install("more-itertools")
