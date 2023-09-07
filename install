@@ -23,4 +23,5 @@ xdg-config
 zsh
 EOF
 git stash
+brew install python@3.11
 ~/.config/yadm/bootstrap
