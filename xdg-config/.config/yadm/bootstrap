@@ -1,20 +1,16 @@
 #!/usr/bin/env python3.11
 import asyncio
-import tarfile
 import re
 import functools
 import site
 from contextlib import asynccontextmanager
 import getpass
-import io
 import os
 import platform
-import shlex
 import shutil
 import subprocess as sp
 import sys
 import tempfile
-import zipfile
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Iterator
@@ -123,7 +119,6 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
 
 
 async def main():
-    guarantee_yadm()
     apt_pkgs, brew_pkgs = process_apt_or_brew(
         APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
     )
@@ -154,7 +149,6 @@ async def main():
     kmonad()
 
     symlink_fonts()
-    sp.check_call(["yadm", "enter", "pre-commit", "install"])
 
 
 def is_macos():
@@ -513,18 +507,6 @@ async def build_and_install_kmonad(dir_: Path):
     check_call(["stack", "setup"])
     check_call(["stack", "build"])
     check_call(["stack", "install"])
-
-
-def guarantee_yadm():
-    """
-    Install yadm if it doesn't exist.
-    This is useful when we need to invoke this script directly,
-    such as in a brev.dev environment.
-    """
-    if shutil.which("yadm"):
-        print("yadm already installed, skipping")
-        return
-    gh_install("TheLocehiliosan/yadm")
 
 
 @lru_cache
