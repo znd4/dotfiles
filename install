@@ -2,13 +2,12 @@
 set -xe
 cd "$(dirname "$0")"
 
-./install_homebrew.sh
-
-# run `apt-get update` iff `apt-get` is a valid command
-command -v apt-get && apt-get update && apt-get install -y \
+. ./install_homebrew.sh
+brew install \
 	parallel \
 	stow
-xargs -I {} stow --adopt {} ::: <<EOF
+
+parallel --verbose stow --adopt {} ::: <<EOF
 asdf
 autostart
 bash
