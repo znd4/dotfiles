@@ -289,7 +289,7 @@ async def install_homebrew():
     if shutil.which("brew"):
         return
     homebrew = Path.home() / "homebrew"
-    homebrew.mkdir()
+    homebrew.mkdir(exist_ok=True)
 
     await pip_install("httpx")
     import httpx
