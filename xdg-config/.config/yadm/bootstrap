@@ -301,7 +301,7 @@ async def install_homebrew():
 
     r.raise_for_status()
     with sp.check_call(
-        ["tar", "-xvzf", "-", "-C", str(homebrew), "--strip-components=1"],
+        ["tar", "zxf", "-", "-C", str(homebrew), "--strip-components=1"],
         stdin=sp.PIPE,
     ) as proc:
         proc.stdin.write(r.content)

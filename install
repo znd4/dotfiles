@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 command -v apt-get && apt-get update && apt-get install -y \
 	parallel \
 	stow
-parallel --verbose stow --adopt {} ::: <<EOF
+xargs -I {} stow --adopt {} ::: <<EOF
 asdf
 autostart
 bash
