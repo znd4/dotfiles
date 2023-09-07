@@ -21,6 +21,5 @@ vscode
 xdg-config
 zsh
 EOF
-# cd to parent of this file, then git checkout .
-git checkout .
+git stash
 ~/.config/yadm/bootstrap
