@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -xe
 update_or_install_homebrew() {
+    set -xe
     export PATH="$HOME/homebrew/bin:$PATH"
     # if homebrew is already installed, update it
     command -v brew && brew update && brew upgrade && return 0
@@ -8,6 +9,7 @@ update_or_install_homebrew() {
     curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/homebrew    
 }
 ensure_ruby_linux() {
+    set -xe
     # if on macos, return
     [ "$(uname)" = "Darwin" ] && return 0
 
