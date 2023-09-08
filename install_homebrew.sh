@@ -31,6 +31,7 @@ ensure_ruby_linux() {
         | sort --reverse \
         | head -n 1 \
     )"
+    echo "version: ${version?}"
     rbenv versions | grep "${version?}" || rbenv install "${version?}"
     rbenv global "${version?}"
 }
