@@ -26,7 +26,7 @@ ensure_ruby_linux() {
 
     shopt -s lastpipe
     # if ruby 2.6 is not installed, install it
-    rbenv install --list \
+    rbenv install -L \
         | grep "^2.6" \
         | sort --reverse \
         | head -n 1 \
