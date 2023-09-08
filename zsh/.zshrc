@@ -200,7 +200,7 @@ source_if_exists "$HOME/.cargo/env"
 add_to_path "$HOME/.cargo/bin"
 
 eval $(thefuck --alias)
-
+eval "$(fnm env --use-on-cd)"
 
 # Hishtory Config:
 add_to_path "$HOME/.hishtory"
