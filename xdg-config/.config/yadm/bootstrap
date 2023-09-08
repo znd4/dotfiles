@@ -104,7 +104,6 @@ if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
     BREW_PACKAGES.extend(
         [
-            "joplin-cli",
             "texlive",
             "font-symbols-only-nerd-font",
             "font-victor-mono",
@@ -283,7 +282,6 @@ def skip_if(cond: bool | Callable[[], bool]):
         return wrapper
 
     return decorator
-
 
 
 async def install_rustup():
