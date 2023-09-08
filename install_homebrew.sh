@@ -10,6 +10,7 @@ update_or_install_homebrew() {
 }
 ensure_ruby_linux() {
     set -xe
+    set -o pipefail
     # if on macos, return
     [ "$(uname)" = "Darwin" ] && return 0
 
