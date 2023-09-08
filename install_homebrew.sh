@@ -26,13 +26,13 @@ ensure_ruby_linux() {
 
     # if ruby 2.6 is not installed, install it
     version="$(\
-        rbenv versions \
+        rbenv install --list \
         | grep "^2.6" \
         | sort --reverse \
         | head -n 1 \
     )"
-    rbenv versions | grep $version || rbenv install $version
-    rbenv global $version
+    rbenv versions | grep "${version?}" || rbenv install "${version?}"
+    rbenv global "${version?}"
 }
 update_or_install_homebrew
 ensure_ruby_linux
