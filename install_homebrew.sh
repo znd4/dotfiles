@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -xe
+set -xe -o pipefail
 update_or_install_homebrew() {
     set -xe
     export PATH="$HOME/homebrew/bin:$PATH"
@@ -10,7 +10,6 @@ update_or_install_homebrew() {
 }
 ensure_ruby_linux() {
     set -xe
-    set -o pipefail
     # if on macos, return
     [ "$(uname)" = "Darwin" ] && return 0
 
@@ -27,14 +26,14 @@ ensure_ruby_linux() {
     # add ruby-build to path
     export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
+    shopt -s lastpipe
     # if ruby 2.6 is not installed, install it
-    version="$(\
-        rbenv install --list \
+    rbenv install --list \
         | grep "^2.6" \
         | sort --reverse \
         | head -n 1 \
         | xargs \
-    )"
+        | read version
     echo "version: '${version?}'"
     rbenv versions | grep "${version?}" || rbenv install "${version?}"
     rbenv global "${version?}"
