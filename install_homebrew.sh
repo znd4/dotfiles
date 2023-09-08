@@ -28,7 +28,7 @@ ensure_ruby_linux() {
     # if ruby 2.6 is not installed, install it
     rbenv install -L \
         | grep "^2.6" \
-        | sort --reverse \
+        | sort --reverse --version-sort \
         | head -n 1 \
         | xargs \
         | read version
