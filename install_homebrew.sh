@@ -34,7 +34,7 @@ ensure_ruby_linux() {
         | head -n 1 \
         | xargs \
     )"
-    echo "version: ${version?}"
+    echo "version: '${version?}'"
     rbenv versions | grep "${version?}" || rbenv install "${version?}"
     rbenv global "${version?}"
 }
