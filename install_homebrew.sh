@@ -32,6 +32,7 @@ ensure_ruby_linux() {
         | grep "^2.6" \
         | sort --reverse \
         | head -n 1 \
+        | xargs \
     )"
     echo "version: ${version?}"
     rbenv versions | grep "${version?}" || rbenv install "${version?}"
