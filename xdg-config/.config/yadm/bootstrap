@@ -649,7 +649,7 @@ def install_pyenv():
             ]
         )
     pyenv = pyenv_root / "bin" / "pyenv"
-    versions = ["3.10.11", "3.11.4"]
+    versions = ["3.10.11", "3.11.3"]
     globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
     print(f"{globals=}")
     print(f"{versions=}")
