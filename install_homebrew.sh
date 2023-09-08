@@ -25,8 +25,14 @@ ensure_ruby_linux() {
     export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
     # if ruby 2.6 is not installed, install it
-    rbenv versions | grep 2.6 || rbenv install 2.6.8
-    rbenv global 2.6
+    version="$(\
+        rbenv versions \
+        | grep "^2.6" \
+        | sort --reverse \
+        | head -n 1 \
+    )"
+    rbenv versions | grep $version || rbenv install $version
+    rbenv global $version
 }
 update_or_install_homebrew
 ensure_ruby_linux
