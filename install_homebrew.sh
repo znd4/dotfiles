@@ -22,4 +22,4 @@ ensure_ruby_linux() {
     fi
 }
 update_or_install_homebrew
-brew install ruby-build
+ensure_ruby_linux
