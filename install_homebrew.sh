@@ -26,6 +26,7 @@ ensure_ruby_linux() {
 
     # if ruby 2.6 is not installed, install it
     rbenv versions | grep 2.6 || rbenv install 2.6.8
+    rbenv global 2.6
 }
 update_or_install_homebrew
 ensure_ruby_linux
