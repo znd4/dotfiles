@@ -104,7 +104,6 @@ if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
     BREW_PACKAGES.extend(
         [
-            "joplin-cli",
             "texlive",
             "font-symbols-only-nerd-font",
             "font-victor-mono",
@@ -283,7 +282,6 @@ def skip_if(cond: bool | Callable[[], bool]):
         return wrapper
 
     return decorator
-
 
 
 async def install_rustup():
@@ -542,7 +540,9 @@ def apt_install(*pkgs: str):
         return
     # get all apt-get installed packages as a set (use regex)
     out = sp.check_output(["dpkg", "--get-selections"]).decode()
-    installed = set(re.findall(r"^(\S+?)\s+?install$", out, flags=re.MULTILINE))
+    installed = {
+        line.split()[0] for line in out.splitlines() if line.split()[1] == "install"
+    }
     # filter out already installed packages
     pkgs = set(pkgs) - installed
 
@@ -651,7 +651,7 @@ def install_pyenv():
             ]
         )
     pyenv = pyenv_root / "bin" / "pyenv"
-    versions = ["3.10.12", "3.11.4"]
+    versions = ["3.10.11", "3.11.3"]
     globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
     print(f"{globals=}")
     print(f"{versions=}")
@@ -720,7 +720,7 @@ def symlink_fonts():
     fonts_dir = Path.home() / ".local" / "share" / "fonts"
     if not fonts_dir.is_dir():
         os.symlink(
-            "/home/linuxbrew/.linuxbrew/share/fonts",
+            str(brew_bin().parent / "share" / "fonts"),
             str(fonts_dir),
         )
 
