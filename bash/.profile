@@ -53,6 +53,9 @@ add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
 add_to_path "$HOME/homebrew/bin"
+add_to_path /opt/homebrew/bin
+add_to_path /linuxbrew/.linuxbrew/bin
+
 if [ "$(uname -s)" != 'Darwin' ]; then
 	# Start all of my after-login systemd services
 	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service

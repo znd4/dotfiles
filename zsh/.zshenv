@@ -30,10 +30,9 @@ GOPATH="$GOROOT/bin"
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # MacOS
-  add_to_path "$HOME/homebrew/bin"
-  add_to_path /opt/homebrew/bin
   add_to_path /opt/local/bin
   add_to_path /opt/local/sbin
   # Insert your MacOS specific code here.
