@@ -64,6 +64,7 @@ BREW_PACKAGES = [
     "clipboard",
     "cookiecutter",
     "copier",
+    "devcontainer",
     "glab",
     "git-delta",
     "fd",
