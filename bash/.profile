@@ -21,6 +21,7 @@ export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
 
 # use neovim as default pager
 export GIT_PAGER=delta
