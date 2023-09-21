@@ -2,26 +2,10 @@
 set -xe
 cd "$(dirname "$0")"
 
-. ./install_homebrew.sh
+command -v brew || . ./install_homebrew.sh
 brew install \
 	parallel \
-	stow
+	just
 
-parallel --verbose stow --adopt {} ::: <<EOF
-asdf
-autostart
-bash
-git
-go
-macos
-python
-scripts
-tabby
-vim
-vscode
-xdg-config
-zsh
-EOF
-git stash
-command -v python3.11 || brew install python@3.11
-~/.config/yadm/bootstrap
+just link
+just bootstrap
