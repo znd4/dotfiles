@@ -58,6 +58,7 @@ APT_OR_BREW = [
 BREW_PACKAGES = [
     "asdf",
     "argocd",
+    "aws-shell",
     "bat",
     "black",
     "brevdev/homebrew-brev/brev",
