@@ -247,6 +247,7 @@ COMPLETIONS = [
     (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
     (["podman", "completion", "zsh"], "_podman"),
     (["k3d", "completion", "zsh"], "_k3d"),
+    (["register-python-argcomplete", "pipx"], "_pipx"),
 ]
 
 
