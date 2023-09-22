@@ -251,7 +251,7 @@ COMPLETIONS = [
 
 
 async def add_to_fpath_dir():
-    local_fpath = Path.home() / ".local" / "fpath"
+    local_fpath = Path.home() / ".zfunc"
     local_fpath.mkdir(exist_ok=True)
     await pip_install("atomicwrites")
 
