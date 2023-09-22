@@ -11,7 +11,7 @@
 #
 # fpath
 #
-export fpath=("$HOME/.zpath" $fpath)
+export fpath=("$HOME/.zfunc" $fpath)
 
 #
 # History
