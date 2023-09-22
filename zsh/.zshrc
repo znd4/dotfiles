@@ -209,6 +209,14 @@ source_if_exists "$HOME/.hishtory/config.zsh"
 export PATH="$PATH:$HOME/.aido"
 
 
+if command -v register-python-argcomplete; then
+    autoload -U bashcompinit
+    bashcompinit
+    eval "$(register-python-argcomplete pipx)"
+fi
+
+
+
 # TODO - get this working on new desktop
 source_if_exists "$HOME/.config/op/plugins.sh"
 
