@@ -28,6 +28,9 @@ export FZF_DEFAULT_OPTS="--cycle"
 export GIT_PAGER=delta
 export PAGER="$EDITOR -R"
 
+# enable awscli completion
+export AWS_CLI_AUTO_PROMPT=on
+
 # use neovim as manpager
 export MANPAGER="$EDITOR +Man!"
 export MANWIDTH=999
