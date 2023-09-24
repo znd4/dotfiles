@@ -35,6 +35,8 @@ export AWS_CLI_AUTO_PROMPT=on
 export MANPAGER="$EDITOR +Man!"
 export MANWIDTH=999
 
+command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezterm'
+
 ##########################################################################
 ########## Helper Functions
 ##########################################################################
