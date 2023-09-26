@@ -215,7 +215,7 @@ if command -v register-python-argcomplete >/dev/null; then
     eval "$(register-python-argcomplete pipx)"
 fi
 if command -v wezterm >/dev/null; then
-    eval $(    wezterm    shell-completion    --shell    zsh    _wezterm)
+    eval $(wezterm shell-completion --shell zsh)
 fi
 
 
