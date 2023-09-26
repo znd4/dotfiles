@@ -227,7 +227,7 @@ async def pipx_stuff():
 def process_apt_or_brew(
     apt_or_brew: list[str], apt: list[str], brew: list[str]
 ) -> tuple[list[str], list[str]]:
-    if shutil.which("apt"):
+    if shutil.which("apt-get"):
         apt = [*apt, *apt_or_brew]
     elif shutil.which("brew"):
         brew = [*brew, *apt_or_brew]
