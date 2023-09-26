@@ -1,3 +1,6 @@
+default:
+    ./install
+
 python3:
     brew install python3
 
