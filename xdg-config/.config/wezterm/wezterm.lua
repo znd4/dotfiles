@@ -28,18 +28,16 @@ else
     }
 end
 
--- ensure config.launch_menu is an array
-if config.launch_menu == nil then
-    config.launch_menu = {}
-end
-
-table.insert(
-    config.launch_menu,
-    wezterm.action.SpawnCommandInNewTab({
+config.launch_menu = {
+    {
+        label = "tmux",
+        args = { "tmux", "new", "-Asdotfiles" },
+    },
+    {
         label = "zellij",
         args = { "zellij" },
-    })
-)
+    },
+}
 
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
