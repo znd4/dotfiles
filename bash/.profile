@@ -35,8 +35,6 @@ export AWS_CLI_AUTO_PROMPT=on
 export MANPAGER="$EDITOR +Man!"
 export MANWIDTH=999
 
-command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezterm'
-
 ##########################################################################
 ########## Helper Functions
 ##########################################################################
@@ -46,6 +44,9 @@ command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezte
 ##########################################################################
 ########## Add to path
 ##########################################################################
+
+add_to_path "$HOME/Applications/WezTerm.app/Contents/MacOS"
+command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezterm'
 
 # set PATH so it includes user's private bin if it exists
 add_to_path "$HOME/bin"
