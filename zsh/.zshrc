@@ -214,6 +214,9 @@ if command -v register-python-argcomplete >/dev/null; then
     bashcompinit
     eval "$(register-python-argcomplete pipx)"
 fi
+if command -v wezterm >/dev/null; then
+    eval $(    wezterm    shell-completion    --shell    zsh    _wezterm)
+fi
 
 
 
