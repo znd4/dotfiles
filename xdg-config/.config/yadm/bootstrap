@@ -54,7 +54,6 @@ if not HEADLESS:
 APT_OR_BREW = [
     "podman",
     "shfmt",
-    "zellij",
 ]
 
 BREW_PACKAGES = [
@@ -98,6 +97,7 @@ BREW_PACKAGES = [
     "thefuck",
     "tmux",
     "yq",
+    "zellij",
     "zoxide",
     "zsh",
 ]
