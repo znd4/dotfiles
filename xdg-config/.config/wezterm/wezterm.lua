@@ -28,8 +28,6 @@ else
     }
 end
 
-config.default_prog = { os.getenv("SHELL"), "-c", "zellij" }
-
 config.launch_menu = {
     {
         label = "tmux",
@@ -38,6 +36,9 @@ config.launch_menu = {
     {
         label = "zellij",
         args = { "zellij" },
+    },
+    {
+        args = { "zsh", "--login" },
     },
 }
 
