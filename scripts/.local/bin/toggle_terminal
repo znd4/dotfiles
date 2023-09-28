@@ -1,0 +1,19 @@
+#!/usr/bin/env osascript
+set appName to "Wezterm"
+
+tell application "System Events"
+	set frontAppName to name of first process whose frontmost is true
+	if frontAppName begins with appName then
+		set visible of process appName to false
+	else
+		set frontApp to first application process whose name is. apName
+		if frontApp exists then
+			set frontmost of frontApp to true
+		else
+			tell application appName to activate
+		end if
+	end if
+end tell
+return input
+
+
