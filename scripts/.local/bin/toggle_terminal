@@ -1,19 +1,26 @@
 #!/usr/bin/env osascript
 set appName to "Wezterm"
+set logFilePath to (path to desktop as text) & "myLog.txt" -- change this to your preferred location
+
+-- This handler writes log messages to a file
+on writeLog(logMessage, logPath)
+    set logFile to open for access file logPath with write permission
+    write logMessage & linefeed to logFile starting at eof
+    close access logFile
+end writeLog
 
 tell application "System Events"
-	set frontAppName to name of first process whose frontmost is true
-	if frontAppName begins with appName then
-		set visible of process appName to false
-	else
-		set frontApp to first application process whose name is. apName
-		if frontApp exists then
-			set frontmost of frontApp to true
-		else
-			tell application appName to activate
-		end if
-	end if
+    set frontAppName to name of first process whose frontmost is true
+    if frontAppName begins with appName then
+        my writeLog("sending to back", logFilePath)
+        set visible of process appName to false
+    else
+        my writeLog("finding app", logFilePath)
+        set frontApp to first application process whose name begins with appName
+        if frontApp exists then
+            set frontmost of frontApp to true
+        else
+            tell application appName to activate
+        end if
+    end if
 end tell
-return input
-
-

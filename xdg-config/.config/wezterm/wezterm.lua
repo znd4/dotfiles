@@ -13,7 +13,13 @@ config.exit_behavior = "CloseOnCleanExit"
 
 config.adjust_window_size_when_changing_font_size = false
 
-config.keys = {}
+config.keys = {
+    {
+        key = "'",
+        mods = "SUPER",
+        action = wezterm.action.HideApplication,
+    },
+}
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
 -- check if windows
