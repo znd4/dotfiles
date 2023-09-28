@@ -251,6 +251,7 @@ COMPLETIONS = [
     (["podman", "completion", "zsh"], "_podman"),
     (["k3d", "completion", "zsh"], "_k3d"),
     (["register-python-argcomplete", "pipx"], "_pipx"),
+    (["zellij", "setup", "--generate-completion", "zsh"], "_zellij"),
 ]
 
 
