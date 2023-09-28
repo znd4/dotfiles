@@ -19,9 +19,9 @@ config.keys = {}
 -- check if windows
 wezterm.log_error("target_triple: " .. wezterm.target_triple)
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-    config.default_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
+    local tmux_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
 else
-    config.default_prog = {
+    local tmux_prog = {
         os.getenv("SHELL"),
         "-c",
         "tmux new -Asdotfiles",
@@ -36,6 +36,9 @@ config.launch_menu = {
     {
         label = "zellij",
         args = { "zellij" },
+    },
+    {
+        args = { "zsh", "--login" },
     },
 }
 

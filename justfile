@@ -25,6 +25,7 @@ link: python3
         "vim",
         "vscode",
         "xdg-config",
+        "zellij",
         "zsh",
     ]:
         sp.check_call(["stow", "--adopt", package])
