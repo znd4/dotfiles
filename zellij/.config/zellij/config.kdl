@@ -5,6 +5,16 @@ ui {
 }
 theme "tokyo-night-storm"
 
+keybinds {
+    session {
+        bind "x" {
+            Run "zellij" "ac" "new-pane" "-c" "-f" "--" "zsh" "-c" "zellij list-sessions | fzf | xargs zellij kill-session" {
+
+            }
+        }
+    }
+}
+
 themes {
     tokyo-night{
         fg 169 177 214
