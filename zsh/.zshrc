@@ -230,3 +230,4 @@ add_to_path "$HOME/.local/bin"
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 eval "$(zellij setup --generate-auto-start zsh)"
+command -v kompose && eval "$(kompose completion zsh)"
