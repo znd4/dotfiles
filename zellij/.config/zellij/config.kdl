@@ -3,7 +3,15 @@ ui {
         rounded_corners true
     }
 }
-theme "tokyo-night-storm"
+theme "dracula"
+
+// Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
+// eg. when terminal window with an active zellij session is closed
+// Options:
+//   - detach (Default)
+//   - quit
+//
+on_force_close "detach"
 
 keybinds {
     session {
@@ -58,4 +66,17 @@ themes {
         white 52 59 88
         orange 150 80 39
     }
+    dracula {
+		fg 248 248 242
+		bg 40 42 54
+		red 255 85 85
+		green 80 250 123
+		yellow 241 250 140
+		blue 98 114 164
+		magenta 255 121 198
+		orange 255 184 108
+		cyan 139 233 253
+		black 0 0 0
+		white 255 255 255
+	}
 }
