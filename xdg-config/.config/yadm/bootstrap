@@ -97,6 +97,7 @@ BREW_PACKAGES = [
     "thefuck",
     "tmux",
     "yq",
+    "zellij",
     "zoxide",
     "zsh",
 ]
@@ -250,6 +251,7 @@ COMPLETIONS = [
     (["podman", "completion", "zsh"], "_podman"),
     (["k3d", "completion", "zsh"], "_k3d"),
     (["register-python-argcomplete", "pipx"], "_pipx"),
+    (["zellij", "setup", "--generate-completion", "zsh"], "_zellij"),
 ]
 
 
@@ -568,7 +570,7 @@ def install_tpm_packages():
 
 
 async def install_tpm(*plugins: str):
-    plugins_dir = Path.home() / ".tmux" / "plugins"
+    plugins_dir = Path.home() / ".config" / "tmux" / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
 
     for plugin in plugins:

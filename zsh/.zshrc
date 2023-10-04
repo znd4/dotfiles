@@ -215,7 +215,7 @@ if command -v register-python-argcomplete >/dev/null; then
     eval "$(register-python-argcomplete pipx)"
 fi
 if command -v wezterm >/dev/null; then
-    eval $(wezterm shell-completion --shell zsh)
+    eval "$(wezterm shell-completion --shell zsh)"
 fi
 
 
@@ -229,3 +229,5 @@ add_to_path "$HOME/.local/bin"
 # uninstall by removing these lines
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
+eval "$(zellij setup --generate-auto-start zsh)"
+command -v kompose >/dev/null && eval "$(kompose completion zsh)"

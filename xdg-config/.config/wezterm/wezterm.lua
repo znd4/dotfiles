@@ -13,33 +13,40 @@ config.exit_behavior = "CloseOnCleanExit"
 
 config.adjust_window_size_when_changing_font_size = false
 
-config.keys = {}
+config.keys = {
+    {
+        key = "'",
+        mods = "SUPER",
+        action = wezterm.action.HideApplication,
+    },
+}
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
 -- check if windows
 wezterm.log_error("target_triple: " .. wezterm.target_triple)
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-    config.default_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
+    local tmux_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
 else
-    config.default_prog = {
+    local tmux_prog = {
         os.getenv("SHELL"),
         "-c",
         "tmux new -Asdotfiles",
     }
 end
 
--- ensure config.launch_menu is an array
-if config.launch_menu == nil then
-    config.launch_menu = {}
-end
-
-table.insert(
-    config.launch_menu,
-    wezterm.action.SpawnCommandInNewTab({
+config.launch_menu = {
+    {
+        label = "tmux",
+        args = { "tmux", "new", "-Asdotfiles" },
+    },
+    {
         label = "zellij",
         args = { "zellij" },
-    })
-)
+    },
+    {
+        args = { "zsh", "--login" },
+    },
+}
 
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {

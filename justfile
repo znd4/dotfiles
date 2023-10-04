@@ -1,3 +1,6 @@
+default:
+    ./install
+
 python3:
     brew install python3
 
@@ -22,6 +25,7 @@ link: python3
         "vim",
         "vscode",
         "xdg-config",
+        "zellij",
         "zsh",
     ]:
         sp.check_call(["stow", "--adopt", package])
