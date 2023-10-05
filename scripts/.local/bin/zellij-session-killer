@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+zellij ac switch-mode normal
+zellij list-sessions | fzf | xargs zellij kill-session

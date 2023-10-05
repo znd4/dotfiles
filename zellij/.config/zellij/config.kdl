@@ -28,9 +28,11 @@ keybinds {
     }
     session {
         bind "x" {
-            Run "zellij" "ac" "new-pane" "-c" "-f" "--" "zsh" "-c" "zellij list-sessions | fzf | xargs zellij kill-session" {
-
+            Run "zellij-session-killer" {
+                floating true
+                close_on_exit true
             }
+            // Run "zellij" "ac" "new-pane" "-c" "-f" "--" "zsh" "-c" "zellij list-sessions | fzf | xargs zellij kill-session" {
         }
     }
     shared_except "pane" "locked" {
