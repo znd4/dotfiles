@@ -111,4 +111,3 @@ go install mvdan.cc/sh/v3/cmd/shfmt@latest
 1. Install alacritty
 2. Install [tdrop](https://github.com/noctuid/tdrop)
 3. `sudo apt install sxhkd wmctrl`
-

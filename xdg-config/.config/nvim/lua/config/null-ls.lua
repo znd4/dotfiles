@@ -12,10 +12,6 @@ null_ls.setup({
         null_ls.builtins.diagnostics.buf,
         null_ls.builtins.formatting.buf,
 
-        null_ls.builtins.formatting.stylua.with({
-            extra_args = { "--indent-type", "spaces" },
-        }),
-
         -- python
         -- null_ls.builtins.formatting.black,
         -- null_ls.builtins.formatting.isort,

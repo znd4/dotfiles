@@ -14,6 +14,18 @@ theme "dracula"
 on_force_close "detach"
 
 keybinds {
+	normal {
+		unbind "Ctrl p"
+		unbind "Ctrl o"
+		unbind "Ctrl q"
+		// unbind "Ctrl h"
+		// uncomment this and adjust key if using copy_on_select=false
+		// bind "Alt c" { Copy; }
+	}
+    session {
+        unbind "Ctrl o"
+        bind "Ctrl x" { SwitchToMode "Normal" }
+    }
     session {
         bind "x" {
             Run "zellij" "ac" "new-pane" "-c" "-f" "--" "zsh" "-c" "zellij list-sessions | fzf | xargs zellij kill-session" {
@@ -21,6 +33,27 @@ keybinds {
             }
         }
     }
+    shared_except "pane" "locked" {
+		bind "Ctrl b" { SwitchToMode "Pane"; }
+	}
+	shared_except "resize" "locked" {
+		bind "Ctrl n" { SwitchToMode "Resize"; }
+	}
+	shared_except "scroll" "locked" {
+		bind "Ctrl s" { SwitchToMode "Scroll"; }
+	}
+	shared_except "session" "locked" {
+		bind "Ctrl x" { SwitchToMode "Session"; }
+	}
+	shared_except "tab" "locked" {
+		bind "Ctrl t" { SwitchToMode "Tab"; }
+	}
+	shared_except "renametab" "locked" {
+		bind "Alt r" { SwitchToMode "RenameTab"; }
+	}
+	shared_except "tmux" "locked" {
+		bind "Ctrl a" { SwitchToMode "Tmux"; }
+	}
 }
 
 themes {
