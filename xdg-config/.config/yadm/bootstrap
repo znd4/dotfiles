@@ -104,6 +104,10 @@ BREW_PACKAGES = [
 
 BREW_TAPS = []
 
+CARGO_PACKAGES = [
+    "skim",
+]
+
 if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
     BREW_PACKAGES.extend(
@@ -133,11 +137,11 @@ async def main():
         [
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
-            install_rustup(),
+            cargo_setup(cargo_packages=CARGO_PACKAGES),
             install_krew(),
         ],
     )
-    await add_to_fpath_dir(),
+    await add_to_fpath_dir()
 
     install_docker_compose()
     install_pyenv()
@@ -293,8 +297,24 @@ def skip_if(cond: bool | Callable[[], bool]):
 async def install_rustup():
     if shutil.which("rustup"):
         return
+
     async with download_script("https://sh.rustup.rs") as installer:
         await run(["sh", installer], check=True, stdin=sys.stdin)
+
+    os.environ["PATH"] = f"{os.environ['PATH']}:{Path.home() / '.cargo' / 'bin'}"
+
+
+async def cargo_setup(cargo_packages: list[str]):
+    await install_rustup()
+    installed = {
+        line.strip().split()[0]
+        for line in sp.check_output(
+            ["cargo", "install", "--list"], text=True
+        ).splitlines()
+    }
+
+    for package in set(cargo_packages) - installed:
+        await run(["cargo", "install", package], check=True, stdin=sys.stdin)
 
 
 @asynccontextmanager
