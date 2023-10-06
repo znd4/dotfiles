@@ -34,7 +34,7 @@ keybinds {
             // }
             Run "bash" "-c" r"zellij ac switch-mode normal \
                             && zellij list-sessions \
-                            | sk --header 'Kill selected session. Ctrl-C or Esc to cancel' \
+                            | sk --multi --header 'Kill selected session(s). Tab to toggle. Ctrl-C or Esc to cancel' \
                             | xargs zellij kill-session" {
                 floating true // default: false
                 close_on_exit true // default: false
