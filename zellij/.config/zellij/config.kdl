@@ -28,10 +28,15 @@ keybinds {
     }
     session {
         bind "x" {
-            Run "zellij-session-killer" {
-                floating true
-                close_on_exit true
+            // Run "zellij-session-killer" {
+            //     floating true
+            //     close_on_exit true
+            // }
+            Run "bash" "-c" "zellij ac switch-mode normal && zellij list-sessions | sk | xargs zellij kill-session" {
+                floating true // default: false
+                close_on_exit true // default: false
             }
+
             // Run "zellij" "ac" "new-pane" "-c" "-f" "--" "zsh" "-c" "zellij list-sessions | fzf | xargs zellij kill-session" {
         }
     }
