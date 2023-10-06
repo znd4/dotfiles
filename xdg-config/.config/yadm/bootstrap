@@ -62,7 +62,6 @@ BREW_PACKAGES = [
     "aws-shell",
     "bat",
     "black",
-    "brevdev/homebrew-brev/brev",
     "clipboard",
     "cookiecutter",
     "copier",
