@@ -8,7 +8,7 @@ if not vim.loop.fs_stat(lazypath) then
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",     -- latest stable release
+    "--branch=stable", -- latest stable release
     lazypath,
   }))
 end
@@ -35,7 +35,7 @@ require("lazy").setup({
       "preservim/vim-markdown",
     },
     opts = {
-      dir = "~/Documents/obsidian-vault",       -- no need to call 'vim.fn.expand' here
+      dir = "~/Documents/obsidian-vault", -- no need to call 'vim.fn.expand' here
       -- see below for full list of options 👇
     },
     config = function(_, opts)
@@ -71,6 +71,24 @@ require("lazy").setup({
   -- smooth scrolling
   -- { "declancm/cinnamon.nvim",    config = { centered = true } },
   "tpope/vim-dotenv",
+  "znd4/vim-dadbod",
+  "kristijanhusak/vim-dadbod-ui",
+  {
+    "kristijanhusak/vim-dadbod-completion",
+    config = function()
+      -- autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'vim-dadbod-completion' }} })
+      vim.api.nvim_create_autocmd(
+        { "BufEnter" },
+        {
+          pattern = { "*.sql", "*.mysql", "*.plsql" },
+          callback = function()
+            require('cmp').setup.buffer({ sources = { { name = 'vim-dadbod-completion' } } })
+          end,
+        }
+      )
+    end,
+  },
+
   "norcalli/nvim_utils",
   "fladson/vim-kitty",
   -- split and join treesitter
@@ -253,7 +271,7 @@ require("lazy").setup({
   { "echasnovski/mini.nvim", branch = "stable" },
   {
     "kylechui/nvim-surround",
-    version = "*",     -- Use for stability; omit to use `main` branch for the latest features
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
     config = true,
   },
 
@@ -295,7 +313,7 @@ require("lazy").setup({
 
   {
     "phaazon/hop.nvim",
-    branch = "v2",     -- optional but strongly recommended
+    branch = "v2", -- optional but strongly recommended
     config = function()
       -- you can configure Hop the way you like here; see :h hop-config
       local hop = require("hop")
@@ -447,7 +465,7 @@ require("lazy").setup({
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-emoji",
       "kdheepak/cmp-latex-symbols",
-      "hrsh7th/cmp-nvim-lua",       -- Optional
+      "hrsh7th/cmp-nvim-lua", -- Optional
       "dmitmel/cmp-cmdline-history",
       "petertriho/cmp-git",
       { "tzachar/cmp-fuzzy-path",   dependencies = { "hrsh7th/nvim-cmp", "tzachar/fuzzy.nvim" } },
@@ -473,7 +491,7 @@ require("lazy").setup({
       "jose-elias-alvarez/null-ls.nvim",
     },
     config = function()
-      require("config.null-ls")       -- require your null-ls config here (example below)
+      require("config.null-ls") -- require your null-ls config here (example below)
     end,
   },
   --{
@@ -548,7 +566,7 @@ require("lazy").setup({
     config = function()
       require("nvim-treesitter.parsers").get_parser_configs().just = {
         install_info = {
-          url = "https://github.com/IndianBoy42/tree-sitter-just",           -- local path or git repo
+          url = "https://github.com/IndianBoy42/tree-sitter-just", -- local path or git repo
           files = { "src/parser.c", "src/scanner.cc" },
           branch = "main",
           use_makefile = true,
@@ -563,9 +581,9 @@ require("lazy").setup({
   {
     "nvim-tree/nvim-tree.lua",
     dependencies = {
-      "nvim-tree/nvim-web-devicons",       -- optional, for file icons
+      "nvim-tree/nvim-web-devicons", -- optional, for file icons
     },
-    tag = "nightly",                       -- optional, updated every week. (see issue #1193)
+    tag = "nightly",                 -- optional, updated every week. (see issue #1193)
     config = {
       open_on_setup = false,
       sync_root_with_cwd = true,
