@@ -1,8 +1,16 @@
 local wezterm = require("wezterm")
+
+
+wezterm.on('gui-startup', function(cmd)
+  local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
+  local gui_window = window:gui_window();
+  gui_window:perform_action(wezterm.action.ToggleFullScreen, pane)
+end)
+
 -- This table will hold the configuration.
 local config = {}
 if wezterm.config_builder then
-    config = wezterm.config_builder()
+  config = wezterm.config_builder()
 end
 -- append to config
 
@@ -14,46 +22,46 @@ config.exit_behavior = "CloseOnCleanExit"
 config.adjust_window_size_when_changing_font_size = false
 
 config.keys = {
-    {
-        key = "'",
-        mods = "SUPER",
-        action = wezterm.action.HideApplication,
-    },
+  {
+    key = "'",
+    mods = "SUPER",
+    action = wezterm.action.HideApplication,
+  },
 }
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
 -- check if windows
 wezterm.log_error("target_triple: " .. wezterm.target_triple)
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-    local tmux_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
+  local tmux_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
 else
-    local tmux_prog = {
-        os.getenv("SHELL"),
-        "-c",
-        "tmux new -Asdotfiles",
-    }
+  local tmux_prog = {
+    os.getenv("SHELL"),
+    "-c",
+    "tmux new -Asdotfiles",
+  }
 end
 
 config.launch_menu = {
-    {
-        label = "tmux",
-        args = { "tmux", "new", "-Asdotfiles" },
-    },
-    {
-        label = "zellij",
-        args = { "zellij" },
-    },
-    {
-        args = { "zsh", "--login" },
-    },
+  {
+    label = "tmux",
+    args = { "tmux", "new", "-Asdotfiles" },
+  },
+  {
+    label = "zellij",
+    args = { "zellij" },
+  },
+  {
+    args = { "zsh", "--login" },
+  },
 }
 
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
-    left = 0,
-    right = 0,
-    top = "0.4cell",
-    bottom = 0,
+  left = 0,
+  right = 0,
+  top = "0.4cell",
+  bottom = 0,
 }
 
 config.adjust_window_size_when_changing_font_size = false
@@ -67,32 +75,32 @@ config.font = wezterm.font({ family = "Fira Code" })
 
 -- Set italic fonts to Victor Mono
 config.font_rules = {
-    {
-        intensity = "Bold",
-        italic = true,
-        font = wezterm.font({
-            family = "Victor Mono",
-            weight = "Bold",
-            style = "Italic",
-        }),
-    },
-    {
-        italic = true,
-        intensity = "Half",
-        font = wezterm.font({
-            family = "Victor Mono",
-            weight = "DemiBold",
-            style = "Italic",
-        }),
-    },
-    {
-        italic = true,
-        intensity = "Normal",
-        font = wezterm.font({
-            family = "Victor Mono",
-            style = "Italic",
-        }),
-    },
+  {
+    intensity = "Bold",
+    italic = true,
+    font = wezterm.font({
+      family = "Victor Mono",
+      weight = "Bold",
+      style = "Italic",
+    }),
+  },
+  {
+    italic = true,
+    intensity = "Half",
+    font = wezterm.font({
+      family = "Victor Mono",
+      weight = "DemiBold",
+      style = "Italic",
+    }),
+  },
+  {
+    italic = true,
+    intensity = "Normal",
+    font = wezterm.font({
+      family = "Victor Mono",
+      style = "Italic",
+    }),
+  },
 }
 
 return config
