@@ -28,6 +28,10 @@ GOPATH="$GOROOT/bin"
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
+export LESS="-FX"
+if command -v most >/dev/null; then
+    export PAGER=most
+fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # MacOS

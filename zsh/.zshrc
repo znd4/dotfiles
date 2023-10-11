@@ -177,6 +177,7 @@ if type nvim >/dev/null; then
 fi
 
 
+
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
 
 
