@@ -1,24 +1,54 @@
 {
-  "title": "Toggle terminal emulator",
+  "title": "Quake-style Hotkey Window for Wezterm",
   "rules": [
     {
-      "description": "Cmd+' to toggle Wezterm",
+      "description": "Launch/show Wezterm if it is not in foreground",
       "manipulators": [
         {
           "type": "basic",
           "from": {
             "key_code": "quote",
             "modifiers": {
-              "mandatory": [
-                "left_command"
-              ]
+              "mandatory": ["command"]
             }
           },
           "to": [
             {
-              "shell_command": "zsh -c toggle_terminal"
+              "shell_command": "open $HOME/Applications/WezTerm.app"
             }
           ],
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["^com\\.github\\.wez\\.wezterm$"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Minimize Wezterm if it is in foreground",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "quote",
+            "modifiers": {
+              "mandatory": ["command"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "h",
+              "modifiers": ["command"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["^com\\.github\\.wez\\.wezterm$"]
+            }
+          ]
         }
       ]
     }
