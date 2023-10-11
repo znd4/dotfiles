@@ -1,0 +1,27 @@
+{
+  "title": "CAPS_LOCK tap ESC, hold for CTRL",
+  "rules": [
+    {
+      "description": "CAPS_LOCK tap ESC",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {}
+          },
+          "to": [
+            {
+              "key_code": "left_control"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "escape"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}
