@@ -20,13 +20,14 @@ config.window_background_opacity = 1
 config.exit_behavior = "CloseOnCleanExit"
 
 config.adjust_window_size_when_changing_font_size = false
+-- config.native_macos_fullscreen_mode = true
 
 config.keys = {
-  {
-    key = "'",
-    mods = "SUPER",
-    action = wezterm.action.HideApplication,
-  },
+  -- {
+  --   key = "'",
+  --   mods = "SUPER",
+  --   action = wezterm.action.HideApplication,
+  -- },
 }
 
 -- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }

@@ -9,7 +9,7 @@
           "from": {
             "key_code": "quote",
             "modifiers": {
-              "mandatory": ["command"]
+              "mandatory": ["left_command"]
             }
           },
           "to": [
@@ -34,7 +34,7 @@
           "from": {
             "key_code": "quote",
             "modifiers": {
-              "mandatory": ["command"]
+              "mandatory": ["left_command"]
             }
           },
           "to": [
