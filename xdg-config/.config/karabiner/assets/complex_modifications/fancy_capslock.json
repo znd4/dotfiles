@@ -7,7 +7,9 @@
         {
           "from": {
             "key_code": "caps_lock",
-            "modifiers": {}
+            "modifiers": {
+              "optional": ["shift", "command", "option"]
+            }
           },
           "to": [
             {
