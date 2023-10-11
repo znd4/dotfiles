@@ -1,0 +1,26 @@
+{
+  "title": "Toggle terminal emulator",
+  "rules": [
+    {
+      "description": "Cmd+' to toggle Wezterm",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "quote",
+            "modifiers": {
+              "mandatory": [
+                "left_command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "zsh -c toggle_terminal"
+            }
+          ],
+        }
+      ]
+    }
+  ]
+}
