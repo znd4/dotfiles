@@ -8,10 +8,7 @@
           "type": "basic",
           "from": {
             "key_code": "h",
-            "modifiers": {
-              "mandatory": ["semicolon"],
-              "optional": ["shift", "control", "option", "command"]
-            }
+            "modifiers": {}
           },
           "to": [
             {
@@ -21,7 +18,7 @@
           "conditions": [
             {
               "type": "variable_if",
-              "name": "semicolon_prefix_active",
+              "name": "semicolon_pressed",
               "value": 1
             }
           ]
@@ -30,10 +27,7 @@
           "type": "basic",
           "from": {
             "key_code": "j",
-            "modifiers": {
-              "mandatory": ["semicolon"],
-              "optional": ["shift", "control", "option", "command"]
-            }
+            "modifiers": {}
           },
           "to": [
             {
@@ -43,7 +37,7 @@
           "conditions": [
             {
               "type": "variable_if",
-              "name": "semicolon_prefix_active",
+              "name": "semicolon_pressed",
               "value": 1
             }
           ]
@@ -52,10 +46,7 @@
           "type": "basic",
           "from": {
             "key_code": "k",
-            "modifiers": {
-              "mandatory": ["semicolon"],
-              "optional": ["shift", "control", "option", "command"]
-            }
+            "modifiers": {}
           },
           "to": [
             {
@@ -65,7 +56,7 @@
           "conditions": [
             {
               "type": "variable_if",
-              "name": "semicolon_prefix_active",
+              "name": "semicolon_pressed",
               "value": 1
             }
           ]
@@ -74,10 +65,7 @@
           "type": "basic",
           "from": {
             "key_code": "l",
-            "modifiers": {
-              "mandatory": ["semicolon"],
-              "optional": ["shift", "control", "option", "command"]
-            }
+            "modifiers": {}
           },
           "to": [
             {
@@ -87,7 +75,7 @@
           "conditions": [
             {
               "type": "variable_if",
-              "name": "semicolon_prefix_active",
+              "name": "semicolon_pressed",
               "value": 1
             }
           ]
@@ -102,21 +90,21 @@
           },
           "to": [
             {
-              "key_code": "semicolon"
-            }
-          ],
-          "to_after_key_up": [
-            {
               "set_variable": {
-                "name": "semicolon_prefix_active",
+                "name": "semicolon_pressed",
                 "value": 1
               }
             }
           ],
           "to_if_alone": [
             {
+              "key_code": "semicolon"
+            }
+          ],
+          "to_after_key_up": [
+            {
               "set_variable": {
-                "name": "semicolon_prefix_active",
+                "name": "semicolon_pressed",
                 "value": 0
               }
             }
