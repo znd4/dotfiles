@@ -8,7 +8,9 @@
           "type": "basic",
           "from": {
             "key_code": "h",
-            "modifiers": {}
+            "modifiers": {
+              "optional": ["shift", "control", "option", "command"]
+            }
           },
           "to": [
             {
@@ -27,7 +29,10 @@
           "type": "basic",
           "from": {
             "key_code": "j",
-            "modifiers": {}
+
+            "modifiers": {
+              "optional": ["shift", "control", "option", "command"]
+            }
           },
           "to": [
             {
@@ -46,7 +51,9 @@
           "type": "basic",
           "from": {
             "key_code": "k",
-            "modifiers": {}
+            "modifiers": {
+              "optional": ["shift", "control", "option", "command"]
+            }
           },
           "to": [
             {
@@ -65,7 +72,9 @@
           "type": "basic",
           "from": {
             "key_code": "l",
-            "modifiers": {}
+            "modifiers": {
+              "optional": ["shift", "control", "option", "command"]
+            }
           },
           "to": [
             {
