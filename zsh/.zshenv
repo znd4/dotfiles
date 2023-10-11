@@ -7,8 +7,6 @@ unset CURL_CA_BUNDLE
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 
-# use neovim as default pager
-export PAGER='nvim -R'
 
 # use neovim as manpager
 add_to_path() {

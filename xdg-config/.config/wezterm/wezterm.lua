@@ -42,6 +42,14 @@ else
   }
 end
 
+local zellij_prog = {
+  os.getenv("SHELL"),
+  "--login",
+  "-c",
+  "zellij attach --create dotfiles",
+}
+config.default_prog = zellij_prog
+
 config.launch_menu = {
   {
     label = "tmux",
@@ -49,7 +57,7 @@ config.launch_menu = {
   },
   {
     label = "zellij",
-    args = { "zellij" },
+    args = zellij_prog,
   },
   {
     args = { "zsh", "--login" },
