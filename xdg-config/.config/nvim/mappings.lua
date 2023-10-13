@@ -1,11 +1,29 @@
 local vimp = require("vimp")
 vimp.nmap("<D-q>", ":qa")
 
+-- Don't yank when pasting over a selection
+-- see: https://vi.stackexchange.com/a/39151
+vimp.xnoremap("p", "P")
+
+------------------------------------------------------
+-- MacOS system clipboard mappings
+------------------------------------------------------
+
+vimp.nmap("<D-c>", '"+y')
+vimp.vmap("<D-c>", '"+y')
+vimp.nmap("<D-v>", '"+p')
+vimp.cnoremap("<D-v>", '<C-r>+')
+vimp.inoremap("<D-v>", '<C-r>+')
+vimp.tnoremap("<D-v>", [[<c-\><c-n><c-r>+]])
+
+-- setup mapping to call :LazyGit
+vimp.nnoremap({"<silent>"}, "<leader>gg", vim.cmd.LazyGit)
+
 local factory = function(func, ...)
-    local args = { ... }
-    return function()
-        func(unpack(args))
-    end
+  local args = { ... }
+  return function()
+    func(unpack(args))
+  end
 end
 
 vimp.nnoremap("<leader>xx", vim.cmd.TroubleToggle)
@@ -22,23 +40,23 @@ vimp.nnoremap("<leader>gP", factory(vim.cmd.Git, "push"))
 vimp.nnoremap("<leader>gc", factory(vim.cmd.Git, "commit"))
 
 vim.on_key(function(char)
-    if vim.fn.mode() == "n" then
-        local new_hlsearch = vim.tbl_contains({ "<CR>", "n", "N", "*", "#", "?", "/" }, vim.fn.keytrans(char))
-        if vim.opt.hlsearch:get() ~= new_hlsearch then
-            vim.opt.hlsearch = new_hlsearch
-        end
+  if vim.fn.mode() == "n" then
+    local new_hlsearch = vim.tbl_contains({ "<CR>", "n", "N", "*", "#", "?", "/" }, vim.fn.keytrans(char))
+    if vim.opt.hlsearch:get() ~= new_hlsearch then
+      vim.opt.hlsearch = new_hlsearch
     end
+  end
 end, vim.api.nvim_create_namespace("auto_hlsearch"))
 
 local function escape()
-    -- check if location window is open
-    if vim.fn.winnr("$") > 1 then
-        print("closing location window")
-        vim.cmd("lclose")
-        return
-    end
-    -- check if a quickfix window is open
-    vim.cmd("cclose")
+  -- check if location window is open
+  if vim.fn.winnr("$") > 1 then
+    print("closing location window")
+    vim.cmd("lclose")
+    return
+  end
+  -- check if a quickfix window is open
+  vim.cmd("cclose")
 end
 
 local leader = "<leader>"
