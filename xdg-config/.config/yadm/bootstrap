@@ -56,6 +56,16 @@ APT_OR_BREW = [
     "shfmt",
 ]
 
+BINARY_INSTALLS = [
+    GITHUB / "kubernetes-sigs" / "krew", Path.home() / ".krew" / "bin" / "kubectl-krew",
+]
+
+KREW_INSTALLS = [
+    "ctx",
+    "ns",
+]
+
+
 BREW_PACKAGES = [
     "asdf",
     "argocd",
