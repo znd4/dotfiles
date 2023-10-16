@@ -2,8 +2,7 @@ default:
     ./install
 
 python3:
-    #!/usr/bin/env bash
-    command -v python3 >/dev/null || brew install python3
+    just guarantee python3
 
 adopt: python3
     #!/usr/bin/env bash
@@ -45,7 +44,13 @@ link: python3
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
 
+guarantee pkg:
+    command -v {{pkg}} || brew install {{pkg}}
+
+pre-commit-install:
+    just guarantee pre-commit
+    pre-commit install
+
 bootstrap:
-    #!/usr/bin/env bash
-    command -v python3.11 || brew install python@3.11
-    ~/.config/yadm/bootstrap
+    just guarantee pipx
+    pipx run pyinfra @local deploy.py

@@ -3,9 +3,8 @@ set -xe
 cd "$(dirname "$0")"
 
 command -v brew || . ./install_homebrew.sh
-brew install \
-	parallel \
-	just
+brew install just
 
 just link
 just bootstrap
+just pre-commit-install
