@@ -23,6 +23,7 @@ alias snowsql='\
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+alias bh="bat --plain --language=help"
 
 # some more ls aliases
 alias ll='ls -alF'
@@ -48,6 +49,12 @@ alias gpl="git pull"
 alias gs="git status"
 
 ####################################################################
+
+####################################################################
+# VW ALIASES
+####################################################################
+
+alias impala-shell="impala-shell -i dlimpala.vwoa.na.vwg:21050 -k --ssl"
 
 ####################################################################
 # YADM ALIASES

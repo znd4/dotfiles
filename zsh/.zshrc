@@ -173,9 +173,9 @@ export EDITOR=vi
 if type nvim >/dev/null; then
     export EDITOR=`which nvim`
     export MANPAGER="$EDITOR +Man!"
-    export PAGER="$MANPAGER"
     export ZVM_VI_EDITOR=$EDITOR
 fi
+
 
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
@@ -229,5 +229,4 @@ add_to_path "$HOME/.local/bin"
 # uninstall by removing these lines
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
-eval "$(zellij setup --generate-auto-start zsh)"
 command -v kompose >/dev/null && eval "$(kompose completion zsh)"

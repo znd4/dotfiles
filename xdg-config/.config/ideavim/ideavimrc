@@ -1,8 +1,7 @@
-let mapleader="\\"
+" nnoremap <SPACE> <Nop>
+noremap <SPACE> <Nop>
+let mapleader=" "
 
-
-"" Source your .vimrc
-source ~/.vimrc
 
 "" -- Suggested options --
 " Show a few lines of context around the cursor. Note that this makes the
@@ -18,11 +17,12 @@ map Q gq
 
 """ Plugins  --------------------------------
 set surround
-set multiple-cursors
+" set multiple-cursors
 set commentary
 set argtextobj
 set easymotion
 set textobj-entire
+
 set ReplaceWithRegister
 set NERDTree
 
@@ -34,15 +34,12 @@ set showmode
 set so=5
 set incsearch
 set nu
+set relativenumber
 
 """ Idea specific settings ------------------
 set ideajoin
 set ideastatusicon=gray
 set idearefactormode=keep
-
-""" Mappings --------------------------------
-map <leader>f <Plug>(easymotion-s)
-map <leader>e <Plug>(easymotion-f)
 
 
 

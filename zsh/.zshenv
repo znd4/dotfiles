@@ -7,8 +7,6 @@ unset CURL_CA_BUNDLE
 # fzf
 export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 
-# use neovim as default pager
-export PAGER='nvim -R'
 
 # use neovim as manpager
 add_to_path() {
@@ -30,6 +28,10 @@ GOPATH="$GOROOT/bin"
 add_to_path "$GOPATH"
 add_to_path "/usr/local/go/bin"
 
+export LESS="-FX"
+if command -v most >/dev/null; then
+    export PAGER=most
+fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # MacOS
