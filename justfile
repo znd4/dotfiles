@@ -45,7 +45,7 @@ link: python3
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
 
-guarantee:
+guarantee pkg:
     command -v {{pkg}} || brew install {{pkg}}
 
 pre-commit-install:
