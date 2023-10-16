@@ -46,6 +46,5 @@ link: python3
         sp.check_call(["git", "stash"])
 
 bootstrap:
-    #!/usr/bin/env bash
-    command -v python3.11 || brew install python@3.11
-    ~/.config/yadm/bootstrap
+    command -v pipx || brew install pipx
+    pipx run pyinfra @local deploy.py
