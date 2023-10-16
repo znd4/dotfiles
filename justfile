@@ -45,6 +45,13 @@ link: python3
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
 
+guarantee:
+    command -v {{pkg}} || brew install {{pkg}}
+
+pre-commit-install:
+    just guarantee pkg=pre-commit
+    pre-commit install
+
 bootstrap:
-    command -v pipx || brew install pipx
+    just guarantee pkg=pipx
     pipx run pyinfra @local deploy.py
