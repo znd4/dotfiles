@@ -49,9 +49,9 @@ guarantee pkg:
     command -v {{pkg}} || brew install {{pkg}}
 
 pre-commit-install:
-    just guarantee pkg=pre-commit
+    just guarantee pre-commit
     pre-commit install
 
 bootstrap:
-    just guarantee pkg=pipx
+    just guarantee pipx
     pipx run pyinfra @local deploy.py
