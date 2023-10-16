@@ -34,6 +34,7 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
     "INSTALL_KMONAD", "true"
 ).lower() == "true"
 
+LOCAL_BIN = Path.home() / ".local" / "bin"
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 UBUNTU_PACKAGES = [
     "python3-pip",
@@ -139,7 +140,8 @@ async def main():
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
             cargo_setup(cargo_packages=CARGO_PACKAGES),
-            install_krew(),
+            krew_install("ctx"),
+            krew_install("ns"),
         ],
     )
     await add_to_fpath_dir()
@@ -157,6 +159,20 @@ async def main():
     kmonad()
 
     symlink_fonts()
+
+
+def is_executable(p: os.PathLike) -> bool:
+    return os.access(p, os.X_OK)
+
+
+async def bin_install(repo: str, dest: Path = None):
+    if dest and dest.is_file() and is_executable(dest):
+        return
+    await install_bin()
+    cmd = ["bin", "install", repo]
+    if dest:
+        cmd.append(str(dest))
+    await run(cmd, stdin=sys.stdin)
 
 
 def is_macos():
@@ -379,6 +395,38 @@ async def brew_tap(*taps: str):
         await run([brew_path("brew"), "tap", tap], check=True)
 
 
+@functools.lru_cache
+async def install_bin():
+    if shutil.which("bin"):
+        return
+    os, arch = get_platform()
+    with tempfile.TemporaryDirectory() as td:
+        bin = Path(td) / "bin"
+        sp.check_call(
+            [
+                "gh",
+                "release",
+                "download",
+                "--repo=marcosnils/bin",
+                f"--pattern=*{os}_{arch}*",
+                f"--output={bin}",
+            ],
+            stdin=sys.stdin,
+        )
+        sp.check_call(["chmod", "+x", bin])
+        await run([bin, "install", "github.com/marcosnils/bin", LOCAL_BIN / "bin"])
+
+
+def get_platform():
+    is_macos = platform.system() == "Darwin"
+    if is_macos:
+        return ("darwin", "arm64")
+    is_windows = platform.system() == "Windows"
+    if is_windows:
+        return ("windows", "amd64")
+    return ("linux", "amd64")
+
+
 @skip_if(lambda: HEADLESS)
 def install_nerd_font_symbols():
     if "nerd" in sp.check_output(["fc-list"], text=True).lower():
@@ -549,13 +597,13 @@ async def pip_install(*packages: str):
         )
         return
 
-    sp.check_call(
+    await run(
         [
             sys.executable,
             "-m",
             "pip",
             "install",
-            "--user",
+            # "--user",
             *packages,
         ]
     )
@@ -785,20 +833,28 @@ async def asdf_install():
     sp.check_call(["asdf", "install"])
 
 
+async def krew_install(plugin: str):
+    if plugin in krew_list():
+        return
+    await install_krew()
+    await run(["kubectl", "krew", "install", plugin])
+
+
+@lru_cache
+def krew_list():
+    return set(
+        sp.check_output(["kubectl", "krew", "list"], text=True).strip().splitlines()
+    )
+
+
+@lru_cache
 async def install_krew():
-    sp.check_call([Path(__file__).parent.resolve() / "krew_install.sh"])
-
-
-def process_apt_or_brew(
-    apt_or_brew: list[str], apt: list[str], brew: list[str]
-) -> tuple[list[str], list[str]]:
-    if shutil.which("apt-get"):
-        apt = [*apt, *apt_or_brew]
-    elif shutil.which("brew"):
-        brew = [*brew, *apt_or_brew]
-    else:
-        raise RuntimeError("No apt or brew found")
-    return apt, brew
+    if shutil.which("kubectl-krew"):
+        return
+    await bin_install(
+        "github.com/kubernetes-sigs/krew",
+        LOCAL_BIN / "kubectl-krew",
+    ),
 
 
 asyncio.run(main())
