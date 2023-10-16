@@ -55,9 +55,10 @@ APT_OR_BREW = [
     "podman",
     "shfmt",
 ]
+GITHUB="https://github.com"
 
 BINARY_INSTALLS = [
-    GITHUB / "kubernetes-sigs" / "krew", Path.home() / ".krew" / "bin" / "kubectl-krew",
+    f"{GITHUB}/kubernetes-sigs/krew", Path.home() / ".krew" / "bin" / "kubectl-krew",
 ]
 
 KREW_INSTALLS = [
