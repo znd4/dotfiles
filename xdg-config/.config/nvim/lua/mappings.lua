@@ -17,7 +17,7 @@ vimp.inoremap("<D-v>", '<C-r>+')
 vimp.tnoremap("<D-v>", [[<c-\><c-n><c-r>+]])
 
 -- setup mapping to call :LazyGit
-vimp.nnoremap({"<silent>"}, "<leader>gg", vim.cmd.LazyGit)
+vimp.nnoremap({"silent"}, "<leader>gg", function() vim.cmd.Lazygit() end)
 
 local factory = function(func, ...)
   local args = { ... }

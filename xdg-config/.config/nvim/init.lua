@@ -6,7 +6,7 @@ vim.g.mapleader = " "
 vim.g.python3_host_prog = "python3"
 
 -- set clipboard+=unnamedplus
-vim.g.clipboard:append({ "unnamedplus" })
+vim.o.clipboard = vim.o.clipboard .. "unnamedplus"
 
 
 -- TODO - use `nvm exec 17 which node` to set this
