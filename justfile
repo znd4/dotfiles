@@ -2,8 +2,7 @@ default:
     ./install
 
 python3:
-    #!/usr/bin/env bash
-    command -v python3 >/dev/null || brew install python3
+    just guarantee python3
 
 adopt: python3
     #!/usr/bin/env bash
