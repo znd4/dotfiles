@@ -77,15 +77,12 @@ require("lazy").setup({
     "kristijanhusak/vim-dadbod-completion",
     config = function()
       -- autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'vim-dadbod-completion' }} })
-      vim.api.nvim_create_autocmd(
-        { "BufEnter" },
-        {
-          pattern = { "*.sql", "*.mysql", "*.plsql" },
-          callback = function()
-            require('cmp').setup.buffer({ sources = { { name = 'vim-dadbod-completion' } } })
-          end,
-        }
-      )
+      vim.api.nvim_create_autocmd({ "BufEnter" }, {
+        pattern = { "*.sql", "*.mysql", "*.plsql" },
+        callback = function()
+          require("cmp").setup.buffer({ sources = { { name = "vim-dadbod-completion" } } })
+        end,
+      })
     end,
   },
 
@@ -162,7 +159,14 @@ require("lazy").setup({
 
   { "tpope/vim-fugitive", dependencies = { "tpope/vim-rhubarb" } },
   "wsdjeg/vim-fetch",
-  "kdheepak/lazygit.nvim",
+  {
+    "kdheepak/lazygit.nvim",
+    config = function()
+      require("vimp").nnoremap({ "silent" }, "<leader>gg", function()
+        vim.cmd.LazyGit()
+      end)
+    end,
+  },
   "earthly/earthly.vim",
   "tpope/vim-sensible",
   "junegunn/seoul256.vim",
