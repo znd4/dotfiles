@@ -840,6 +840,9 @@ async def krew_install(plugin: str):
     await run(["kubectl", "krew", "install", plugin])
 
 
+KREW_LIST = None
+
+
 @lru_cache
 def krew_list():
     return set(
@@ -847,10 +850,15 @@ def krew_list():
     )
 
 
-@lru_cache
+INSTALLING_KREW = False
+
+
 async def install_krew():
-    if shutil.which("kubectl-krew"):
+    # safe b.c. async, not separate threads
+    global INSTALLING_KREW
+    if INSTALLING_KREW or shutil.which("kubectl-krew"):
         return
+    INSTALLING_KREW = True
     await bin_install(
         "github.com/kubernetes-sigs/krew",
         LOCAL_BIN / "kubectl-krew",
