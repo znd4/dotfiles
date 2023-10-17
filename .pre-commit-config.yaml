@@ -12,8 +12,6 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/JohnnyMorganz/StyLua
-    rev: v0.14.1
+    rev: v0.18.2
     hooks:
       - id: stylua # or stylua-system / stylua-github
-        args:
-          - "--indent-type=spaces"
