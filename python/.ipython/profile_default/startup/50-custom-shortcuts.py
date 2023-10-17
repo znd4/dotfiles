@@ -1,18 +1,19 @@
-from IPython import get_ipython
-from pathlib import Path
+import os
+import subprocess
 import tempfile
+from pathlib import Path
+
+from IPython import get_ipython
 from prompt_toolkit.enums import DEFAULT_BUFFER
-from prompt_toolkit.keys import Keys
 from prompt_toolkit.filters import (
+    EmacsInsertMode,
     HasFocus,
     HasSelection,
     ViInsertMode,
-    EmacsInsertMode,
     ViNavigationMode,
     ViSelectionMode,
 )
-import os
-import subprocess
+from prompt_toolkit.keys import Keys
 
 ip = get_ipython()
 insert_mode = ViInsertMode() | EmacsInsertMode()
