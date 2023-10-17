@@ -1,60 +1,60 @@
 local actions = require("telescope.actions")
 local telescope = require("telescope")
 telescope.setup({
-    extensions = {
-        zoxide = {
-            mappings = {
-                default = {
-                    action = function(selection)
-                        vim.cmd.cd({ selection.path })
-                        vim.cmd.edit({ selection.path })
-                    end,
-                },
-            },
+  extensions = {
+    zoxide = {
+      mappings = {
+        default = {
+          action = function(selection)
+            vim.cmd.cd({ selection.path })
+            vim.cmd.edit({ selection.path })
+          end,
         },
+      },
     },
-    defaults = {
-        file_ignore_patterns = { "%.git/*", "rpc/*" },
-        vimgrep_arguments = {
-            "rg",
-            "--color=never",
-            "--no-heading",
-            "--with-filename",
-            "--line-number",
-            "--column",
-            "--smart-case",
-            "--trim", -- add this value
-        },
-        mappings = {
-            n = {
-                [","] = telescope.extensions.hop.hop,
-                -- map backspace to delete_buffer
-                ["<BS>"] = actions.delete_buffer,
-            },
-            i = {
-                ["<C-BS>"] = actions.delete_buffer,
-                ["<C-,>"] = telescope.extensions.hop.hop, -- hop.hop_toggle_selection
-                -- custom hop loop to multi selects and sending selected entries to quickfix list
-                ["<C-space>"] = function(prompt_bufnr)
-                    local opts = {
-                        callback = actions.toggle_selection,
-                        loop_callback = actions.send_selected_to_qflist,
-                    }
-                    require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
-                end,
-            },
-        },
+  },
+  defaults = {
+    file_ignore_patterns = { "%.git/*", "rpc/*" },
+    vimgrep_arguments = {
+      "rg",
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+      "--smart-case",
+      "--trim", -- add this value
     },
+    mappings = {
+      n = {
+        [","] = telescope.extensions.hop.hop,
+        -- map backspace to delete_buffer
+        ["<BS>"] = actions.delete_buffer,
+      },
+      i = {
+        ["<C-BS>"] = actions.delete_buffer,
+        ["<C-,>"] = telescope.extensions.hop.hop, -- hop.hop_toggle_selection
+        -- custom hop loop to multi selects and sending selected entries to quickfix list
+        ["<C-space>"] = function(prompt_bufnr)
+          local opts = {
+            callback = actions.toggle_selection,
+            loop_callback = actions.send_selected_to_qflist,
+          }
+          require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
+        end,
+      },
+    },
+  },
 })
 telescope.load_extension("hop")
 
 local vimp = require("vimp")
 
 local factory = function(func, ...)
-    local args = { ... }
-    return function()
-        func(unpack(args))
-    end
+  local args = { ... }
+  return function()
+    func(unpack(args))
+  end
 end
 
 local builtin = require("telescope.builtin")
@@ -73,7 +73,7 @@ vimp.map_command("Files", factory(builtin.find_files))
 -- vimp.nnoremap("<C-f>", telescope.find_files)
 
 local nnoremap = function(...)
-    vim.keymap.set("n", ...)
+  vim.keymap.set("n", ...)
 end
 
 local leader = "<leader>"

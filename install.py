@@ -7,8 +7,7 @@ from typing import Literal
 from pyinfra import facts as facts
 from pyinfra import host
 from pyinfra.facts.server import Home
-from pyinfra.operations import (apt, brew, files, git, pacman, pip, server,
-                                systemd)
+from pyinfra.operations import apt, brew, files, git, pacman, pip, server, systemd
 
 
 def main():
