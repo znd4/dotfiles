@@ -129,7 +129,8 @@ async def main():
     apt_pkgs, brew_pkgs = process_apt_or_brew(
         APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
     )
-    apt.packages(packages=apt_pkgs, _sudo=True)
+    if shutil.which("apt-get"):
+        apt.packages(packages=apt_pkgs, _sudo=True)
     for tap in BREW_TAPS:
         brew.tap(tap)
     brew.packages(packages=brew_pkgs)
