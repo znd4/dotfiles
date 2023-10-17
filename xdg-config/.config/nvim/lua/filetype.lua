@@ -14,6 +14,7 @@ vim.filetype.add({
     [".terraformrc"] = "hcl",
     ["terraform.rc"] = "hcl",
     [".yamllint"] = "yaml",
+    ["Tiltfile"] = "tiltfile",
     [".devcontainer.json"] = "jsonc",
     ["devcontainer.json"] = "jsonc",
   },

@@ -1,14 +1,18 @@
 require("orgmode").setup_ts_grammar()
 
+local ft_to_lang_tbl = {
+  ["zsh"] = "bash",
+  ["xml"] = "html",
+  ["tiltfile"] = "python",
+}
+
 -- trick treesitter into thinking zsh files are bash
 local ft_to_lang = require("nvim-treesitter.parsers").ft_to_lang
 require("nvim-treesitter.parsers").ft_to_lang = function(ft)
-  if ft == "zsh" then
-    return "bash"
-  elseif ft == "xml" then
-    return "html"
+  if ft_to_lang_tbl[ft] == nil then
+    return ft_to_lang(ft)
   end
-  return ft_to_lang(ft)
+  return ft_to_lang_tbl[ft]
 end
 
 vim.filetype.add({
