@@ -30,6 +30,10 @@ vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
 -- if you want to set up formatting on save, you can use this as a callback
 -- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+local function disableFormatting(client)
+  client.server_capabilities.documentFormattingProvider = false
+  client.server_capabilities.documentRangeFormattingProvider = false
+end
 
 -- add to your shared on_attach callback
 local enable_formatting = function(client, bufnr)
@@ -75,7 +79,7 @@ local lsp = require("lsp-zero").preset({
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
 lsp.skip_server_setup({ "ltex", "pyright" })
-require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
+require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls({ on_init = disableFormatting }))
 
 local attached_to_buffer = {}
 
@@ -123,11 +127,6 @@ lsp.on_attach(function(client, bufnr)
 end)
 
 lsp.ensure_installed(ensure_installed)
-
-local function disableFormatting(client)
-  client.server_capabilities.documentFormattingProvider = false
-  client.server_capabilities.documentRangeFormattingProvider = false
-end
 
 local yamlls_settings = {
   redhat = {
@@ -209,32 +208,6 @@ lsp.configure("jsonls", {
           fileMatch = { "devcontainer-feature.json" },
           url = "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json",
         },
-      },
-    },
-  },
-})
-
-lsp.configure("lua_ls", {
-  on_init = disableFormatting,
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-        version = "LuaJIT",
-      },
-      diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = { "vim" },
-      },
-      workspace = {
-        -- Make the server aware of Neovim runtime files
-        -- add ~/.local/share/nvim/lazy to vim.api.nvim_get_runtime_file("", true)
-        library = lua_library,
-        checkThirdParty = false,
-      },
-      -- Do not send telemetry data containing a randomized but unique identifier
-      telemetry = {
-        enable = false,
       },
     },
   },
