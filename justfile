@@ -8,6 +8,9 @@ adopt: python3
     #!/usr/bin/env bash
     STOW_ADOPT=1 just link
 
+unlink:
+    STOW_DELETE=1 just link
+
 link: python3
     #!/usr/bin/env python
     import shutil
@@ -21,6 +24,9 @@ link: python3
     cmd = ["stow", f"--target={pathlib.Path.home()}"]
     if os.environ.get("STOW_ADOPT", False):
         cmd.append("--adopt")
+
+    if os.environ.get("STOW_DELETE", False):
+        cmd.append("--delete")
 
     for package in [
         "asdf",
