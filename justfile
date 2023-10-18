@@ -13,14 +13,14 @@ link: python3
     import shutil
     import subprocess as sp
     import os
+    import pathlib
 
     if not shutil.which("stow"):
         sp.check_call(["brew", "install", "stow"])
 
-    cmd = ["stow"]
+    cmd = ["stow", f"--target={pathlib.Path.home()}"]
     if os.environ.get("STOW_ADOPT", False):
         cmd.append("--adopt")
-
 
     for package in [
         "asdf",
