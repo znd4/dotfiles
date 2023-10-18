@@ -7,9 +7,9 @@
         {
           "type": "basic",
           "from": {
-            "key_code": "quote",
+            "key_code": "grave_accent_and_tilde",
             "modifiers": {
-              "mandatory": ["left_command"]
+              "mandatory": ["control"]
             }
           },
           "to": [
@@ -32,9 +32,9 @@
         {
           "type": "basic",
           "from": {
-            "key_code": "quote",
+            "key_code": "grave_accent_and_tilde",
             "modifiers": {
-              "mandatory": ["left_command"]
+              "mandatory": ["control"]
             }
           },
           "to": [
