@@ -22,6 +22,7 @@ site.addsitedir(site.getusersitepackages())
 
 GLOBAL_CRATES = ["lolcate-rs"]
 
+
 CARGO_PACKAGES = [
     "skim",
 ]
@@ -143,6 +144,7 @@ async def main():
             cargo_setup(cargo_packages=CARGO_PACKAGES),
             krew_install("ctx"),
             krew_install("ns"),
+            bin_install("k3d-io/k3d", LOCAL_BIN / "k3d"),
         ],
     )
     await add_to_fpath_dir()

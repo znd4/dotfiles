@@ -167,6 +167,7 @@ lsp.configure("yamlls", {
 local enabled = { enabled = true }
 
 lsp.configure("pylsp", {
+  cmd = { "pylsp", "--verbose", "--log-file", "/tmp/pylsp.log" },
   settings = {
     pylsp = {
       plugins = {
