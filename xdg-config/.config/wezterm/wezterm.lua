@@ -6,6 +6,25 @@ wezterm.on("gui-startup", function(cmd)
   gui_window:perform_action(wezterm.action.ToggleFullScreen, pane)
 end)
 
+local function which(cmd)
+  local handle = io.popen('zsh -c --login "which ' .. cmd .. '"')
+  if handle == nil then
+    print("Error: Could not find command: " .. cmd)
+    return nil
+  end
+  local result = handle:read("*a")
+  handle:close()
+
+  result = result:gsub("%s+", "") -- Remove any extra whitespace or newlines
+
+  if result == "" then
+    print("Error: Command not found: " .. cmd)
+    return nil
+  end
+
+  return result
+end
+
 -- This table will hold the configuration.
 local config = {}
 if wezterm.config_builder then
@@ -29,21 +48,8 @@ config.keys = {
   -- },
 }
 
--- config.default_prog = { "cached-nix-shell", "--run", "SHELL=`which zsh` zsh -c tmux", wezterm.home_dir .. "/shell.nix" }
--- check if windows
-wezterm.log_error("target_triple: " .. wezterm.target_triple)
-if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-  local tmux_prog = { "wsl.exe", "-d", "debian", "--shell-type", "login", "--", "tmux", "new", "-Asdotfiles" }
-else
-  local tmux_prog = {
-    os.getenv("SHELL"),
-    "-c",
-    "tmux new -Asdotfiles",
-  }
-end
-
 local zellij_prog = {
-  os.getenv("SHELL"),
+  "zsh",
   "--login",
   "-c",
   "zellij attach --create dotfiles",
@@ -56,17 +62,25 @@ config.launch_menu = {
     args = { "tmux", "new", "-Asdotfiles" },
   },
   {
-    label = "fish",
-    args = { "fish", "-l" },
-  },
-  {
     label = "zellij",
     args = zellij_prog,
   },
   {
     args = { "zsh", "--login" },
   },
+  {
+    args = { "bash", "--login" },
+  },
 }
+
+local fish = which("fish")
+if fish ~= nil then
+  -- add fish to the launch menu
+  table.insert(config.launch_menu, {
+    label = "fish",
+    args = { fish, "--login" },
+  })
+end
 
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
