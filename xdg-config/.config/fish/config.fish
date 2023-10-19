@@ -1,4 +1,5 @@
 function main
+    setup_brew
     if status is-interactive
         interactive_setup
     end
@@ -6,7 +7,6 @@ end
 
 function interactive_setup
     setup_coreutils_for_mac
-    setup_brew
     setup_macports
 
     setup_pyenv
