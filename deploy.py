@@ -145,6 +145,7 @@ async def main():
             krew_install("ctx"),
             krew_install("ns"),
             bin_install("https://github.com/k3d-io/k3d", LOCAL_BIN / "k3d"),
+            run(["brew", "install", "--build-from-source", "fish"]),
         ],
     )
     await add_to_fpath_dir()

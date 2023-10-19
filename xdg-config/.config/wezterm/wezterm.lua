@@ -78,7 +78,7 @@ if fish ~= nil then
   -- add fish to the launch menu
   table.insert(config.launch_menu, {
     label = "fish",
-    args = { fish, "--login" },
+    args = { "zsh", "-c", "SHELL=fish " .. fish .. " --login" },
   })
 end
 
