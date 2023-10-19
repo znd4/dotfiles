@@ -1,1 +1,1 @@
-fish_add_path ~/go/bin
+add_to_path ~/go/bin

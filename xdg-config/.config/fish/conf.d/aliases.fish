@@ -18,6 +18,8 @@ alias l='ls -CF'
 
 alias tn="terminal-notifier"
 alias dc="docker-compose"
+alias g=git
+
 alias ga="git add"
 alias gc="git commit"
 alias gd="git diff"
