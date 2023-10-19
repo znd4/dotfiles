@@ -56,6 +56,10 @@ config.launch_menu = {
     args = { "tmux", "new", "-Asdotfiles" },
   },
   {
+    label = "fish",
+    args = { "fish", "-l" },
+  },
+  {
     label = "zellij",
     args = zellij_prog,
   },

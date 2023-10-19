@@ -39,7 +39,6 @@ function setup_pyenv
         pyenv init --path | source
     end
     status is-interactive; and pyenv init - | source
-	status is-interactive; and pyenv virtualenv-init - | source
 end
 
 function setup_direnv

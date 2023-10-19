@@ -136,7 +136,7 @@ unset key
 
 # Add aliases
 . "$HOME/.aliasrc"
-. "$HOME/.dotfiles/path_functions.sh"
+. "$HOME/.path_functions.sh"
 
 is_windows || ulimit -n 8096
 
