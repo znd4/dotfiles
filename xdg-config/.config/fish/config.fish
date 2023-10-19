@@ -6,6 +6,7 @@ end
 
 function interactive_setup
     setup_coreutils_for_mac
+    setup_brew
     setup_macports
 
     setup_pyenv
@@ -15,8 +16,11 @@ function interactive_setup
     setup_direnv
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
-    setup_brew
 	setup_zoxide
+
+    add_to_path $HOME/.local/bin
+    add_to_path $HOME/.cargo/bin
+
 
 	set -gx EDITOR nvim
 
@@ -28,6 +32,16 @@ function interactive_setup
 	set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 end
 
+function add_to_path
+    # guard clause for empty arg
+    test -z $argv[1]; and return 1
+    # guard clause for non-directory arg
+    test -d $argv[1]; or return 2
+    # guard clause for already in path
+    string match -q $argv[1] $PATH; and return 3
+    set -gx PATH $argv[1] $PATH
+end
+
 function setup_zoxide
 	zoxide init fish | source
 end
@@ -35,7 +49,7 @@ end
 function setup_pyenv
     if status is-login
         set PYENV_ROOT ~/.pyenv
-        fish_add_path $PYENV_ROOT/bin
+        set -gx PATH $PYENV_ROOT/bin $PATH
         pyenv init --path | source
     end
     status is-interactive; and pyenv init - | source
@@ -46,12 +60,13 @@ function setup_direnv
 end
 
 function setup_starship
-    source (starship init fish --print-full-init | psub)
+    starship init fish --print-full-init | source
 end
 
 function setup_brew
-    if test -d /home/linuxbrew/.linuxbrew/bin
-        fish_add_path /home/linuxbrew/.linuxbrew/bin 
+    if test -d $HOME/homebrew/bin
+        set -gx PATH $HOME/homebrew/bin $PATH
+        set -g fish_function_path (brew --prefix)/share/fish/functions $fish_function_path
     end
 end
 
@@ -68,5 +83,3 @@ function setup_coreutils_for_mac
 end
 
 main
-set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
