@@ -20,6 +20,7 @@ function interactive_setup
 
     add_to_path $HOME/.local/bin
     add_to_path $HOME/.cargo/bin
+    skim_bind_keys
 
     set -g fish_function_path $HOME/.config/fish/functions $fish_function_path
 
@@ -75,6 +76,14 @@ function setup_macports
     if test -d /opt/local
         fish_add_path /opt/local/bin /opt/local/sbin
     end
+end
+
+function skim_bind_keys
+    if not command -q sk
+      echo "not binding skim keys"
+      return 1
+    end
+    skim_key_bindings
 end
 
 function setup_coreutils_for_mac

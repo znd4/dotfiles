@@ -163,11 +163,3 @@ function skim_key_bindings
 
 end
 
-function skim_bind_keys
-    if not command -q sk
-      echo "not binding skim keys"
-      return 1
-    end
-    skim_key_bindings
-end
-skim_bind_keys
