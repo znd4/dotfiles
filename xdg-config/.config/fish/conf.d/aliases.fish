@@ -3,10 +3,11 @@ alias g=git
 
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
-alias bat=batcat
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
+
+alias k="kubectl"
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
