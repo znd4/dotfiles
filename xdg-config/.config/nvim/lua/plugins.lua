@@ -176,15 +176,7 @@ require("lazy").setup({
   {
     "johmsalas/text-case.nvim",
     config = function()
-      local textcase = require("textcase")
-      textcase.setup({})
-      local vimp = require("vimp")
-      vimp.nnoremap("gas", function()
-        textcase.current_word("to_snake_case")
-      end)
-      vimp.nnoremap("gaS", function()
-        textcase.lsp_rename("to_snake_case")
-      end)
+      require("textcase").setup({})
     end,
   },
 
