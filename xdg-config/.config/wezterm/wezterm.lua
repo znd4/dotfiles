@@ -59,7 +59,7 @@ config.default_prog = zellij_prog
 config.launch_menu = {
   {
     label = "tmux",
-    args = { "tmux", "new", "-Asdotfiles" },
+    args = { "zsh", "--login", "-c", "tmux new -Asdotfiles" },
   },
   {
     label = "zellij",
