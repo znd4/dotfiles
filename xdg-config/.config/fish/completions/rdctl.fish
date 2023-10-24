@@ -1,205 +1,177 @@
-#compdef rdctl
+# fish completion for rdctl                                -*- shell-script -*-
 
-# zsh completion for rdctl                                -*- shell-script -*-
+function __rdctl_debug
+    set -l file "$BASH_COMP_DEBUG_FILE"
+    if test -n "$file"
+        echo "$argv" >> $file
+    end
+end
 
-__rdctl_debug()
-{
-    local file="$BASH_COMP_DEBUG_FILE"
-    if [[ -n ${file} ]]; then
-        echo "$*" >> "${file}"
-    fi
-}
+function __rdctl_perform_completion
+    __rdctl_debug "Starting __rdctl_perform_completion"
 
-_rdctl()
-{
-    local shellCompDirectiveError=1
-    local shellCompDirectiveNoSpace=2
-    local shellCompDirectiveNoFileComp=4
-    local shellCompDirectiveFilterFileExt=8
-    local shellCompDirectiveFilterDirs=16
+    # Extract all args except the last one
+    set -l args (commandline -opc)
+    # Extract the last arg and escape it in case it is a space
+    set -l lastArg (string escape -- (commandline -ct))
 
-    local lastParam lastChar flagPrefix requestComp out directive comp lastComp noSpace
-    local -a completions
+    __rdctl_debug "args: $args"
+    __rdctl_debug "last arg: $lastArg"
 
-    __rdctl_debug "\n========= starting completion logic =========="
-    __rdctl_debug "CURRENT: ${CURRENT}, words[*]: ${words[*]}"
+    # Disable ActiveHelp which is not supported for fish shell
+    set -l requestComp "RDCTL_ACTIVE_HELP=0 $args[1] __complete $args[2..-1] $lastArg"
 
-    # The user could have moved the cursor backwards on the command-line.
-    # We need to trigger completion from the $CURRENT location, so we need
-    # to truncate the command-line ($words) up to the $CURRENT location.
-    # (We cannot use $CURSOR as its value does not work when a command is an alias.)
-    words=("${=words[1,CURRENT]}")
-    __rdctl_debug "Truncated words[*]: ${words[*]},"
+    __rdctl_debug "Calling $requestComp"
+    set -l results (eval $requestComp 2> /dev/null)
 
-    lastParam=${words[-1]}
-    lastChar=${lastParam[-1]}
-    __rdctl_debug "lastParam: ${lastParam}, lastChar: ${lastChar}"
+    # Some programs may output extra empty lines after the directive.
+    # Let's ignore them or else it will break completion.
+    # Ref: https://github.com/spf13/cobra/issues/1279
+    for line in $results[-1..1]
+        if test (string trim -- $line) = ""
+            # Found an empty line, remove it
+            set results $results[1..-2]
+        else
+            # Found non-empty line, we have our proper output
+            break
+        end
+    end
 
-    # For zsh, when completing a flag with an = (e.g., rdctl -n=<TAB>)
+    set -l comps $results[1..-2]
+    set -l directiveLine $results[-1]
+
+    # For Fish, when completing a flag with an = (e.g., <program> -n=<TAB>)
     # completions must be prefixed with the flag
-    setopt local_options BASH_REMATCH
-    if [[ "${lastParam}" =~ '-.*=' ]]; then
-        # We are dealing with a flag with an =
-        flagPrefix="-P ${BASH_REMATCH}"
-    fi
+    set -l flagPrefix (string match -r -- '-.*=' "$lastArg")
 
-    # Prepare the command to obtain completions
-    requestComp="${words[1]} __complete ${words[2,-1]}"
-    if [ "${lastChar}" = "" ]; then
-        # If the last parameter is complete (there is a space following it)
-        # We add an extra empty parameter so we can indicate this to the go completion code.
-        __rdctl_debug "Adding extra empty parameter"
-        requestComp="${requestComp} \"\""
-    fi
+    __rdctl_debug "Comps: $comps"
+    __rdctl_debug "DirectiveLine: $directiveLine"
+    __rdctl_debug "flagPrefix: $flagPrefix"
 
-    __rdctl_debug "About to call: eval ${requestComp}"
+    for comp in $comps
+        printf "%s%s\n" "$flagPrefix" "$comp"
+    end
 
-    # Use eval to handle any environment variables and such
-    out=$(eval ${requestComp} 2>/dev/null)
-    __rdctl_debug "completion output: ${out}"
+    printf "%s\n" "$directiveLine"
+end
 
-    # Extract the directive integer following a : from the last line
-    local lastLine
-    while IFS='\n' read -r line; do
-        lastLine=${line}
-    done < <(printf "%s\n" "${out[@]}")
-    __rdctl_debug "last line: ${lastLine}"
+# This function does two things:
+# - Obtain the completions and store them in the global __rdctl_comp_results
+# - Return false if file completion should be performed
+function __rdctl_prepare_completions
+    __rdctl_debug ""
+    __rdctl_debug "========= starting completion logic =========="
 
-    if [ "${lastLine[1]}" = : ]; then
-        directive=${lastLine[2,-1]}
-        # Remove the directive including the : and the newline
-        local suffix
-        (( suffix=${#lastLine}+2))
-        out=${out[1,-$suffix]}
-    else
-        # There is no directive specified.  Leave $out as is.
-        __rdctl_debug "No directive found.  Setting do default"
-        directive=0
-    fi
+    # Start fresh
+    set --erase __rdctl_comp_results
 
-    __rdctl_debug "directive: ${directive}"
-    __rdctl_debug "completions: ${out}"
-    __rdctl_debug "flagPrefix: ${flagPrefix}"
+    set -l results (__rdctl_perform_completion)
+    __rdctl_debug "Completion results: $results"
 
-    if [ $((directive & shellCompDirectiveError)) -ne 0 ]; then
-        __rdctl_debug "Completion received error. Ignoring completions."
-        return
-    fi
+    if test -z "$results"
+        __rdctl_debug "No completion, probably due to a failure"
+        # Might as well do file completion, in case it helps
+        return 1
+    end
 
-    local activeHelpMarker="_activeHelp_ "
-    local endIndex=${#activeHelpMarker}
-    local startIndex=$((${#activeHelpMarker}+1))
-    local hasActiveHelp=0
-    while IFS='\n' read -r comp; do
-        # Check if this is an activeHelp statement (i.e., prefixed with $activeHelpMarker)
-        if [ "${comp[1,$endIndex]}" = "$activeHelpMarker" ];then
-            __rdctl_debug "ActiveHelp found: $comp"
-            comp="${comp[$startIndex,-1]}"
-            if [ -n "$comp" ]; then
-                compadd -x "${comp}"
-                __rdctl_debug "ActiveHelp will need delimiter"
-                hasActiveHelp=1
-            fi
+    set -l directive (string sub --start 2 $results[-1])
+    set --global __rdctl_comp_results $results[1..-2]
 
-            continue
-        fi
+    __rdctl_debug "Completions are: $__rdctl_comp_results"
+    __rdctl_debug "Directive is: $directive"
 
-        if [ -n "$comp" ]; then
-            # If requested, completions are returned with a description.
-            # The description is preceded by a TAB character.
-            # For zsh's _describe, we need to use a : instead of a TAB.
-            # We first need to escape any : as part of the completion itself.
-            comp=${comp//:/\\:}
+    set -l shellCompDirectiveError 1
+    set -l shellCompDirectiveNoSpace 2
+    set -l shellCompDirectiveNoFileComp 4
+    set -l shellCompDirectiveFilterFileExt 8
+    set -l shellCompDirectiveFilterDirs 16
 
-            local tab="$(printf '\t')"
-            comp=${comp//$tab/:}
+    if test -z "$directive"
+        set directive 0
+    end
 
-            __rdctl_debug "Adding completion: ${comp}"
-            completions+=${comp}
-            lastComp=$comp
-        fi
-    done < <(printf "%s\n" "${out[@]}")
+    set -l compErr (math (math --scale 0 $directive / $shellCompDirectiveError) % 2)
+    if test $compErr -eq 1
+        __rdctl_debug "Received error directive: aborting."
+        # Might as well do file completion, in case it helps
+        return 1
+    end
 
-    # Add a delimiter after the activeHelp statements, but only if:
-    # - there are completions following the activeHelp statements, or
-    # - file completion will be performed (so there will be choices after the activeHelp)
-    if [ $hasActiveHelp -eq 1 ]; then
-        if [ ${#completions} -ne 0 ] || [ $((directive & shellCompDirectiveNoFileComp)) -eq 0 ]; then
-            __rdctl_debug "Adding activeHelp delimiter"
-            compadd -x "--"
-            hasActiveHelp=0
-        fi
-    fi
+    set -l filefilter (math (math --scale 0 $directive / $shellCompDirectiveFilterFileExt) % 2)
+    set -l dirfilter (math (math --scale 0 $directive / $shellCompDirectiveFilterDirs) % 2)
+    if test $filefilter -eq 1; or test $dirfilter -eq 1
+        __rdctl_debug "File extension filtering or directory filtering not supported"
+        # Do full file completion instead
+        return 1
+    end
 
-    if [ $((directive & shellCompDirectiveNoSpace)) -ne 0 ]; then
-        __rdctl_debug "Activating nospace."
-        noSpace="-S ''"
-    fi
+    set -l nospace (math (math --scale 0 $directive / $shellCompDirectiveNoSpace) % 2)
+    set -l nofiles (math (math --scale 0 $directive / $shellCompDirectiveNoFileComp) % 2)
 
-    if [ $((directive & shellCompDirectiveFilterFileExt)) -ne 0 ]; then
-        # File extension filtering
-        local filteringCmd
-        filteringCmd='_files'
-        for filter in ${completions[@]}; do
-            if [ ${filter[1]} != '*' ]; then
-                # zsh requires a glob pattern to do file filtering
-                filter="\*.$filter"
-            fi
-            filteringCmd+=" -g $filter"
-        done
-        filteringCmd+=" ${flagPrefix}"
+    __rdctl_debug "nospace: $nospace, nofiles: $nofiles"
 
-        __rdctl_debug "File filtering command: $filteringCmd"
-        _arguments '*:filename:'"$filteringCmd"
-    elif [ $((directive & shellCompDirectiveFilterDirs)) -ne 0 ]; then
-        # File completion for directories only
-        local subdir
-        subdir="${completions[1]}"
-        if [ -n "$subdir" ]; then
-            __rdctl_debug "Listing directories in $subdir"
-            pushd "${subdir}" >/dev/null 2>&1
-        else
-            __rdctl_debug "Listing directories in ."
-        fi
+    # If we want to prevent a space, or if file completion is NOT disabled,
+    # we need to count the number of valid completions.
+    # To do so, we will filter on prefix as the completions we have received
+    # may not already be filtered so as to allow fish to match on different
+    # criteria than the prefix.
+    if test $nospace -ne 0; or test $nofiles -eq 0
+        set -l prefix (commandline -t | string escape --style=regex)
+        __rdctl_debug "prefix: $prefix"
 
-        local result
-        _arguments '*:dirname:_files -/'" ${flagPrefix}"
-        result=$?
-        if [ -n "$subdir" ]; then
-            popd >/dev/null 2>&1
-        fi
-        return $result
-    else
-        __rdctl_debug "Calling _describe"
-        if eval _describe "completions" completions $flagPrefix $noSpace; then
-            __rdctl_debug "_describe found some completions"
+        set -l completions (string match -r -- "^$prefix.*" $__rdctl_comp_results)
+        set --global __rdctl_comp_results $completions
+        __rdctl_debug "Filtered completions are: $__rdctl_comp_results"
 
-            # Return the success of having called _describe
-            return 0
-        else
-            __rdctl_debug "_describe did not find completions."
-            __rdctl_debug "Checking if we should do file completion."
-            if [ $((directive & shellCompDirectiveNoFileComp)) -ne 0 ]; then
-                __rdctl_debug "deactivating file completion"
+        # Important not to quote the variable for count to work
+        set -l numComps (count $__rdctl_comp_results)
+        __rdctl_debug "numComps: $numComps"
 
-                # We must return an error code here to let zsh know that there were no
-                # completions found by _describe; this is what will trigger other
-                # matching algorithms to attempt to find completions.
-                # For example zsh can match letters in the middle of words.
-                return 1
-            else
-                # Perform file completion
-                __rdctl_debug "Activating file completion"
+        if test $numComps -eq 1; and test $nospace -ne 0
+            # We must first split on \t to get rid of the descriptions to be
+            # able to check what the actual completion will be.
+            # We don't need descriptions anyway since there is only a single
+            # real completion which the shell will expand immediately.
+            set -l split (string split --max 1 \t $__rdctl_comp_results[1])
 
-                # We must return the result of this command, so it must be the
-                # last command, or else we must store its result to return it.
-                _arguments '*:filename:_files'" ${flagPrefix}"
-            fi
-        fi
-    fi
-}
+            # Fish won't add a space if the completion ends with any
+            # of the following characters: @=/:.,
+            set -l lastChar (string sub -s -1 -- $split)
+            if not string match -r -q "[@=/:.,]" -- "$lastChar"
+                # In other cases, to support the "nospace" directive we trick the shell
+                # by outputting an extra, longer completion.
+                __rdctl_debug "Adding second completion to perform nospace directive"
+                set --global __rdctl_comp_results $split[1] $split[1].
+                __rdctl_debug "Completions are now: $__rdctl_comp_results"
+            end
+        end
 
-# don't run the completion function when being source-ed or eval-ed
-if [ "$funcstack[1]" = "_rdctl" ]; then
-    _rdctl
-fi
+        if test $numComps -eq 0; and test $nofiles -eq 0
+            # To be consistent with bash and zsh, we only trigger file
+            # completion when there are no other completions
+            __rdctl_debug "Requesting file completion"
+            return 1
+        end
+    end
+
+    return 0
+end
+
+# Since Fish completions are only loaded once the user triggers them, we trigger them ourselves
+# so we can properly delete any completions provided by another script.
+# Only do this if the program can be found, or else fish may print some errors; besides,
+# the existing completions will only be loaded if the program can be found.
+if type -q "rdctl"
+    # The space after the program name is essential to trigger completion for the program
+    # and not completion of the program name itself.
+    # Also, we use '> /dev/null 2>&1' since '&>' is not supported in older versions of fish.
+    complete --do-complete "rdctl " > /dev/null 2>&1
+end
+
+# Remove any pre-existing completions for the program since we will be handling all of them.
+complete -c rdctl -e
+
+# The call to __rdctl_prepare_completions will setup __rdctl_comp_results
+# which provides the program's completion choices.
+complete -c rdctl -n '__rdctl_prepare_completions' -f -a '$__rdctl_comp_results'
+
