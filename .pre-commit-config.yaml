@@ -3,14 +3,10 @@ repos:
     rev: b9e96b3212fa06aea65964ff0d5cda84ce935f38
     hooks:
       - id: git-secrets
-  - repo: https://github.com/psf/black
-    rev: 23.9.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.3
     hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.11.5
-    hooks:
-      - id: isort
+      - id: ruff-format
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v0.18.2
     hooks:
