@@ -95,6 +95,7 @@ BREW_PACKAGES = [
     "just",
     "jq",
     "kubectl",
+    "kpt",
     "lazygit",
     "neovim",
     # "node",
@@ -113,7 +114,7 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
-BREW_TAPS = []
+BREW_TAPS = ["GoogleContainerTools/kpt"]
 
 if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
@@ -145,9 +146,6 @@ async def main():
             krew_install("ctx"),
             krew_install("ns"),
             bin_install("https://github.com/k3d-io/k3d", LOCAL_BIN / "k3d"),
-            bin_install(
-                "https://github.com/GoogleContainerTools/kpt", LOCAL_BIN / "kpt"
-            ),
             run(["brew", "install", "--build-from-source", "fish"]),
         ],
     )
@@ -866,10 +864,12 @@ async def install_krew():
     if INSTALLING_KREW or shutil.which("kubectl-krew"):
         return
     INSTALLING_KREW = True
-    await bin_install(
-        "github.com/kubernetes-sigs/krew",
-        LOCAL_BIN / "kubectl-krew",
-    ),
+    (
+        await bin_install(
+            "github.com/kubernetes-sigs/krew",
+            LOCAL_BIN / "kubectl-krew",
+        ),
+    )
 
 
 asyncio.run(main())
