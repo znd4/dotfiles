@@ -145,6 +145,9 @@ async def main():
             krew_install("ctx"),
             krew_install("ns"),
             bin_install("https://github.com/k3d-io/k3d", LOCAL_BIN / "k3d"),
+            bin_install(
+                "https://github.com/GoogleContainerTools/kpt", LOCAL_BIN / "kpt"
+            ),
             run(["brew", "install", "--build-from-source", "fish"]),
         ],
     )
