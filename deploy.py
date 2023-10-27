@@ -129,6 +129,7 @@ if not HEADLESS:
             "font-symbols-only-nerd-font",
             "font-victor-mono",
             "font-fira-code",
+            "font-fira-code-nerd-font",
         ]
     )
 
