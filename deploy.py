@@ -114,7 +114,7 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
-BREW_TAPS = ["kptdev/kpt"]
+BREW_TAPS = [dict(src="kptdev/kpt", url="https://github.com/kptdev/kpt")]
 
 if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
@@ -134,7 +134,7 @@ async def main():
     if shutil.which("apt-get"):
         apt.packages(packages=apt_pkgs, _sudo=True)
     for tap in BREW_TAPS:
-        brew.tap(tap)
+        brew.tap(**tap)
     brew.packages(packages=brew_pkgs)
 
     async_jobs = map(
@@ -145,7 +145,6 @@ async def main():
             cargo_setup(cargo_packages=CARGO_PACKAGES),
             krew_install("ctx"),
             krew_install("ns"),
-            bin_install("https://github.com/k3d-io/k3d", LOCAL_BIN / "k3d"),
             run(["brew", "install", "--build-from-source", "fish"]),
         ],
     )
