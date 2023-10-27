@@ -116,12 +116,12 @@ BREW_PACKAGES = [
     "zsh",
 ]
 BREW_TAPS = [dict(src="kptdev/kpt", url="https://github.com/kptdev/kpt")]
+IS_LINUX = platform.system() == "Linux"
+IS_MACOS = platform.system() == "Darwin"
 
 if not HEADLESS:
-    if platform.system() == "Linux":
-        BREW_TAPS.append(dict(src="homebrew/linux-fonts"))
-    else:
-        BREW_TAPS.append(dict(src="homebrew/cask-fonts"))
+    BREW_TAPS.append(dict(src="homebrew/linux-fonts", present=IS_LINUX))
+    BREW_TAPS.append(dict(src="homebrew/cask-fonts", present=IS_MACOS))
 
     BREW_PACKAGES.extend(
         [
