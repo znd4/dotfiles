@@ -117,7 +117,7 @@ BREW_PACKAGES = [
 BREW_TAPS = [dict(src="kptdev/kpt", url="https://github.com/kptdev/kpt")]
 
 if not HEADLESS:
-    BREW_TAPS.append("homebrew/linux-fonts")
+    BREW_TAPS.append(dict(src="homebrew/linux-fonts"))
     BREW_PACKAGES.extend(
         [
             "texlive",
