@@ -16,7 +16,7 @@ function interactive_setup
     setup_direnv
     # https://fishshell.com/docs/current/interactive.html#command-line-editor
     fish_vi_key_bindings
-	setup_zoxide
+    setup_zoxide
 
     add_to_path $HOME/.local/bin
     add_to_path $HOME/.cargo/bin
@@ -25,19 +25,19 @@ function interactive_setup
     set -g fish_function_path $HOME/.config/fish/functions $fish_function_path
 
 
-	set -gx EDITOR nvim
+    set -gx EDITOR nvim
 
-	# Needed for bash aliases to show up in vim etc.
-	# https://stackoverflow.com/a/19819036/5071232
-	set -gx BASH_ENV ~/.aliasrc
+    # Needed for bash aliases to show up in vim etc.
+    # https://stackoverflow.com/a/19819036/5071232
+    set -gx BASH_ENV ~/.aliasrc
 
-	# needed for rust
-	set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
+    # needed for rust
+    set -gx PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 end
 
 
 function setup_zoxide
-	zoxide init fish | source
+    zoxide init fish | source
 end
 
 function setup_pyenv
@@ -66,7 +66,7 @@ function setup_brew
     if test -d (brew --prefix)"/share/fish/completions"
         set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/completions
     end
-    
+
     if test -d (brew --prefix)"/share/fish/vendor_completions.d"
         set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
     end
@@ -80,14 +80,14 @@ end
 
 function skim_bind_keys
     if not command -q sk
-      echo "not binding skim keys"
-      return 1
+        echo "not binding skim keys"
+        return 1
     end
     skim_key_bindings
 end
 
 function setup_coreutils_for_mac
-    if test -d "/usr/local/opt/coreutils/libexec/gnubin";
+    if test -d /usr/local/opt/coreutils/libexec/gnubin
         fish_add_path /usr/local/opt/coreutils/libexec/gnubin
     end
 end
