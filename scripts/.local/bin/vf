@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Exit on any error
+set -e
+
+# Ensure variables are not used uninitialized
+set -u
+
+# Ensure that pipelines return an error if any command within them fails
+set -o pipefail
+
+# Run the commands and loop through the results
+file=$(rg --hidden -n ".*" | fzf -d ':' --with-nth "3" | awk -F: '{print $1 ":" $2}')
+
+nvim "${file?}"
