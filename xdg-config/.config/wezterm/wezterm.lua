@@ -97,7 +97,7 @@ config.color_scheme = "tokyonight_night"
 config.font_size = 14
 -- set default font to Fira Code
 -- config.font = wezterm.font_with_fallback({ "Fira Code", "Symbols Nerd Font" })
-config.font = wezterm.font_with_fallback({ family = "Fira Code" })
+config.font = wezterm.font_with_fallback({ family = "FiraCode Nerd Font" })
 
 -- Set italic fonts to Victor Mono
 config.font_rules = {
