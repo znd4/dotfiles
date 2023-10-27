@@ -20,7 +20,9 @@ export PAGER=bat
 
 # Global environment variables
 # These are the environment variables we set the same everywhere (e.g. EDITOR=nvim)
-source "$HOME/.dotfiles/global_environment_variables.sh"
+source "$HOME/.path_functions.sh"
+
+eval "$(direnv hook bash)"
 
 check_path thefuck && eval "$(thefuck --alias)"
 
@@ -139,6 +141,9 @@ fi
 
 # bat, but just for linux
 check_path bat || alias bat=batcat
+
+check_path pyenv && eval "$(pyenv init -)"
+
 
 # export SSH_AUTH_SOCK=~/.1password/agent.sock
 

@@ -1,4 +1,3 @@
-
 function add_to_path
     # guard clause for empty arg
     test -z $argv[1]; and echo "add_to_path: empty arg" >&2; and return 1

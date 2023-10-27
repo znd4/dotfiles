@@ -1,0 +1,63 @@
+export HOME=${HOME:-/c/Users/dufourz}
+
+unset CURL_CA_BUNDLE
+export POETRY_VIRTUALENVS_IN_PROJECT=true
+
+# fzf
+export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
+export FZF_DEFAULT_OPTS="--cycle"
+
+export SKIM_DEFAULT_OPTS=${FZF_DEFAULT_COMMAND?}
+
+# use neovim as default pager
+export GIT_PAGER=delta
+
+# enable awscli completion
+export AWS_CLI_AUTO_PROMPT=on
+
+
+PATH_add "$HOME/Applications/WezTerm.app/Contents/MacOS"
+PATH_add "$HOME/bin"
+PATH_add "$HOME/.cargo/bin"
+PATH_add "$HOME/.local/bin"
+PATH_add /mingw64/bin
+PATH_add "$HOME/scoop/shims"
+
+GOROOT="$HOME/go"
+GOPATH="$GOROOT/bin"
+PATH_add "$GOPATH"
+
+PATH_add "/usr/local/go/bin"
+
+if has thefuck; then
+    eval "$(thefuck --alias)"
+fi
+
+if [ "$(uname -s)" != 'Darwin' ]; then
+	# Start all of my after-login systemd services
+	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service
+else
+	PATH_add /opt/local/bin
+	PATH_add /opt/local/sbin
+fi
+
+setup_pyenv() {
+	# if on windows, do nothing
+	uname -s | grep -q 'MINGW' && return 0
+	if [ -d "$HOME/.pyenv" ]; then
+		export PYENV_ROOT=$HOME/.pyenv
+	elif [ -d /home/linuxbrew/bin/.pyenv ]; then
+		export PYENV_ROOT=/home/linuxbrew/bin/.pyenv
+	fi
+
+	# setup pyenv
+}
+setup_pyenv
+
+PATH_add "$PYENV_ROOT/bin"
+PATH_add "$PYENV_ROOT/shims"
+PATH_add "${KREW_ROOT:-$HOME/.krew}/bin"
+PATH_add "/usr/local/bin"
+PATH_add "$HOME/.local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/"
+PATH_add "$HOME/.rd/bin"

@@ -14,109 +14,47 @@
 ##########################################################################
 # set -x
 
-export HOME=${HOME:-/c/Users/dufourz}
-
-unset CURL_CA_BUNDLE
-export POETRY_VIRTUALENVS_IN_PROJECT=true
-
-# fzf
-export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
-export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
-export FZF_DEFAULT_OPTS="--cycle"
-
-# use neovim as default pager
-export GIT_PAGER=delta
-
-# enable awscli completion
-export AWS_CLI_AUTO_PROMPT=on
-
-# use neovim as manpager
-export MANPAGER="$EDITOR +Man!"
-export MANWIDTH=999
 
 ##########################################################################
 ########## Helper Functions
 ##########################################################################
 
-. "$HOME/.path_functions.sh"
 
 ##########################################################################
 ########## Add to path
 ##########################################################################
-
-add_to_path "$HOME/Applications/WezTerm.app/Contents/MacOS"
-command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezterm'
-
-# set PATH so it includes user's private bin if it exists
-add_to_path "$HOME/bin"
-add_to_path "$HOME/.cargo/bin"
-add_to_path /mingw64/bin
-add_to_path "$HOME/scoop/shims"
-
-GOROOT="$HOME/go"
-GOPATH="$GOROOT/bin"
-
-add_to_path "$GOPATH"
-add_to_path "/usr/local/go/bin"
+source "$HOME/.path_functions.sh"
 
 add_to_path "$HOME/homebrew/bin"
 add_to_path /opt/homebrew/bin
 add_to_path /linuxbrew/.linuxbrew/bin
 
-if [ "$(uname -s)" != 'Darwin' ]; then
-	# Start all of my after-login systemd services
-	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service
-else
-	add_to_path /opt/local/bin
-	add_to_path /opt/local/sbin
-fi
-
-setup_pyenv() {
-	# if on windows, do nothing
-	uname -s | grep -q 'MINGW' && return 0
-	if [ -d "$HOME/.pyenv" ]; then
-		export PYENV_ROOT=$HOME/.pyenv
-	elif [ -d /home/linuxbrew/bin/.pyenv ]; then
-		export PYENV_ROOT=/home/linuxbrew/bin/.pyenv
-	fi
-
-	# setup pyenv
-
-	add_to_path "$PYENV_ROOT/bin"
-	add_to_path "$PYENV_ROOT/shims"
-	check_path pyenv && eval "$(pyenv init -)"
-}
-setup_pyenv
 
 # use 1password for ssh
 # export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
+    check_path direnv && eval "$(direnv hook bash)" && eval "$(direnv export bash)"
 	# include .bashrc if it exists
 	if [ -f "$HOME/.bashrc" ]; then
 		. "$HOME/.bashrc"
 	fi
+elif [ -n "$ZSH_VERSION" ]; then
+    check_path direnv && eval "$(direnv hook zsh)" && eval "$(direnv export zsh)"
 fi
+
+
+command -v wezterm >/dev/null || alias wezterm='flatpak run org.wezfurlong.wezterm'
 
 x86_64_pkgconfig=/usr/lib/x86_64-linux-gnu/pkgconfig
 if [ -d $x86_64_pkgconfig ]; then
 	export PKG_CONFIG_PATH="$x86_64_pkgconfig:$PKG_CONFIG_PATH"
 fi
 
-# add linuxbrew directory to PATH
-if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
 
 if type brew &>/dev/null; then
 	FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
-add_to_path "${KREW_ROOT:-$HOME/.krew}/bin"
-add_to_path "/usr/local/bin"
-add_to_path "$HOME/.local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/"
-add_to_path "$HOME/.rd/bin"
 
-source_if_exists "$HOME/.gvm/scripts/gvm"
-. "$HOME/.cargo/env"

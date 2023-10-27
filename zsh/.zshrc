@@ -158,24 +158,14 @@ setopt HIST_IGNORE_SPACE
 setopt interactivecomments
 
 
-#####################
-### volta
-#####################
-
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
-
-
 # POETRY VIRTUALENVS IN PROJECT
 
 # Editor config
 export EDITOR=vi
 if type nvim >/dev/null; then
     export EDITOR=`which nvim`
-    export MANPAGER="$EDITOR +Man!"
     export ZVM_VI_EDITOR=$EDITOR
 fi
-
 
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=55,bg=248,underline"
@@ -199,8 +189,8 @@ source_if_exists "$HOME/.cargo/env"
 
 add_to_path "$HOME/.cargo/bin"
 
-eval $(thefuck --alias)
-eval "$(fnm env --use-on-cd)"
+check_path thefuck && eval $(thefuck --alias)
+check_path fnm && eval "$(fnm env --use-on-cd)"
 
 # Hishtory Config:
 add_to_path "$HOME/.hishtory"
