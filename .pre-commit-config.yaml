@@ -8,13 +8,11 @@ repos:
     hooks:
       - id: ruff-format
   # pipe changed fish files through fish -c fish_indent (using system-installed fish)
-  - repo: local
+  - repo: https://github.com/znd4/pre-commit-fish
+    rev: 47fba3824b49387e9fefc61423c7a25ac4022088
     hooks:
       - id: fish_indent
-        name: Format fish scripts with fish_indent
-        language: system
-        entry: fish -c fish_indent
-        types: [fish]
+      - id: fish_syntax
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v0.18.2
     hooks:

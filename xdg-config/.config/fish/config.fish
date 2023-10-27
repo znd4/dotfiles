@@ -5,6 +5,7 @@ function main
     end
 end
 
+
 function interactive_setup
     setup_coreutils_for_mac
     setup_macports
