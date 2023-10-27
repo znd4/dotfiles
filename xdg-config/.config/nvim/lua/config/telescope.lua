@@ -22,8 +22,8 @@ telescope.setup({
       "--with-filename",
       "--line-number",
       "--column",
+      "--hidden",
       "--smart-case",
-      "--trim", -- add this value
     },
     mappings = {
       n = {
