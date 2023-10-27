@@ -128,6 +128,7 @@ if not HEADLESS:
             "texlive",
             "font-symbols-only-nerd-font",
             "font-victor-mono",
+            "font-fira-code",
         ]
     )
 
