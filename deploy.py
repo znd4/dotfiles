@@ -114,7 +114,7 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
-BREW_TAPS = ["GoogleContainerTools/kpt"]
+BREW_TAPS = ["kptdev/kpt"]
 
 if not HEADLESS:
     BREW_TAPS.append("homebrew/linux-fonts")
