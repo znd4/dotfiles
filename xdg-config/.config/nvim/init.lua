@@ -18,7 +18,7 @@ end
 
 require("colorscheme")
 
-require("plugins")
+require("config.lazy")
 vim.cmd.colorscheme("tokyonight")
 
 require("neovide")

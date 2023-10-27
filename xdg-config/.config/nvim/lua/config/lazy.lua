@@ -15,6 +15,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  {
+    import = "plugins",
+  },
   -- load scrollbar before gitsigns
   {
     "epwalsh/obsidian.nvim",
@@ -476,17 +479,6 @@ require("lazy").setup({
     branch = "v2.x",
     config = function()
       require("config.lsp")
-    end,
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "williamboman/mason.nvim",
-      "jose-elias-alvarez/null-ls.nvim",
-    },
-    config = function()
-      require("config.null-ls") -- require your null-ls config here (example below)
     end,
   },
   --{
