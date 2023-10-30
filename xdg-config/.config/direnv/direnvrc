@@ -8,7 +8,8 @@ export FZF_COMPLETION_DIR_COMMANDS="cd z pushd rmdir"
 export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
 export FZF_DEFAULT_OPTS="--cycle"
 
-export SKIM_DEFAULT_OPTS=${FZF_DEFAULT_COMMAND?}
+export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND?}"
+export SKIM_DEFAULT_OPTS=${FZF_DEFAULT_OPTS?}
 
 # use neovim as default pager
 export GIT_PAGER=delta
