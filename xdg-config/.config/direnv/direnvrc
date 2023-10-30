@@ -61,3 +61,5 @@ PATH_add "${KREW_ROOT:-$HOME/.krew}/bin"
 PATH_add "/usr/local/bin"
 PATH_add "$HOME/.local/share/containers/podman-desktop/extensions-storage/podman-desktop.compose/bin/"
 PATH_add "$HOME/.rd/bin"
+
+export MANPAGER="nvim -c 'Man!'"
