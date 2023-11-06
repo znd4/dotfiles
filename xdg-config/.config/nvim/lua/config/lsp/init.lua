@@ -228,6 +228,7 @@ local texlab_settings = {
     },
   },
 }
+lsp.configure("helm_ls", {})
 lsp.configure("texlab", {
   settings = texlab_settings,
 })
