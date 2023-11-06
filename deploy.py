@@ -153,19 +153,22 @@ async def main():
             cargo_setup(cargo_packages=CARGO_PACKAGES),
             krew_install("ctx"),
             krew_install("ns"),
-            run(["brew", "install", "--build-from-source", "fish"]),
-            run(["fish", "-c", "fisher update"]),
-            fisher_update(),
         ],
     )
     await add_to_fpath_dir()
 
     install_docker_compose()
     install_pyenv()
-    async_jobs = [*async_jobs, asyncio.create_task(pipx_stuff())]
+    await run(["brew", "install", "--build-from-source", "fish"])
+    async_jobs = [
+        *async_jobs,
+        asyncio.create_task(pipx_stuff()),
+        asyncio.create_task(fisher_update()),
+    ]
 
     # gather all async_jobs
     await gather(*async_jobs)
+    await bin_install("https://github.com/mrjosh/helm-ls", LOCAL_BIN / "helm_ls")
 
     sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
     sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
