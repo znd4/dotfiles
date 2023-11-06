@@ -154,6 +154,7 @@ async def main():
             krew_install("ctx"),
             krew_install("ns"),
             run(["brew", "install", "--build-from-source", "fish"]),
+            run(["fish", "-c", "fisher update"]),
         ],
     )
     await add_to_fpath_dir()
