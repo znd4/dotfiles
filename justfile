@@ -51,7 +51,7 @@ link: python3
         sp.check_call(["git", "stash"])
 
 guarantee pkg:
-    command -v {{pkg}} || brew install {{pkg}}
+    command -v {{ pkg }} || brew install {{ pkg }}
 
 pre-commit-install:
     just guarantee pre-commit
@@ -59,4 +59,4 @@ pre-commit-install:
 
 bootstrap:
     just guarantee pipx
-    pipx run --spec git+https://github.com/znd4/pyinfra@add-url-option-to-brew.tap pyinfra @local deploy.py
+    pipx run --spec git+https://github.com/znd4/pyinfra@add-url-option-to-brew.tap pyinfra -vvv @local deploy.py

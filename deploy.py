@@ -155,6 +155,7 @@ async def main():
             krew_install("ns"),
             run(["brew", "install", "--build-from-source", "fish"]),
             run(["fish", "-c", "fisher update"]),
+            fisher_update(),
         ],
     )
     await add_to_fpath_dir()
@@ -172,6 +173,16 @@ async def main():
     kmonad()
 
     symlink_fonts()
+
+
+async def fisher_update():
+    if not os.system("fish -c 'which fisher'"):
+        await run(["fish", "-c", "fisher update"])
+        return
+    async with download_script(
+        "https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish"
+    ) as installer:
+        await run(["fish", "-c", f"source {installer} && fisher update"], check=True)
 
 
 def is_executable(p: os.PathLike) -> bool:
