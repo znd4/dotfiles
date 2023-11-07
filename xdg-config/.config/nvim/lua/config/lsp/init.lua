@@ -7,6 +7,7 @@ local ensure_installed = {
   "ltex",
   "marksman",
   "tsserver",
+  "helm_ls",
   "rnix",
   "rust_analyzer",
   "sqlls",
@@ -70,7 +71,7 @@ if vimp == nil then
   return
 end
 
-local lsp = require("lsp-zero").preset({
+local lsp_zero = require("lsp-zero").preset({
   manage_nvim_cmp = {
     set_extra_mappings = true,
   },
@@ -78,8 +79,7 @@ local lsp = require("lsp-zero").preset({
 
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
-lsp.skip_server_setup({ "ltex", "pyright" })
-require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls({ on_init = disableFormatting }))
+require("lspconfig").lua_ls.setup(lsp_zero.nvim_lua_ls({ on_init = disableFormatting }))
 
 local attached_to_buffer = {}
 
@@ -87,7 +87,7 @@ local function set_keymaps_for_buffer(bufnr)
   if attached_to_buffer[bufnr] then
     return
   end
-  lsp.default_keymaps({ buffer = bufnr, preserve_mappings = false })
+  lsp_zero.default_keymaps({ buffer = bufnr, preserve_mappings = false })
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -118,15 +118,13 @@ local function set_keymaps_for_buffer(bufnr)
   attached_to_buffer[bufnr] = true
 end
 
-lsp.on_attach(function(client, bufnr)
+lsp_zero.on_attach(function(client, bufnr)
   if client.name == "copilot" then
     return
   end
   enable_formatting(client, bufnr)
   set_keymaps_for_buffer(bufnr)
 end)
-
-lsp.ensure_installed(ensure_installed)
 
 local yamlls_settings = {
   redhat = {
@@ -157,7 +155,7 @@ local yamlls_settings = {
 }
 local yamlls_filetypes = { "yaml", "yml", "yaml.docker-compose" }
 
-lsp.configure("yamlls", {
+lsp_zero.configure("yamlls", {
   on_init = disableFormatting,
   settings = yamlls_settings,
   filetypes = yamlls_filetypes,
@@ -166,7 +164,7 @@ lsp.configure("yamlls", {
 -- code to be profiled
 local enabled = { enabled = true }
 
-lsp.configure("pylsp", {
+lsp_zero.configure("pylsp", {
   cmd = { "pylsp", "--verbose", "--log-file", "/tmp/pylsp.log" },
   settings = {
     pylsp = {
@@ -181,11 +179,14 @@ lsp.configure("pylsp", {
   },
 })
 
-lsp.configure("tsserver", {
+lsp_zero.configure("tsserver", {
   on_init = disableFormatting,
 })
+lsp_zero.configure("helm_ls", {
+  filetypes = { "helm.yaml" },
+})
 
-lsp.configure("jsonls", {
+lsp_zero.configure("jsonls", {
   on_init = disableFormatting,
   settings = {
     json = {
@@ -228,22 +229,21 @@ local texlab_settings = {
     },
   },
 }
-lsp.configure("helm_ls", {})
-lsp.configure("texlab", {
+lsp_zero.configure("texlab", {
   settings = texlab_settings,
 })
-lsp.configure("taplo", {
+lsp_zero.configure("taplo", {
   filetypes = { "toml", "gitconfig" },
 })
 
-lsp.configure("sqlls", {
+lsp_zero.configure("sqlls", {
   init_options = {
     provideFormatter = false,
   },
   on_init = disableFormatting,
 })
 
-lsp.configure("gopls", {
+lsp_zero.configure("gopls", {
   cmd = { "gopls" },
   settings = {
     gopls = {
@@ -268,15 +268,20 @@ local lspkind = require("lspkind")
 
 local cmp = require("cmp")
 
-require("mason").setup()
-require("mason-lspconfig").setup()
-
-lsp.setup()
+require("mason").setup({})
+require("mason-lspconfig").setup({
+  ensure_installed = ensure_installed,
+  handlers = {
+    lsp_zero.default_setup,
+    ltex = lsp_zero.noop,
+    pyright = lsp_zero.noop,
+  },
+})
 
 require("luasnip.loaders.from_vscode").lazy_load()
 require("luasnip.loaders.from_snipmate").lazy_load()
 
-local cmp_config = lsp.defaults.cmp_config({
+local cmp_config = lsp_zero.defaults.cmp_config({
   completion = {
     keyword_length = 1,
   },

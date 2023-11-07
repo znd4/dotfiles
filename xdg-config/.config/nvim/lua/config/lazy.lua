@@ -443,7 +443,7 @@ require("lazy").setup({
       "neovim/nvim-lspconfig",
     },
     priority = 102,
-    branch = "v2.x",
+    branch = "v3.x",
     config = function()
       require("config.lsp")
     end,
