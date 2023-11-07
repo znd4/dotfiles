@@ -115,6 +115,7 @@ BREW_PACKAGES = [
     "zoxide",
     "zsh",
 ]
+
 BREW_TAPS = [dict(src="kptdev/kpt", url="https://github.com/kptdev/kpt")]
 IS_LINUX = platform.system() == "Linux"
 IS_MACOS = platform.system() == "Darwin"
@@ -141,6 +142,7 @@ async def main():
     )
     if shutil.which("apt-get"):
         apt.packages(packages=apt_pkgs, _sudo=True)
+
     for tap in BREW_TAPS:
         brew.tap(**tap)
     brew.packages(packages=brew_pkgs)
@@ -168,10 +170,10 @@ async def main():
 
     # gather all async_jobs
     await gather(*async_jobs)
-    await bin_install("https://github.com/mrjosh/helm-ls", LOCAL_BIN / "helm_ls")
 
     sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
     sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
+    install_rancher_desktop()
 
     kmonad()
 
@@ -206,6 +208,21 @@ def is_macos():
     return platform.system().lower() == "darwin"
 
 
+STDIN_LOCK = asyncio.Lock()
+
+
+def lock_stdin(func):
+    @functools.wraps(func)
+    async def wrapped(*args, **kwargs):
+        if kwargs.get("stdin") is None:
+            return await func(*args, **kwargs)
+        async with STDIN_LOCK:
+            return await func(*args, **kwargs)
+
+    return wrapped
+
+
+@lock_stdin
 async def run(
     cmd: list[str],
     check=True,
@@ -343,7 +360,7 @@ async def install_rustup():
         return
 
     async with download_script("https://sh.rustup.rs") as installer:
-        await run(["sh", installer], check=True, stdin=sys.stdin)
+        await lock_stdin(run)(["sh", installer], check=True, stdin=sys.stdin)
 
     os.environ["PATH"] = f"{os.environ['PATH']}:{Path.home() / '.cargo' / 'bin'}"
 
@@ -892,6 +909,26 @@ async def install_krew():
             LOCAL_BIN / "kubectl-krew",
         ),
     )
+
+
+def install_rancher_desktop():
+    if HEADLESS:
+        return
+    if platform.system() != "Linux":
+        return
+    apt.key(
+        name="Add rancher desktop key",
+        src="https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/Release.key",
+    )
+    apt.repo(
+        name="Rancher Desktop repo",
+        present=True,
+        src="deb [signed-by=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg]"
+        " https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/ ./",
+        filename="isv-rancher-stable",
+    )
+    apt.update(cache_time=3600)
+    apt.packages(packages=["rancher-desktop"])
 
 
 asyncio.run(main())
