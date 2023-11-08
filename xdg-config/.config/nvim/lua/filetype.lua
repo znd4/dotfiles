@@ -11,7 +11,7 @@ end
 --@private
 --@return string
 local function yaml_filetype(path, bufname)
-  return is_helm_file(path) and "helm.yaml" or "yaml"
+  return is_helm_file(path) and "gotmpl" or "yaml"
 end
 
 --@private

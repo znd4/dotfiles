@@ -4,6 +4,17 @@ local ft_to_lang_tbl = {
   ["zsh"] = "bash",
   ["xml"] = "html",
   ["tiltfile"] = "python",
+  -- ["helm"] = "yaml",
+}
+
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.gotmpl = {
+  install_info = {
+    url = "https://github.com/ngalaiko/tree-sitter-go-template",
+    files = { "src/parser.c" },
+  },
+  filetype = "gotmpl",
+  used_by = { "gohtmltmpl", "gotexttmpl", "gotmpl", "yaml" },
 }
 
 -- trick treesitter into thinking zsh files are bash
@@ -111,17 +122,18 @@ require("nvim-treesitter.configs").setup({
   },
   ensure_installed = {
     "bash",
-    "kotlin",
+    "comment",
     "go",
     "gomod",
+    "gotmpl",
     "json",
+    "kotlin",
     "lua",
     "markdown",
-    "typescript",
     "org",
     "python",
-    "comment",
     "sql",
+    "typescript",
   },
   auto_install = true,
   highlight = {
