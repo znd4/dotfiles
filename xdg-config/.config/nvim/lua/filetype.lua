@@ -3,15 +3,24 @@ vim.filetype.add({
   filename = {},
 })
 
+local Path = require("plenary.path")
+
 local function is_helm_file(path)
   local check = vim.fs.find("Chart.yaml", { path = vim.fs.dirname(path), upward = true })
-  return not vim.tbl_isempty(check)
+  if vim.tbl_isempty(check) then
+    return false
+  end
+
+  local values_yaml = Path:new(check[1]):parent():joinpath("values.yaml"):normalize()
+  local file_path = Path:new(path):normalize()
+  return file_path ~= values_yaml
 end
 
 --@private
 --@return string
 local function yaml_filetype(path, bufname)
-  return is_helm_file(path) and "gotmpl" or "yaml"
+  local is_helm = is_helm_file(path)
+  return is_helm and "gotmpl" or "yaml"
 end
 
 --@private
