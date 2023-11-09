@@ -79,8 +79,6 @@ local lsp_zero = require("lsp-zero").preset({
 
 local lua_library = vim.api.nvim_get_runtime_file("", true)
 
-require("lspconfig").lua_ls.setup(lsp_zero.nvim_lua_ls({ on_init = disableFormatting }))
-
 local attached_to_buffer = {}
 
 local function set_keymaps_for_buffer(bufnr)
@@ -275,6 +273,10 @@ require("mason-lspconfig").setup({
     lsp_zero.default_setup,
     ltex = lsp_zero.noop,
     pyright = lsp_zero.noop,
+    lua_ls = function()
+      local lua_opts = lsp_zero.nvim_lua_ls({ on_init = disableFormatting })
+      require("lspconfig").lua_ls.setup(lua_opts)
+    end,
   },
 })
 
