@@ -312,17 +312,24 @@
   xcp (tap-hold-next 400 esc ctl)
   ;; mvmt (tap-hold-next-release 1000 semicolon (layer-toggle movement))
   mvmt (tap-next-release semicolon (layer-toggle movement))
+
+  jgui (tap-hold-next-release 400 j lmet)
+  kalt (tap-hold-next-release 400 k lalt)
+  lctl (tap-hold-next-release 400 l lctl)
+  sctl (tap-hold-next-release 400 s lctl)
+  dalt (tap-hold-next-release 400 d lalt)
+  fgui (tap-hold-next-release 400 f lmet)
   ;; mvmt (tap-hold-next 500 semicolon (layer-toggle movement))
 )
 
 
 (deflayer qwerty
-  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11  f12  home end  ins  del
-  grv   1    2    3    4    5    6    7    8    9    0     -    =    bspc
-  tab   q    w    e    r    t    y    u    i    o    p     [    ]    \
-  @xcp  a    s    d    f    g    h    j    k    l    @mvmt '    ret
-  sft z    x    c    v    b    n    m    ,    .    /     sft
-  wkup  lctl lmet lalt           spc            ralt sys   rctl  pgdn up   pgup
+  esc   f1   f2    f3    f4    f5   f6   f7    f8    f9    f10   f11  f12  home end  ins  del
+  grv   1    2     3     4     5    6    7     8     9     0     -    =    bspc
+  tab   q    w     e     r     t    y    u     i     o     p     [    ]    \
+  @xcp  a    @sctl @dalt @fgui g    h    @jgui @kalt @lctl @mvmt '    ret
+  sft   z    x     c     v     b    n    m     ,     .     /     sft
+  wkup  lctl lmet  lalt           spc          ralt  sys   rctl  pgdn up   pgup
                                                                  left down rght
 )
 
