@@ -313,13 +313,12 @@
   ;; mvmt (tap-hold-next-release 1000 semicolon (layer-toggle movement))
   mvmt (tap-next-release semicolon (layer-toggle movement))
 
-  jgui (tap-hold-next 400 j lmet)
-  kalt (tap-hold-next 400 k lalt)
-  lctl (tap-hold-next 400 l lctl)
-
-  sctl (tap-hold-next 400 s lctl)
-  dalt (tap-hold-next 400 d lalt)
-  fgui (tap-hold-next 400 f lmet)
+  jgui (tap-hold-next-release 400 j lmet)
+  kalt (tap-hold-next-release 400 k lalt)
+  lctl (tap-hold-next-release 400 l lctl)
+  sctl (tap-hold-next-release 400 s lctl)
+  dalt (tap-hold-next-release 400 d lalt)
+  fgui (tap-hold-next-release 400 f lmet)
   ;; mvmt (tap-hold-next 500 semicolon (layer-toggle movement))
 )
 
