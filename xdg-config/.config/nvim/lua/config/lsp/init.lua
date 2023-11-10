@@ -264,8 +264,6 @@ lsp_zero.configure("gopls", {
 
 local lspkind = require("lspkind")
 
-local cmp = require("cmp")
-
 require("mason").setup({})
 require("mason-lspconfig").setup({
   ensure_installed = ensure_installed,
@@ -283,28 +281,19 @@ require("mason-lspconfig").setup({
 require("luasnip.loaders.from_vscode").lazy_load()
 require("luasnip.loaders.from_snipmate").lazy_load()
 
+local cmp = require("cmp")
+
 local cmp_config = lsp_zero.defaults.cmp_config({
   completion = {
     keyword_length = 1,
   },
-  formatting = {
-    format = lspkind.cmp_format({
-      mode = "symbol",
-      with_text = true,
-      menu = {
-        fuzzy_buffer = "[buf]",
-        nvim_lsp = "[LSP]",
-        nvim_lua = "[api]",
-        fuzzy_path = "[path]",
-        luasnip = "[snip]",
-        tn = "[TabNine]",
-      },
-    }),
-  },
+  formatting = lsp_zero.cmp_format(),
   window = cmp.config.window.bordered(),
-  mapping = {
+  mapping = cmp.mapping.preset.insert({
     ["<C-Space>"] = cmp.mapping.complete(),
-  },
+    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-d>"] = cmp.mapping.scroll_docs(4),
+  }),
   sources = cmp.config.sources({
     { name = "nvim_lsp" },
     { name = "nvim_lua" },
