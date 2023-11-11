@@ -313,6 +313,8 @@
   ;; mvmt (tap-hold-next-release 1000 semicolon (layer-toggle movement))
   mvmt (tap-next-release semicolon (layer-toggle movement))
 
+  nums (layer-toggle numbers)
+
   jgui (tap-hold-next-release 400 j lmet)
   kalt (tap-hold-next-release 400 k lalt)
   lctl (tap-hold-next-release 400 l lctl)
@@ -329,10 +331,23 @@
   tab   q    w     e     r     t    y    u     i     o     p     [    ]    \
   @xcp  a    @sctl @dalt @fgui g    h    @jgui @kalt @lctl @mvmt '    ret
   sft   z    x     c     v     b    n    m     ,     .     /     sft
-  wkup  lctl lmet  lalt           spc          ralt  sys   rctl  pgdn up   pgup
+  wkup  lctl lmet  @nums           spc          ralt  sys   rctl  pgdn up   pgup
                                                                  left down rght
 )
 
+;; numbers layer
+
+
+;; ;; symbols layer
+;; (deflayer symbols
+;;   _    _    _    _    _    _    _    _    _    _     _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _     _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _     _    _    _    _
+;;   _    1    2    3    4    5    6    7    8    9     0    _    _
+;;   _    _    _    _    _    _    _    _    _    _     _    _
+;;   _    _    _    _              _              _    _     _    _    _    _
+;;                                                                _    _    _
+;; )
 
 ;; Movement layer
 
@@ -363,13 +378,13 @@
   -------------------------------------------------------------------------- |#
 
 (deflayer numbers
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    XX   /    7    8    9    -    _    _    _
-  _    _    _    _    _    XX   *    4    5    6    +    _    _
-  _    _    \(   \)   .    XX   0    1    2    3    _    _
-  _    _    _    _              _              _    _    _    _    _    _
-                                                              _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _    _    _
+  _    1    2    3    4    5    6    7    8    9     0    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _
+  _    _    _    _              _              _    _     _    _    _    _
+                                                          _    _    _
 )
 
 
