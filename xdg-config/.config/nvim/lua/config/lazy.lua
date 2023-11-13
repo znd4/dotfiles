@@ -372,7 +372,6 @@ require("lazy").setup({
         winblend = 0,
         direction = "float",
         height = 20,
-        shell = "zsh",
       })
     end,
   },
