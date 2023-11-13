@@ -1,4 +1,5 @@
 function main
+    set -g SHELL (which fish)
     setup_direnv
     if status is-interactive
         interactive_setup
