@@ -4,6 +4,7 @@ local ensure_installed = {
   "eslint",
   "gopls",
   "jsonls",
+  "jsonnet_ls",
   "ltex",
   "marksman",
   "tsserver",
@@ -272,6 +273,9 @@ require("mason-lspconfig").setup({
     lsp_zero.default_setup,
     ltex = lsp_zero.noop,
     pyright = lsp_zero.noop,
+    jsonnet_ls = function()
+      require("lspconfig").jsonnet_ls.setup({})
+    end,
     lua_ls = function()
       local lua_opts = lsp_zero.nvim_lua_ls({ on_init = disableFormatting })
       require("lspconfig").lua_ls.setup(lua_opts)
