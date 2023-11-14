@@ -55,6 +55,29 @@ vim.treesitter.query.add_directive("colzero!", function(match, pattern, bufnr, p
   end
 end)
 
+-- This module contains a number of default definitions
+local rainbow_delimiters = require("rainbow-delimiters")
+
+vim.g.rainbow_delimiters = {
+  strategy = {
+    [""] = rainbow_delimiters.strategy["global"],
+    vim = rainbow_delimiters.strategy["local"],
+  },
+  query = {
+    [""] = "rainbow-delimiters",
+    lua = "rainbow-blocks",
+  },
+  highlight = {
+    "RainbowDelimiterRed",
+    "RainbowDelimiterYellow",
+    "RainbowDelimiterBlue",
+    "RainbowDelimiterOrange",
+    "RainbowDelimiterGreen",
+    "RainbowDelimiterViolet",
+    "RainbowDelimiterCyan",
+  },
+}
+
 require("nvim-treesitter.install").prefer_git = true
 
 require("nvim-treesitter.configs").setup({

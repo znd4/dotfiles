@@ -550,7 +550,7 @@ require("lazy").setup({
     end,
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
-      "HiPhish/nvim-ts-rainbow2",
+      "https://gitlab.com/HiPhish/rainbow-delimiters.nvim",
       "JoosepAlviste/nvim-ts-context-commentstring",
     },
   },
