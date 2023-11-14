@@ -543,18 +543,6 @@ require("lazy").setup({
   },
   { "akinsho/bufferline.nvim", version = "2.*", dependencies = { "nvim-tree/nvim-web-devicons" } },
   {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      require("config.treesitter")
-    end,
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "https://gitlab.com/HiPhish/rainbow-delimiters.nvim",
-      "JoosepAlviste/nvim-ts-context-commentstring",
-    },
-  },
-  {
     "nvim-orgmode/orgmode",
     config = function()
       require("config.orgmode")
