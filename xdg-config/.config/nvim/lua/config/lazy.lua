@@ -293,14 +293,6 @@ require("lazy").setup({
   },
   "nvim-telescope/telescope-hop.nvim",
   {
-    "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require("config.telescope")
-    end,
-    priority = 2,
-  },
-  {
     "jvgrootveld/telescope-zoxide",
     priority = 1,
     config = function()
@@ -380,7 +372,6 @@ require("lazy").setup({
         winblend = 0,
         direction = "float",
         height = 20,
-        shell = "zsh",
       })
     end,
   },
