@@ -96,13 +96,7 @@ require("lazy").setup({
   -- "vimwiki/vimwiki",
   "ruanyl/vim-gh-line",
   { "direnv/direnv.vim", priority = 102 },
-  {
-    "github/copilot.vim",
-    priority = 101,
-    config = function()
-      require("config.copilot")
-    end,
-  },
+
   {
     "glacambre/firenvim",
     -- Lazy load firenvim
