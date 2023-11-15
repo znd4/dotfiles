@@ -95,7 +95,7 @@ BREW_PACKAGES = [
     "jq",
     "just",
     "kpt",
-    "kubectl",
+    "kubernetes-cli",
     "lazygit",
     "neovim",
     "pdm",
