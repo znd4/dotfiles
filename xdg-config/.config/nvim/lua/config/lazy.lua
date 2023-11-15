@@ -92,7 +92,7 @@ require("lazy").setup({
   "norcalli/nvim_utils",
   "fladson/vim-kitty",
   -- split and join treesitter
-  { "Wansmer/treesj", config = true },
+
   -- "vimwiki/vimwiki",
   "ruanyl/vim-gh-line",
   { "direnv/direnv.vim", priority = 102 },
