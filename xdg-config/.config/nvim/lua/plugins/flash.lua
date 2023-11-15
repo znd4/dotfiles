@@ -1,6 +1,13 @@
 return {
   "folke/flash.nvim",
   event = "VeryLazy",
+  config = {
+    label = {
+      rainbow = {
+        enabled = true,
+      },
+    },
+  },
   ---@type Flash.Config
   opts = {},
   keys = {
