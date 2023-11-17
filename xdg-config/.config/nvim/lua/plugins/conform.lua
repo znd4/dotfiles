@@ -14,8 +14,15 @@ return {
       go = { "gofumpt" },
       yaml = { prettier },
       json = { prettier },
+      jsonnet = { "jsonnetfmt" },
       javascript = { prettier },
       markdown = { prettier },
+    },
+    formatters = {
+      jsonnetfmt = {
+        command = "jsonnetfmt",
+        args = { "-" },
+      },
     },
     format_on_save = {
       timeout_ms = 500,
