@@ -150,6 +150,7 @@ async def main():
     async_jobs = map(
         asyncio.create_task,
         [
+            mason_install("gofumpt"),
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
             cargo_setup(cargo_packages=CARGO_PACKAGES),
@@ -202,6 +203,19 @@ async def bin_install(repo: str, dest: Path = None):
     if dest:
         cmd.append(str(dest))
     await run(cmd, stdin=sys.stdin)
+
+
+async def mason_install(*packages: str):
+    await run(
+        [
+            "nvim",
+            "--headless",
+            "-c",
+            f"MasonInstall {' '.join(packages)}",
+            "-c",
+            "qall",
+        ],
+    )
 
 
 def is_macos():
