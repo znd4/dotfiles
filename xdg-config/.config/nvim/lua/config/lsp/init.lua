@@ -243,12 +243,12 @@ lsp_zero.configure("sqlls", {
   on_init = disableFormatting,
 })
 
-lsp_zero.configure("gopls", {
+local gopls_settings = {
   cmd = { "gopls" },
   settings = {
     gopls = {
       experimentalPostfixCompletions = true,
-      buildFlags = { "-tags=integration" },
+      -- buildFlags = { "-tags=integration" },
       analyses = {
         unusedparams = true,
         shadow = true,
@@ -262,9 +262,7 @@ lsp_zero.configure("gopls", {
   init_options = {
     usePlaceholders = true,
   },
-})
-
-local lspkind = require("lspkind")
+}
 
 require("mason").setup({})
 require("mason-lspconfig").setup({
@@ -273,6 +271,9 @@ require("mason-lspconfig").setup({
     lsp_zero.default_setup,
     ltex = lsp_zero.noop,
     pyright = lsp_zero.noop,
+    gopls = function()
+      require("lspconfig").gopls.setup(gopls_settings)
+    end,
     jsonnet_ls = function()
       require("lspconfig").jsonnet_ls.setup({})
     end,
