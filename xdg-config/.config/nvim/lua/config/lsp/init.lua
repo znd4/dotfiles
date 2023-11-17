@@ -264,8 +264,6 @@ local gopls_settings = {
   },
 }
 
-local lspkind = require("lspkind")
-
 require("mason").setup({})
 require("mason-lspconfig").setup({
   ensure_installed = ensure_installed,
