@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyinfra.operations import apt, brew
+import pyinfra
 
 # ~/.local/lib/pythonX.Y/site-packages might not exist when script starts
 # So we need to manually add it to sys.path
@@ -518,6 +519,13 @@ def install_nerd_font_symbols():
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @skip_if(HEADLESS or is_macos())
 def kmonad():
+    services = pyinfra.host.get_fact(
+        pyinfra.facts.systemd.SystemdStatus, user_mode=True
+    )
+    print(f"{services=}")
+    if "kmonad.service" in services:
+        print("kmonad already installed, skipping")
+        return
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
         return
@@ -643,27 +651,15 @@ async def pip_install(*packages: str):
     if platform.system().lower() == "linux" and sys.executable.startswith(
         "/usr/bin/python3"
     ):
-        sp.check_call(
-            sudo(
-                [
-                    "apt-get",
-                    "install",
-                    "-y",
-                    *(f"python3-{package}" for package in packages),
-                ]
-            )
+        apt.packages(
+            packages=[f"python3-{package}" for package in packages], _sudo=True
         )
         return
 
-    await run(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            # "--user",
-            *packages,
-        ]
+    virtualenv = Path(sys.executable).resolve().parent.parent
+    pyinfra.operations.pip.packages(
+        packages,
+        virtualenv=str(virtualenv),
     )
 
 
@@ -790,17 +786,16 @@ def install_pyenv():
 
     for version in versions:
         print(f"{version=}")
-        sp.check_call(
+        pip = sp.check_output(
             [
                 pyenv,
-                "exec",
+                "which",
                 "pip",
-                "install",
-                "--upgrade",
-                "pynvim",
             ],
             env={"PYENV_VERSION": version, **os.environ},
-        )
+            text=True,
+        ).strip()
+        pyinfra.operations.pip.packages(["pynvim"], pip=pip)
 
 
 def brew_bin() -> Path:
