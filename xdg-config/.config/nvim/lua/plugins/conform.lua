@@ -11,6 +11,7 @@ return {
       fish = { "fish_indent" },
       lua = { "stylua" },
       just = { "just" },
+      go = { "gofumpt" },
       yaml = { prettier },
       json = { prettier },
       javascript = { prettier },
