@@ -1,972 +1,805 @@
+import asyncio
+import functools
+import getpass
+import json
+import os
+import platform
+import shutil
+import subprocess as sp
+import sys
+import tempfile
+from contextlib import asynccontextmanager
+from functools import lru_cache
+from pathlib import Path
+from typing import Callable, Iterator
+
+from pyinfra.operations import apt, brew
+import pyinfra
+from pyinfra import operations, facts, host
 import shlex
-from dataclasses import dataclass
-from functools import wraps
-from pathlib import Path, PurePosixPath
-from typing import Literal
-
-from pyinfra import facts as facts
-from pyinfra import host
-from pyinfra.facts.server import Home
-from pyinfra.operations import apt, brew, files, git, pacman, pip, server, systemd
 
 
-def main():
-    enable_services()
-    npm_global_nosudo()
-    configure_repos()
-    install_packages()
-    pipx_installs()
-    go_installs()
-    set_default_shell_to_zsh()
-    script_installs()
-
-
-PACMAN: list[str] = [
-    "polkit-gnome",
-    "libvirt",
-    "rust",
-    "signal-desktop",
-]
-YAY: list[str] = [
-    "tzupdate",
-    "discord_arch_electron",
-    "nerd-fonts-fira-code",
-]
-APT: list[str] = []
-BREW: list[str] = []
-# TODO - run `znap install ohmyzsh/ohmyzsh zsh-users/zsh-completions bigH/git-fuzzy`
-
-
-def get_os_platform() -> str:
-    """
-    Returns `uname` result, `strip`ped and `lower`ed.
-
-    e.g.
-        "darwin"
-    """
-    return host.get_fact(facts.server.Command, "uname").lower().strip()
-
-
-@dataclass
-class Package:
-    name: str
-    arch: Literal[YAY, PACMAN] = None
-    debian: Literal[APT, BREW] = None
-
-
-PACKAGES = (
-    Package("glow", arch=PACMAN, debian=BREW),
-    Package("starship", arch=PACMAN, debian=BREW),
-    Package("git-delta", arch=PACMAN, debian=BREW),
-    Package("fzf", arch=PACMAN, debian=BREW),
-    Package("kitty", arch=PACMAN, debian=BREW),
-    Package("bashtop", arch=PACMAN, debian=APT),
-    Package("the_silver_searcher", arch=PACMAN, debian=BREW),
-)
-
-
-def get_default_package_manager() -> Literal[PACMAN, YAY, BREW, APT]:
-    os_platform = get_os_platform()
-    if os_platform == "darwin":
-        return BREW
-
-    if os_platform != "linux":
-        raise NotImplementedError(os_platform)
-
-
-def wrap_str_packages(packages: tuple[Package | str]) -> tuple[Package]:
-    distribution_alias, package_manager = get_distribution_and_default_package_manager()
-    default_map = {distribution_alias: package_manager} if distribution_alias else {}
-
-    return tuple(
-        (
-            Package(package, **default_map) if isinstance(package, str) else package
-            for package in packages
-        )
-    )
-
-
-def set_default_shell_to_zsh():
-    server.shell(
-        commands=["chsh -s $(which zsh)"],
-        _sudo=True,
-    )
-
-
-def go_installs():
-    packages = [
-        "github.com/cheat/cheat/cmd/cheat@latest",
-    ]
-    server.shell(
-        name="Installing packages with go: " + ", ".join(packages),
-        commands=[shlex.join(["go", "install", package]) for package in packages],
-    )
-
-
-def get_distribution_and_default_package_manager() -> (str, list[Package | str]):
-    os_platform = get_os_platform()
-
-    if os_platform == "darwin":
-        return "macos", BREW
-
-    if os_platform != "linux":
-        raise NotImplementedError(os_platform)
-
-    distro_name = host.get_fact(facts.server.LinuxName).lower()
-    if distro_name in {"ubuntu", "debian"}:
-        return "debian", APT
-    elif distro_name in {"arch linux"}:
-        return "arch", PACMAN
-    else:
-        raise NotImplementedError(f"Haven't implemented {distro_name=}")
-
-
-def setup_libvirtd():
-    YAY.extend(
+async def main():
+    async_jobs = map(
+        asyncio.create_task,
         [
-            "qemu",
-            "virt-manager",
-            "ebtables",
-        ]
+            mason_install("gofumpt"),
+            install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
+            asdf_install(),
+            cargo_setup(cargo_packages=CARGO_PACKAGES),
+            krew_install("ctx"),
+            krew_install("ns"),
+        ],
     )
-    PACMAN.append("libvirt")
+    await add_to_fpath_dir()
 
-    systemd.service(
-        name="Enable libvirtd for virtualization",
-        service="libvirtd",
-        running=True,
-        enabled=True,
-        _sudo=True,
-    )
+    install_docker_compose()
+    install_pyenv()
+    await run(["brew", "install", "--build-from-source", "fish"])
+    async_jobs = [
+        *async_jobs,
+        asyncio.create_task(pipx_stuff()),
+        asyncio.create_task(fisher_update()),
+    ]
 
-    user = host.get_fact(facts.server.User)
-    server.user(
-        user,
-        groups=[
-            *_get_existing_groups(user),
+    # gather all async_jobs
+    await gather(*async_jobs)
+
+    sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
+    sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
+
+    kmonad()
+
+    symlink_fonts()
+
+
+async def fisher_update():
+    if not os.system("fish -c 'which fisher'"):
+        await run(["fish", "-c", "fisher update"])
+        return
+    async with download_script(
+        "https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish"
+    ) as installer:
+        await run(["fish", "-c", f"source {installer} && fisher update"], check=True)
+
+
+def is_executable(p: os.PathLike) -> bool:
+    return os.access(p, os.X_OK)
+
+
+async def bin_install(repo: str, dest: Path = None):
+    if dest and dest.is_file() and is_executable(dest):
+        return
+    await install_bin()
+    cmd = ["bin", "install", repo]
+    if dest:
+        cmd.append(str(dest))
+    await run(cmd, stdin=sys.stdin)
+
+
+async def mason_install(*packages: str):
+    await run(
+        [
+            "nvim",
+            "--headless",
+            "-c",
+            f"MasonInstall {' '.join(packages)}",
+            "-c",
+            "qall",
         ],
     )
 
 
-def _get_existing_groups(username: str) -> list[str]:
-    return host.get_fact(facts.server.Users)[username]["groups"]
+def is_macos():
+    return platform.system().lower() == "darwin"
 
 
-def update_package_lists(packages: tuple[Package | str]):
-    """Update the global package lists based on what's set for each package in packages."""
-    os_platform = get_os_platform()
-    (
-        distrib_alias,
-        default_package_manager,
-    ) = get_distribution_and_default_package_manager()
-    packages = wrap_str_packages(packages)
-    if os_platform == "darwin":
-        BREW.extend(packages)
+STDIN_LOCK = asyncio.Lock()
+
+
+def lock_stdin(func):
+    @functools.wraps(func)
+    async def wrapped(*args, **kwargs):
+        if kwargs.get("stdin") is None:
+            return await func(*args, **kwargs)
+        async with STDIN_LOCK:
+            return await func(*args, **kwargs)
+
+    return wrapped
+
+
+@lock_stdin
+async def run(
+    cmd: list[str],
+    check=True,
+    timeout=60 * 5,
+    stdout=None,
+    stdin=None,
+) -> asyncio.subprocess.Process:
+    stderr = asyncio.subprocess.PIPE if check else None
+
+    if not shutil.which(cmd[0]):
+        raise RuntimeError(f"{cmd[0]} not found")
+
+    try:
+        server.shell([shlex.join(cmd)])
         return
+        # proc = await asyncio.create_subprocess_exec(
+        #     *cmd, stderr=stderr, stdout=stdout, stdin=stdin
+        # )
+    except Exception as e:
+        print(f"Failed to start {cmd}")
+        raise e
 
-    if os_platform != "linux":
-        raise NotImplementedError(os_platform)
+    try:
+        # Wait for the subprocess to finish, with a timeout
+        await asyncio.wait_for(proc.wait(), timeout)
+    except asyncio.TimeoutError:
+        # If the process doesn't finish before the timeout, kill it
+        print(f"Process timed out: {cmd}")
+        proc.kill()
+        await proc.wait()
+        raise
+    except Exception as e:
+        print(f"got another error, Failed to wait for {cmd}")
+        raise e
 
-    distro_name = host.get_fact(facts.server.LinuxName).lower()
-    if distro_name in {"ubuntu", "debian"}:
-        for package in packages:
-            package.debian.append(package.name)
-    elif distro_name in {"arch linux"}:
-        for package in packages:
-            package.arch.append(package.name)
-    else:
-        raise NotImplementedError(f"Haven't implemented {distro_name=}")
+    if not check:
+        return proc
+    if proc.returncode == 0:
+        return proc
 
-
-def enable_services():
-    systemd.service(
-        name="Restart and enable gnome polkit",
-        service="auth-agent.service",
-        running=True,
-        enabled=True,
-        user_mode=True,
+    raise RuntimeError(
+        (await proc.stderr.read()).decode()
+        if proc.stderr
+        else f"Unknown error, {proc.returncode=}"
     )
 
 
-def npm_global_nosudo():
-    npm_packages = str(_get_home() / ".npm-packages")
-    files.directory(npm_packages)
+async def pipx_stuff():
+    pylsp = pipx_install("python-lsp-server[rope]")
+
+    rest = pipx_install("pre-commit", "black", "isort", "ruff", "nox")
+    await pylsp
+
+    await gather(
+        run(
+            pipx_cmd(
+                "inject",
+                "python-lsp-server",
+                "pylsp-rope",
+                "python-lsp-ruff",
+                "pyls-isort",
+                "python-lsp-black",
+            ),
+            check=True,
+        ),
+        rest,
+    )
 
 
-def skipif(condition: bool):
-    """
-    Skip install function if `condition` is truthy
-    """
+def process_apt_or_brew(
+    apt_or_brew: list[str], apt: list[str], brew: list[str]
+) -> tuple[list[str], list[str]]:
+    if shutil.which("apt-get"):
+        apt = [*apt, *apt_or_brew]
+    elif shutil.which("brew"):
+        brew = [*brew, *apt_or_brew]
+    else:
+        raise RuntimeError("No apt or brew found")
+    return apt, brew
 
+
+async def gather(*tasks: asyncio.Task):
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    exceptions = [r for r in results if isinstance(r, Exception)]
+    if not exceptions:
+        return
+    raise ExceptionGroup("errors: ", exceptions)
+
+
+COMPLETIONS = [
+    (["pdm", "completion", "zsh"], "_pdm"),
+    (["ruff", "generate-shell-completion", "zsh"], "_ruff"),
+    (["podman", "completion", "zsh"], "_podman"),
+    (["k3d", "completion", "zsh"], "_k3d"),
+    (["register-python-argcomplete", "pipx"], "_pipx"),
+    (["zellij", "setup", "--generate-completion", "zsh"], "_zellij"),
+]
+
+
+async def add_to_fpath_dir():
+    home = host.get_fact(facts.server.home)
+    local_fpath = home / ".zfunc"
+    operations.files.directory(
+        str(local_fpath),
+    )
+    await pip_install("atomicwrites")
+
+    import atomicwrites
+
+    # pipe pdm completion zsh to local_fpath / _pdm
+    async def pipe(cmd: list[str], fp: Path):
+        if not shutil.which(cmd[0]):
+            print(f"{cmd[0]} not installed, not generating completions")
+            return
+        print(f"{shutil.which(cmd[0])=}")
+        with atomicwrites.atomic_write(fp, overwrite=True) as f:
+            await run(cmd, stdout=f, check=True)
+
+    await gather(*(pipe(cmd, local_fpath / fname) for cmd, fname in COMPLETIONS))
+
+
+def skip_if(cond: bool | Callable[[], bool]):
     def decorator(func):
-        @wraps(func)
-        def wrapped_func(*args, **kwargs):
-            if condition:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if cond is True:
+                return
+
+            if callable(cond) and cond():
                 return
 
             return func(*args, **kwargs)
 
-        return wrapped_func
+        return wrapper
 
     return decorator
 
 
-def _get_home() -> Path:
-    return PurePosixPath(host.get_fact(Home))
-
-
-def has_apt() -> bool:
-    return host.get_fact(facts.server.Which, "apt")
-
-
-@skipif(get_os_platform() == "darwin")
-def configure_repos():
-    """
-    Configure OS repos (apt, pacman, yum etc.)
-    """
-    if not has_apt():
+async def install_rustup():
+    if shutil.which("rustup"):
         return
-    apt.ppa(
-        src="ppa:appimagelauncher-team/stable",
-        name="Add appimagelauncher repo",
-        _sudo=True,
+
+    async with download_script("https://sh.rustup.rs") as installer:
+        await lock_stdin(run)(["sh", installer], check=True, stdin=sys.stdin)
+
+    os.environ["PATH"] = f"{os.environ['PATH']}:{Path.home() / '.cargo' / 'bin'}"
+
+
+async def cargo_setup(cargo_packages: list[str]):
+    await install_rustup()
+    installed = {
+        line.strip().split()[0]
+        for line in sp.check_output(
+            ["cargo", "install", "--list"], text=True
+        ).splitlines()
+    }
+
+    for package in set(cargo_packages) - installed:
+        await run(["cargo", "install", package], check=True, stdin=sys.stdin)
+
+
+@asynccontextmanager
+async def download_script(url: str) -> Iterator[Path]:
+    await pip_install("httpx")
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
+
+    resp.raise_for_status()
+
+    with tempfile.TemporaryDirectory() as td:
+        target = Path(td) / "installer"
+        target.write_text(resp.text)
+
+        yield target
+
+
+def gui_only(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if HEADLESS:
+            print("Skipping GUI-only command")
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def haskell_stack():
+    if shutil.which("stack"):
+        print("Stack already installed, skipping")
+        return
+    sp.check_call(
+        "curl -sSL https://get.haskellstack.org/ | sh", shell=True, stdin=sys.stdin
     )
-    apt.key(
-        name="Add signal desktop key",
-        src="https://updates.signal.org/desktop/apt/keys.asc",
-        _sudo=True,
-    )
-    apt.repo(
-        "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main",
-        present=True,
-        filename="signal-xenial",
-        _sudo=True,
-    )
 
 
-PIPX_PACKAGES = (
-    "black",
-    "diceware",
-    "jupyterlab",
-    "virtualenv",
-)
+def env_patch(key: str, val: str) -> Callable[[Callable], Callable]:
+    def decorator(func: Callable):
+        @functools.wraps(func)
+        def wrapped(*args, **kwargs):
+            original = os.environ.get(key, None)
+            os.environ[key] = val
+            try:
+                func(*args, **kwargs)
+            finally:
+                if original is None:
+                    os.environ.pop(key)
+                    return
+                os.environ[key] = original
+
+        return wrapped
+
+    return decorator
 
 
-def pipx_installs():
-    server.shell(
-        name="install packages with pipx: " + ", ".join(PIPX_PACKAGES),
-        commands=[
-            shlex.join(
-                [
-                    "pipx",
-                    "install",
-                    package,
-                ],
-            )
-            for package in PIPX_PACKAGES
+async def brew_tap(*taps: str):
+    for tap in taps:
+        await run([brew_path("brew"), "tap", tap], check=True)
+
+
+@functools.lru_cache
+async def install_bin():
+    if shutil.which("bin"):
+        return
+    os, arch = get_platform()
+    with tempfile.TemporaryDirectory() as td:
+        bin = Path(td) / "bin"
+        sp.check_call(
+            [
+                "gh",
+                "release",
+                "download",
+                "--repo=marcosnils/bin",
+                f"--pattern=*{os}_{arch}*",
+                f"--output={bin}",
+            ],
+            stdin=sys.stdin,
+        )
+        sp.check_call(["chmod", "+x", bin])
+        await run([bin, "install", "github.com/marcosnils/bin", LOCAL_BIN / "bin"])
+
+
+def get_platform():
+    is_macos = platform.system() == "Darwin"
+    if is_macos:
+        return ("darwin", "arm64")
+    is_windows = platform.system() == "Windows"
+    if is_windows:
+        return ("windows", "amd64")
+    return ("linux", "amd64")
+
+
+@skip_if(lambda: HEADLESS)
+def install_nerd_font_symbols():
+    if "nerd" in sp.check_output(["fc-list"], text=True).lower():
+        return
+
+    proc = sp.Popen(
+        [
+            "gh",
+            "release",
+            "download",
+            "--repo=ryanoasis/nerd-fonts",
+            "--pattern=*SymbolsOnly.tar.xz",
+            "--output=-",
         ],
+        stdout=sp.PIPE,
     )
 
+    # Define the fonts directory
+    fonts_dir = Path.home() / ".local" / "share" / "fonts"
 
-def configure_polkit():
-    files.put(
-        src=Path.home() / ".dotfiles" / "pacman_polkit_policy.rules",
-        dest="/etc/polkit-1/rules.d/pacman_polkit_policy.rules",
-        name="Make sure that polkit is configured properly",
-        _sudo=True,
+    # Create the fonts directory if it doesn't exist
+    fonts_dir.mkdir(parents=True, exist_ok=True)
+
+    # Extract all files into the fonts directory
+    sp.check_call(["tar", "--xz", "-xf", "-", "-C", str(fonts_dir)], stdin=proc.stdout)
+
+    sp.check_call(["fc-cache", "-f", "-v"], stdin=sys.stdin)
+
+
+@env_patch("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
+@env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
+@skip_if(HEADLESS or is_macos())
+def kmonad():
+    services = pyinfra.host.get_fact(
+        pyinfra.facts.systemd.SystemdStatus, user_mode=True
     )
-    systemd.service(
-        "polkit.service",
-        name="Restarting polkit.service",
-        restarted=True,
-        _sudo=True,
-    )
+    print(f"{services=}")
+    if "kmonad.service" in services:
+        print("kmonad already installed, skipping")
+        return
+    if not INSTALL_KMONAD:
+        print("Skipping kmonad setup")
+        return
+    print(f"{os.environ['LD_LIBRARY_PATH']=}")
 
-
-def yay_install(packages: list[str | Package]):
-    if not host.get_fact(facts.server.Which, "yay"):
-        raise NotImplementedError("need to write script that installs yay")
-    configure_polkit()
-
-    server.shell(
-        name="install packages with yay: " + ", ".join(packages),
-        commands=[
-            "echo y |"
-            + shlex.join(
+    print("running kmonad setup")
+    haskell_stack()
+    # create uinput group if it doesn't already exist
+    sp.check_call(sudo(["groupadd", "uinput", "--force"]), stdin=sys.stdin)
+    # add current user to uinput group and input group
+    for group in ["uinput", "input"]:
+        sp.check_call(
+            sudo(
                 [
-                    "yay",
-                    "--noconfirm",
-                    # "--removemake",
-                    "--norebuild",
-                    "--noredownload",
-                    "--nocleanmenu",
-                    "--nodiffmenu",
-                    "--sudo=pkexec",
-                    "-S",
-                    *packages,
-                ],
+                    "usermod",
+                    "-aG",
+                    group,
+                    getpass.getuser(),
+                ]
             ),
-        ],
-    )
-
-
-def brew_installs():
-    brew.packages(
-        name="Install os-agnostic brew packages",
-        packages=[
-            # "diceware", # Now that I'm using onepassword for this, I don't think I
-            # really need this
-            "glow",
-            "jesseduffield/lazygit/lazygit",
-            "thefuck",
-            "zoxide",
-        ],
-    )
-    if not host.get_fact(facts.server.Which, "fzf"):
-        brew.packages(
-            name="Install fzf",
-            packages=["fzf"],
-        )
-        # --all is needed. Otherwise, `install` will have an interactive prompt
-        server.shell(commands=["$(brew --prefix)/opt/fzf/install --all"])
-
-    if get_os_platform() == "darwin":
-        brew.tap("microsoft/git")
-
-        brew.casks(
-            name="Install brew casks",
-            casks=["signal", "phoenix", "git-credential-manager-core"],
-            upgrade=True,
+            stdin=sys.stdin,
         )
 
-
-def script_installs():
-    python_setup()
-
-    install_macports()
-
-    install_joplin()
-
-    install_vim_plug()
-    install_vundle()
-
-    install_nerd_fonts()
-    install_rust()
-
-    install_alacritty()
-    install_kitty()
-    install_tdrop()
-
-    install_pretty_tmux()
-
-
-def python_setup():
-    versions = [
-        "3.11-dev",
-        "3.10.4",
-        "3.9.13",
-        "3.8.13",
-        "3.7.12",
-    ]
-    install_pyenv(versions)
-    install_neovim_python(versions)
-    pipx_installs()
-    register_jupyter_kernels(versions)
-
-
-def pyenv_pip_install(version: str, packages: list[str]):
-    """pip install packages into a pyenv environment
-    Args:
-        version: A semver version (e.g. 3.11-dev, 3.10.4)
-        packages: A list of python packages to install with pip
-    """
-    pip.packages(
-        name=f"PYENV_VERSION={version} pip install {', '.join(packages)}",
-        packages=packages,
-        present=True,
-        latest=True,
-        _env=dict(PYENV_VERSION=version),
+    # add to udev rules
+    # copy ~/.config/kmonad/udev.rules to /etc/udev/rules.d/99-kmonad.rules
+    # then reload udev rules
+    sp.check_call(sudo(["mkdir", "-p", "/etc/udev/rules.d/"]), stdin=sys.stdin)
+    sp.check_call(
+        sudo(
+            [
+                "cp",
+                Path.home() / ".config/kmonad/udev.rules",
+                "/etc/udev/rules.d/99-kmonad.rules",
+            ]
+        ),
+        stdin=sys.stdin,
     )
+    sp.check_call(sudo(["udevadm", "control", "--reload-rules"]), stdin=sys.stdin)
+
+    # clone https://github.com/kmonad/kmonad into temporary directory
+    with tempfile.TemporaryDirectory() as tmpdir:
+        build_and_install_kmonad(Path(tmpdir))
+
+    sp.check_call(["systemctl", "--user", "enable", "kmonad.service"], stdin=sys.stdin)
+    sp.check_call(["systemctl", "--user", "restart", "kmonad.service"], stdin=sys.stdin)
 
 
-def register_jupyter_kernels(versions: list[str]):
-    server.shell(
-        name="Install ipython into jupyterlab venv",
-        commands=["pipx inject jupyterlab ipython"],
-    )
-    for version in versions:
-        pip.packages(
-            name=f"Install ipykernel into {version}",
-            packages=["ipykernel", "ipython"],
-            pip=f"~/.pyenv/versions/{version}/bin/pip",
-        )
-    server.shell(
-        name=f"ipython kernel installs: {', '.join(versions)}",
-        commands=[
-            f"PYENV_VERSION={version} pyenv exec ipython kernel install --name={version} --user"
-            for version in versions
-        ],
-    )
+def sudo(cmd: list[str]) -> list[str]:
+    if getpass.getuser() == "root":
+        return cmd
+    return ["sudo", *cmd]
 
 
-#        server.shell(name=f"Registering {version} with ipython kernel install")
-
-
-@skipif(host.get_fact(facts.files.Link, _get_home() / ".tmux.conf"))
-def install_pretty_tmux():
-    """
-    Follows these instructions:
-    https://github.com/gpakosz/.tmux#installation
-    $ git clone https://github.com/gpakosz/.tmux.git /path/to/oh-my-tmux
-    $ ln -s -f /path/to/oh-my-tmux/.tmux.conf ~/.tmux.conf
-    $ cp /path/to/oh-my-tmux/.tmux.conf.local ~/.tmux.conf.local
-    """
-
-    tmux_repo_dir = _get_home() / ".local" / "share" / ".tmux"
-
-    server.shell(
-        name="clone .tmux.git",
-        commands=[
-            shlex.join(
-                [
-                    "git",
-                    "clone",
-                    "https://github.com/gpakosz/.tmux.git",
-                    str(tmux_repo_dir),
-                ]
-            )
-        ],
-    )
-    files.link(
-        _get_home() / ".tmux.conf",
-        tmux_repo_dir / ".tmux.conf",
-    )
-
-
-@skipif(get_os_platform() != "darwin")
-@skipif(host.get_fact(facts.server.Which, "port"))
-def install_macports():
-    pkg_path = "/tmp/macports.pkg"
-    files.download(
-        "https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1-12-Monterey.pkg",
-        pkg_path,
-        name="Download macports installer",
-    )
-    server.shell(
-        commands=[f"installer -pkg {pkg_path} -target /"],
-        _sudo=True,
-    )
-
-
-def install_neovim_python(versions: list[str]):
-    for version in versions:
-        if version.startswith("3.11"):
-            continue
-
-        pyenv_pip_install(
-            version=version,
-            packages=["pynvim"],
-        )
-
-
-def install_pyenv(versions: list[str]):
-    version_output: Optional[str] = host.get_fact(
-        facts.server.Command,
-        "pyenv versions --bare; exit 0",
-    )
-
-    if version_output:
-        existing_versions = set(version_output.strip().split())
-    else:
-        existing_versions = set()
-
-    for version in versions:
-        if version in existing_versions:
-            continue
-        server.shell(
-            name=f"Install python=={version}",
-            commands=[f"pyenv install {version}"],
-        )
-
-    server.shell(
-        name="pyenv global",
-        commands=[f"pyenv global {' '.join(versions)}"],
-    )
-    install_black(versions=versions)
-    return versions
-
-
-def install_black(*, versions):
-    server.shell(
-        name="install black",
-        commands=[
-            f"PYENV_VERSION={version} python -m pip install black"
-            for version in versions
-        ],
-    )
-
-
-@skipif(get_os_platform() == "darwin")
-def install_joplin():
-    if host.get_fact(
-        facts.files.File, _get_home() / ".joplin" / "VERSION"
-    ) or host.get_fact(facts.server.Which, "joplin-desktop"):
-        return
-    server.shell(
-        name="install joplin",
-        commands=[
-            "wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh "
-            "| TERM=linux bash --login -s -- --silent"
-        ],
-    )
-
-
-@skipif(get_os_platform() == "darwin")
-@skipif(host.get_fact(facts.server.Which, "tdrop"))
-def install_tdrop():
-    tmpdir = "/tmp/tdrop"
-    git.repo("https://github.com/noctuid/tdrop", tmpdir)
-    server.shell(
-        name="installing tdrop",
-        commands=["make install"],
-        _sudo=True,
-        chdir=tmpdir,
-    )
-
-
-def which(command: str) -> bool:
-    """Return True iff command is on PATH"""
-    return host.get_fact(facts.server.Which, command)
-
-
-def install_rust():
-    if which("rust"):
+async def build_and_install_kmonad(dir_: Path):
+    if shutil.which("kmonad"):
+        print("kmonad already installed, skipping")
         return
 
-    server.shell(
-        name="Install rust",
-        commands=["curl https://sh.rustup.rs -sSf | sh -s -- -y"],
-    )
-
-
-def install_vim_plug():
-    if not host.get_fact(
-        facts.files.File, _get_home() / ".vim" / "autoload" / "plug.vim"
-    ):
-        server.shell(
-            name="Install [vim plug](https://github.com/junegunn/vim-plug)",
-            commands=[
-                "curl -fLo ~/.vim/autoload/plug.vim --create-dirs "
-                "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-            ],
-        )
-    nvim_path = (
-        _get_home() / ".local" / "share" / "nvim" / "site" / "autoload" / "plug.vim"
-    )
-    if not host.get_fact(
-        facts.files.File,
-        str(nvim_path),
-    ):
-        files.directory(nvim_path.parent)
-        files.download(
-            "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
-            str(nvim_path),
-        )
-
-    server.shell(
-        name="Install vim plugins with vim plug",
-        commands=[
-            # "vim -E -s +PlugInstall +visual +qall",
-            # "vim -E -s +PlugUpdate +visual +qall",
-            "nvim +'PlugInstall --sync' +qa",
-            # "nvim +'PlugUpdate --sync' +qa",
-        ],
-        _shell_executable="bash",
-    )
-
-
-def install_packages():
-    """
-    Install packages with system's package manager
-    (e.g. apt, pacman)
-    """
-    update_package_lists(PACKAGES)
-    if APT:
-        apt.packages(
-            name="Installing packages with apt",
-            packages=APT,
-        )
-    if BREW:
-        brew.packages(
-            name="Installing packages with brew",
-            packages=BREW,
-        )
-    if PACMAN:
-        install_pacman_packages()
-    if YAY:
-        yay_install(YAY)
-
-    return
-
-    common_packages = [
-        "bat",
-        # "ddgr", # needs to be installed with yay on arch
-        "direnv",
-        "neovim",
-        "podman",
-        "tmux",
-        "unzip",
-        "xclip",
-        "xdotool",
-        "zoxide",
-    ]
-
-
-#     if get_os_platform() == "linux":
-#         distro_name = host.get_fact(facts.server.LinuxName).lower()
-#         if distro_name in {"ubuntu", "debian"}:
-#             install_apt_packages(common_packages)
-#         elif distro_name in {"arch linux"}:
-#             install_pacman_packages(common_packages)
-#         else:
-#             raise NotImplementedError(f"Haven't implemented {distro_name=}")
-#     elif get_os_platform() == "darwin":
-#         install_macos_brew_packages(common_packages)
-#     else:
-#         raise NotImplementedError(get_os_platform())
-
-
-def install_pacman_packages():
-    pyenv_arch_build_deps = [
-        "base-devel",
-        "openssl",
-        "zlib",
-        "xz",
-        "tk",
-    ]
-
-    packages = [
-        *PACMAN,
-        *pyenv_arch_build_deps,
-        "pyenv",
-    ]
-
-    print("installing packages with pacman:", ", ".join(packages))
-
-    pacman.packages(
-        name="Install packages with pacman",
-        packages=packages,
-        present=True,
-        update=True,
-        _sudo=True,
-    )
-
-
-def install_macos_brew_packages(common_packages):
-    packages = common_packages + [
-        "antigen",
-        "cmake",
-        "dbmate",
-        "go",
-        "golang",
-        "hammerspoon",
-        "nativefier",
-        "nodejs",
-        "pipx",
-        "python",
-        "ripgrep",  # rg
-        "the_silver_searcher",  # ag
-        "zplug",
-    ]
-    packages = packages + python_build_dependencies()
-    print(f"{packages=}")
-    brew.packages(
-        name="install common packages with brew for macos",
-        packages=packages,
-        latest=True,
-        update=True,
-    )
-
-
-def install_apt_packages(common_packages):
-    apt.update(sudo=True)
-
-    packages = common_packages + [
-        "appimagelauncher",
-        "golang-go",
-        "python3-pip",
-        "signal-desktop",
-        "sxhkd",
-        "virtualbox",
-    ]
-    packages = packages + python_build_dependencies()
-    server.packages(
-        packages=packages,
-        _sudo=True,
-    )
-
-
-def python_build_dependencies():
-    if get_os_platform() == "darwin":
-        return [
-            "openssl",
-            "readline",
-            "sqlite3",
-            "xz",
-            "zlib",
-        ]
-    elif get_os_platform() == "linux":
-        return [
-            "libbz2-dev",
-            "libc6-dev",
-            "libgdbm-dev",
-            "libncursesw5-dev",
-            "libsqlite3-dev",
-            "libssl-dev",
-            "tk-dev",
-            "build-essential",
-            "clang",
-            "curl",
+    sp.check_call(
+        [
             "git",
-            "libbz2-dev",
-            "libffi-dev",
-            "liblzma-dev",
-            "libncurses5-dev",
-            "libncursesw5-dev",
-            "libreadline-dev",
-            "libsqlite3-dev",
-            "libssl-dev",
-            "llvm",
-            "make",
-            "python3-openssl",
-            "tk-dev",
-            "wget",
-            "xz-utils",
-            "zlib1g-dev",
+            "clone",
+            "https://github.com/kmonad/kmonad",
+            str(dir_),
+        ],
+        stdin=sys.stdin,
+    )
+
+    # here because it won't be installed when we first start the script
+    await pip_install("ruamel.yaml")
+    from ruamel.yaml import YAML
+
+    stack_yaml_path = dir_ / "stack.yaml"
+    yaml = YAML()
+    stack_config = {}
+
+    # Check if stack.yaml already exists and load its content
+    if stack_yaml_path.is_file():
+        with open(stack_yaml_path, "r") as stack_yaml:
+            stack_config = yaml.load(stack_yaml)
+
+    extra_lib_dirs = "extra-lib-dirs"
+
+    stack_config[extra_lib_dirs] = [
+        *stack_config.get(extra_lib_dirs, []),
+        "/usr/lib/x86_64-linux-gnu",
+    ]
+
+    # Save the modified stack.yaml file
+    with open(stack_yaml_path, "w") as stack_yaml:
+        yaml.dump(stack_config, stack_yaml)
+
+    def check_call(args):
+        return sp.check_call(args, stdin=sys.stdin, cwd=dir_)
+
+    check_call(["stack", "setup"])
+    check_call(["stack", "build"])
+    check_call(["stack", "install"])
+
+
+@lru_cache
+def install_pip():
+    print(f"{sys.executable=}")
+    try:
+        sp.check_call([sys.executable, "-m", "pip", "--version"])
+    except Exception:
+        pass
+    else:
+        return
+
+    try:
+        import ensurepip
+
+        ensurepip.bootstrap(user=True)
+    except Exception:
+        raise Exception("failed to get pip")
+
+
+@functools.lru_cache()
+async def pip_install(*packages: str):
+    install_pip()
+    print(f"pip installing {', '.join(packages)}")
+    if platform.system().lower() == "linux" and sys.executable.startswith(
+        "/usr/bin/python3"
+    ):
+        apt.packages(
+            packages=[f"python3-{package}" for package in packages], _sudo=True
+        )
+        return
+
+    await run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            # "--user",
+            *packages,
         ]
-
-
-def install_vundle():
-    vundle_dir = str(
-        PurePosixPath(host.get_fact(Home)) / ".vim" / "bundle" / "Vundle.vim"
     )
-    if not host.get_fact(facts.files.Directory, vundle_dir):
-        git.repo(
-            "https://github.com/gmarik/Vundle.vim.git",
-            vundle_dir,
+
+
+def install_tpm_packages():
+    sp.check_call(["tmux", "new", "-d", "-s", "tmp"])
+    tmux_session = "tmp"
+    try:
+        # send prefix + I to install plugins
+        sp.check_call(["tmux", "send-keys", "-t", tmux_session, "C-a", "I"])
+    finally:
+        # kill the session
+        sp.check_call(["tmux", "kill-session", "-t", tmux_session])
+
+
+async def install_tpm(*plugins: str):
+    plugins_dir = Path.home() / ".config" / "tmux" / "plugins"
+    plugins_dir.mkdir(parents=True, exist_ok=True)
+
+    for plugin in plugins:
+        target_dir = plugins_dir / plugin.split("/")[-1]
+
+        if target_dir.exists() and not sp.call(
+            ["git", "rev-parse", "--is-inside-work-tree"], cwd=target_dir
+        ):
+            print(f"{plugin} already installed, skipping")
+            continue
+
+        if target_dir.exists():
+            shutil.rmtree(target_dir)
+
+        await pip_install("furl")
+        import furl
+
+        sp.check_call(
+            [
+                "git",
+                "clone",
+                (furl.furl("https://github.com") / plugin).url,
+                str(target_dir),
+            ]
         )
+    install_tpm_packages()
 
-    server.shell(
-        name="Install vundle and install vundle plugins",
-        commands=[
-            "vim +'PluginInstall --sync' +qall",
-            "vim +PluginInstall  +qall",
-            "nvim +PluginInstall +qall",
-            "nvim +PluginUpdate +qall",
+
+def gh_auth_login():
+    if not os.system("gh auth status"):
+        return
+    sp.check_call(["gh", "auth", "login"])
+
+
+@functools.lru_cache()
+def install_gh_install():
+    gh_auth_login()
+    sp.check_call(
+        [
+            "gh",
+            "extension",
+            "install",
+            # "--force",
+            "--pin=patch-1",
+            "znd4/gh-install",
         ],
+        stdin=sys.stdin,
     )
 
-    build_you_complete_me()
+
+linux_only = skip_if(lambda: platform.system() != "Linux")
 
 
-def build_you_complete_me():
-    plugin_dir = _get_home() / ".vim" / "bundle" / "YouCompleteMe"
-    print(f"run `cd {plugin_dir} && $(brew --prefix)/bin/python3 install.py --all`")
-    # server.shell(
-    #     name="Build YouCompleteMe",
-    #     chdir=str(plugin_dir),
-    #     shell_executable="zsh",
-    #     get_pty=True,
-    #     commands=[
-    #         "git submodule update --init --recursive",
-    #         "zsh --login -c '$(brew --prefix)/bin/python3 install.py --all'",
-    #     ],
-    # )
+DOCKER_PLUGINS_DIR = Path.home() / ".docker" / "cli-plugins"
 
 
-def install_nerd_fonts():
-    if get_os_platform() == "darwin":
-        brew.tap("homebrew/cask-fonts")
-        brew.casks(casks=["font-fira-code-nerd-font", "font-fira-mono-nerd-font"])
+@linux_only
+@env_patch("GH_BINPATH", str(DOCKER_PLUGINS_DIR))
+def install_docker_compose():
+    if (DOCKER_PLUGINS_DIR / "docker-compose").is_file():
+        print("not installing docker compose")
         return
 
-    fc_list_result = host.get_fact(
-        facts.server.Command,
-        # exit 0 so pyinfra doesn't error out
-        "fc-list | grep -i nerd; exit 0",
-    )
-    if fc_list_result and fc_list_result.strip():
-        return
-    tmp_firacode = "/tmp/firacode.zip"
-    files.download(
-        "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip",
-        tmp_firacode,
-    )
-    fonts_dir = str(_get_home() / ".local" / "share" / "fonts")
-    files.directory(fonts_dir, name="Create ~/.local/share/fonts")
-    server.shell(
-        name="Install fira code", commands=[f"unzip {tmp_firacode} -d {fonts_dir}"]
-    )
+    print("installing docker compose")
+    DOCKER_PLUGINS_DIR.mkdir(parents=True, exist_ok=True)
+    gh_install("docker/compose")
 
 
-def install_alacritty():
-    if host.get_fact(facts.server.Which, "alacritty"):
-        return
-    if get_os_platform() == "darwin":
-        brew.casks(name="install Alacritty with brew", casks=["alacritty"])
-        return
+@skip_if(not sys.stdout.isatty())
+def gh_install(repo: str):
+    install_gh_install()
+    sp.check_call(["gh", "install", repo], stdin=sys.stdin)
 
-    alacritty_dir = "/tmp/alacritty"
-    files.directory(alacritty_dir, present=False)
 
-    server.shell(
-        name="cloning alacritty",
-        commands=[
-            shlex.join(
-                [
-                    "git",
-                    "clone",
-                    "https://github.com/alacritty/alacritty.git",
-                    alacritty_dir,
-                ]
-            )
-        ],
-        _shell_executable="bash",
-    )
+def install_pyenv():
+    pyenv_root = Path.home() / ".pyenv"
+    if not pyenv_root.is_dir():
+        sp.check_call(
+            [
+                "git",
+                "clone",
+                "https://github.com/pyenv/pyenv.git",
+                pyenv_root,
+            ]
+        )
+    pyenv = pyenv_root / "bin" / "pyenv"
+    versions = ["3.10.11", "3.11.3"]
+    globals = set(sp.check_output([pyenv, "global"], text=True).strip().split("\n"))
+    print(f"{globals=}")
+    print(f"{versions=}")
+    installed = [
+        line.lstrip("*").strip()
+        for line in sp.check_output(
+            [pyenv, "versions"],
+            text=True,
+        )
+        .strip()
+        .split("\n")
+    ]
+    print(f"{installed=}")
 
-    server.shell(
-        name="Check rust compiler version",
-        commands=[
-            "rustup override set stable",
-            "rustup update stable",
-        ],
-    )
-    if get_os_platform() == "darwin":
-        server.shell(
-            name="build alacritty and copy to Applications",
-            commands=[
-                "rustup target add x86_64-apple-darwin aarch64-apple-darwin",
-                "make app-universal",
-                "cp -r target/release/osx/Alacritty.app /Applications/",
+    for version in versions:
+        if any(v.startswith(version) for v in installed):
+            continue
+        sp.check_call([pyenv, "install", version])
+
+    sp.check_call([pyenv, "global", *versions])
+
+    for version in versions:
+        print(f"{version=}")
+        pip = sp.check_output(
+            [
+                pyenv,
+                "which",
+                "pip",
             ],
-            chdir=alacritty_dir,
+            env={"PYENV_VERSION": version, **os.environ},
+            text=True,
+        ).strip()
+        pyinfra.operations.pip.packages(["pynvim"], pip=pip)
+
+
+def brew_bin() -> Path:
+    brew = shutil.which("brew")
+    if not brew:
+        return Path.home() / "homebrew" / "bin"
+    return Path(brew).resolve().parent
+
+
+def brew_path(exe: str) -> Path:
+    return brew_bin() / exe
+
+
+def path_to_brew() -> Path:
+    return brew_bin() / "brew"
+
+
+async def brew_install(*pkgs: str):
+    installed = set(sp.check_output([path_to_brew(), "list"], text=True).split())
+
+    await pip_install("more-itertools")
+    import more_itertools as mi
+
+    pkgs = (pkg for pkg in pkgs if pkg not in installed)
+
+    for chunk in mi.chunked(pkgs, 10):
+        sp.check_call([path_to_brew(), "install", *chunk])
+
+
+@skip_if(HEADLESS or is_macos())
+def symlink_fonts():
+    fonts_dir = Path.home() / ".local" / "share" / "fonts"
+    if not fonts_dir.is_dir():
+        os.symlink(
+            str(brew_bin().parent / "share" / "fonts"),
+            str(fonts_dir),
         )
 
-    install_alacritty_dependencies()
-    server.shell(
-        name="cargo build alacritty",
-        commands=[
-            f". ~/.cargo/env; cd {alacritty_dir}; cargo build --release",
-        ],
-        _shell_executable="bash",
+    sp.check_call(["fc-cache", "-fv"])
+
+
+def pipx_cmd(*args: str) -> list[str]:
+    return [str(brew_path("pipx")), *args]
+
+
+async def pipx_install(*packages):
+    installed = set(
+        json.loads(
+            (
+                await (
+                    await run(
+                        pipx_cmd("list", "--json"), stdout=asyncio.subprocess.PIPE
+                    )
+                ).stdout.read()
+            ).decode()
+        )["venvs"]
     )
 
-    output = host.get_fact(
-        facts.server.Command,
-        "infocmp alacritty >/dev/null; echo $?",
-    )
-    if output != "0":
-        print(f"infocmp alacritty {output=}")
-        server.shell(
-            name="running tic -xe alacritty",
-            commands=["tic -xe alacritty,alacritty-direct extra/alacritty.info"],
-            _sudo=True,
+    def to_install_cmd(package):
+        if isinstance(package, str):
+            return pipx_cmd("install", package)
+        return pipx_cmd("install", *package)
+
+    await gather(
+        *(
+            run(to_install_cmd(package))
+            for package in packages
+            if package.split("[")[0] not in installed
         )
-    server.shell(
-        name="Install Alacritty Desktop Entry",
-        _sudo=True,
-        commands=[
-            " && ".join(
-                [
-                    f"cd {alacritty_dir}",
-                    "cp target/release/alacritty /usr/local/bin",
-                    "cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg",
-                    "desktop-file-install extra/linux/Alacritty.desktop",
-                    "update-desktop-database",
-                ]
-            )
-        ],
     )
 
 
-def install_alacritty_dependencies():
-    server.packages(
-        name="Install other alacritty dependencies",
-        _sudo=True,
-        packages=[
-            "cmake",
-            "pkg-config",
-            "libfreetype6-dev",
-            "libfontconfig1-dev",
-            "libfontconfig-dev",
-            "libxcb-xfixes0-dev",
-            "libxkbcommon-dev",
-            "python3",
-        ],
+async def asdf_install():
+    plugins = {
+        "direnv",
+    } - set(
+        line.strip()
+        for line in sp.run(
+            ["asdf", "plugin-list"],
+            text=True,
+            capture_output=True,
+        )
+        .stdout.strip()
+        .split("\n")
     )
+    # direnv
+    await gather(*(run(["asdf", "plugin-add", plugin]) for plugin in plugins))
+    sp.check_call(["asdf", "install"])
 
 
-def install_kitty():
-    if get_os_platform() == "darwin":
-        # if "kitty" in host.get_fact(facts.brew.BrewCasks):
-        #     return
-
-        brew.casks(["kitty"])
+async def krew_install(plugin: str):
+    if plugin in krew_list():
         return
+    await install_krew()
+    await run(["kubectl", "krew", "install", plugin])
 
-    server.shell(
-        name="Install Kitty",
-        commands=[
-            "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n",
-        ],
-    )
 
-    # Create a symbolic link to add kitty to PATH (assuming ~/.local/bin is in
-    # your PATH)
-    files.link(
-        path=str(_get_home() / ".local" / "bin" / "kitty"),
-        target=str(_get_home() / ".local" / "kitty.app" / "bin" / "kitty"),
-    )
-    # ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
-    # Place the kitty.desktop file somewhere it can be found by the OS
-    kitty_desktop_src = (
-        _get_home()
-        / ".local"
-        / "kitty.app"
-        / "share"
-        / "applications"
-        / "kitty.desktop"
-    )
-    kitty_desktop_dst = (
-        _get_home() / ".local" / "share" / "applications" / "kitty.desktop"
-    )
-    server.shell(commands=[f"cp {kitty_desktop_src} {kitty_desktop_dst}"])
-    # Update the path to the kitty icon in the kitty.desktop file
+KREW_LIST = None
 
-    kitty_icon = (
-        _get_home()
-        / ".local"
-        / "kitty.app"
-        / "share"
-        / "icons"
-        / "hicolor"
-        / "256x256"
-        / "apps"
-        / "kitty.png"
-    )
-    sed_string = f"s|Icon=kitty|Icon={kitty_icon}|g"
-    server.shell(
-        name="Remapping kitty icon with sed",
-        commands=[f'sed -i "{sed_string}" {kitty_desktop_dst}'],
+
+@lru_cache
+def krew_list():
+    return set(
+        sp.check_output(["kubectl", "krew", "list"], text=True).strip().splitlines()
     )
 
 
-# TODO - Clean up readme + use just python to bootstrap
-# TODO - .tmux - https://github.com/gpakosz/.tmux
-# TODO - Install docker, podman, and earthly
-# TODO - Look into another dotfile CLI tool
-# TODO - Install libevdev key mapping
-# TODO - refactor into package
+INSTALLING_KREW = False
 
 
-main()
+async def install_krew():
+    # safe b.c. async, not separate threads
+    global INSTALLING_KREW
+    if INSTALLING_KREW or shutil.which("kubectl-krew"):
+        return
+    INSTALLING_KREW = True
+    (
+        await bin_install(
+            "github.com/kubernetes-sigs/krew",
+            LOCAL_BIN / "kubectl-krew",
+        ),
+    )
+
+
+asyncio.run(main())

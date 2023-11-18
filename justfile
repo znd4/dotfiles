@@ -59,4 +59,7 @@ pre-commit-install:
 
 bootstrap:
     just guarantee pipx
-    pipx run --spec git+https://github.com/znd4/pyinfra@add-url-option-to-brew.tap pyinfra -vvv @local deploy.py
+    pipx run --python=python3.11 \
+        --spec git+https://github.com/znd4/pyinfra@add-url-option-to-brew.tap \
+        pyinfra -vvv @local deploy.py
+    python3 install.py
