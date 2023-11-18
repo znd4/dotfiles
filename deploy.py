@@ -132,7 +132,7 @@ if not HEADLESS:
             "font-victor-mono",
             "font-victor-mono-nerd-font",
             "font-fira-code",
-            "font-fira-code-nerd-font",
+            # "font-fira-code-nerd-font",
         ]
     )
 
