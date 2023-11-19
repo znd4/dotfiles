@@ -58,4 +58,4 @@ if type brew &>/dev/null; then
 fi
 
 
-source "$HOME/.cargo/env"
+. "$HOME/.cargo/env"
