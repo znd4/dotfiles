@@ -13,23 +13,18 @@ import shlex
 # So we need to manually add it to sys.path
 site.addsitedir(site.getusersitepackages())
 
-GLOBAL_CRATES = ["lolcate-rs"]
-
 
 CARGO_PACKAGES = [
     "skim",
+    "lolcate-rs",
 ]
 
 NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
-INSTALL_KMONAD = (not HEADLESS) and os.getenv(
-    "INSTALL_KMONAD", "true"
-).lower() == "true"
 
-LOCAL_BIN = Path.home() / ".local" / "bin"
-HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
+
 UBUNTU_PACKAGES = [
     "python3-pip",
     # for pyenv
@@ -59,9 +54,11 @@ if not HEADLESS:
         ]
     )
 APT_OR_BREW = [
+    "gh",
+    "jq",
     "podman",
     "shfmt",
-    "gh",
+    "zoxide",
 ]
 BREW_PACKAGES = [
     "argocd",
@@ -85,7 +82,6 @@ BREW_PACKAGES = [
     "helm",
     "httpie",
     "isort",
-    "jq",
     "just",
     "kpt",
     "kubernetes-cli",
@@ -98,13 +94,13 @@ BREW_PACKAGES = [
     "prettier",
     "python-launcher",
     "ripgrep",
+    "rustup-init",
     "starship",
     "stylua",
     "thefuck",
     "tmux",
     "yq",
     "zellij",
-    "zoxide",
     "zsh",
 ]
 
@@ -139,28 +135,23 @@ def main():
         pyinfra.operations.brew.tap(**tap)
     pyinfra.operations.brew.packages(packages=brew_pkgs)
     print("starting the async stuff")
-    install_rancher_desktop()
     install_pyenv()
+    cargo_install(CARGO_PACKAGES)
 
 
-def install_rancher_desktop():
-    if HEADLESS:
-        return
-    if platform.system() != "Linux":
-        return
-    apt.key(
-        name="Add rancher desktop key",
-        src="https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/Release.key",
-    )
-    apt.repo(
-        name="Rancher Desktop repo",
-        present=True,
-        src="deb [signed-by=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg]"
-        " https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/ ./",
-        filename="isv-rancher-stable",
-    )
-    apt.update(cache_time=3600)
-    apt.packages(packages=["rancher-desktop"])
+def cargo_install(cargo_packages: list[str]):
+    run_remote(["rustup-init", "-y"])
+    _env = {
+        "PATH": host.get_fact(facts.server.Path) + ":~/.cargo/bin",
+    }
+    operations.server.shell("rustup default stable", _env=_env)
+    installed = {
+        line.strip().split()[0]
+        for line in check_output(["cargo", "install", "--list"], _env=_env).splitlines()
+    }
+
+    for package in set(cargo_packages) - installed:
+        run_remote(["cargo", "install", package], _env=_env)
 
 
 def install_pyenv():

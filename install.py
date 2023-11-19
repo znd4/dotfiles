@@ -13,10 +13,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Iterator
 
-from pyinfra.operations import apt, brew
-import pyinfra
-from pyinfra import operations, facts, host
 import shlex
+
+HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
+INSTALL_KMONAD = (not HEADLESS) and os.getenv(
+    "INSTALL_KMONAD", "true"
+).lower() == "true"
+LOCAL_BIN = Path.home() / ".local" / "bin"
 
 
 async def main():
@@ -26,7 +29,6 @@ async def main():
             mason_install("gofumpt"),
             install_tpm("tmux-plugins/tpm", "tmux-plugins/tmux-sensible"),
             asdf_install(),
-            cargo_setup(cargo_packages=CARGO_PACKAGES),
             krew_install("ctx"),
             krew_install("ns"),
         ],
@@ -44,9 +46,6 @@ async def main():
 
     # gather all async_jobs
     await gather(*async_jobs)
-
-    sp.check_call([Path.home() / ".cargo" / "bin" / "rustup", "default", "stable"])
-    sp.check_call([Path.home() / ".cargo" / "bin" / "cargo", "install", *GLOBAL_CRATES])
 
     kmonad()
 
@@ -122,11 +121,9 @@ async def run(
         raise RuntimeError(f"{cmd[0]} not found")
 
     try:
-        server.shell([shlex.join(cmd)])
-        return
-        # proc = await asyncio.create_subprocess_exec(
-        #     *cmd, stderr=stderr, stdout=stdout, stdin=stdin
-        # )
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, stderr=stderr, stdout=stdout, stdin=stdin
+        )
     except Exception as e:
         print(f"Failed to start {cmd}")
         raise e
@@ -209,11 +206,10 @@ COMPLETIONS = [
 
 
 async def add_to_fpath_dir():
-    home = host.get_fact(facts.server.home)
+    home = Path.home()
     local_fpath = home / ".zfunc"
-    operations.files.directory(
-        str(local_fpath),
-    )
+    local_fpath.mkdir(parents=True, exist_ok=True)
+
     await pip_install("atomicwrites")
 
     import atomicwrites
@@ -255,19 +251,6 @@ async def install_rustup():
         await lock_stdin(run)(["sh", installer], check=True, stdin=sys.stdin)
 
     os.environ["PATH"] = f"{os.environ['PATH']}:{Path.home() / '.cargo' / 'bin'}"
-
-
-async def cargo_setup(cargo_packages: list[str]):
-    await install_rustup()
-    installed = {
-        line.strip().split()[0]
-        for line in sp.check_output(
-            ["cargo", "install", "--list"], text=True
-        ).splitlines()
-    }
-
-    for package in set(cargo_packages) - installed:
-        await run(["cargo", "install", package], check=True, stdin=sys.stdin)
 
 
 @asynccontextmanager
@@ -396,13 +379,6 @@ def install_nerd_font_symbols():
 @env_patch("LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu")
 @skip_if(HEADLESS or is_macos())
 def kmonad():
-    services = pyinfra.host.get_fact(
-        pyinfra.facts.systemd.SystemdStatus, user_mode=True
-    )
-    print(f"{services=}")
-    if "kmonad.service" in services:
-        print("kmonad already installed, skipping")
-        return
     if not INSTALL_KMONAD:
         print("Skipping kmonad setup")
         return
@@ -528,8 +504,15 @@ async def pip_install(*packages: str):
     if platform.system().lower() == "linux" and sys.executable.startswith(
         "/usr/bin/python3"
     ):
-        apt.packages(
-            packages=[f"python3-{package}" for package in packages], _sudo=True
+        sp.check_call(
+            [
+                "sudo",
+                "apt-get",
+                "install",
+                "-y",
+                "python3-pip",
+            ],
+            stdin=sys.stdin,
         )
         return
 
@@ -677,7 +660,13 @@ def install_pyenv():
             env={"PYENV_VERSION": version, **os.environ},
             text=True,
         ).strip()
-        pyinfra.operations.pip.packages(["pynvim"], pip=pip)
+        sp.check_call(
+            [
+                pip,
+                "install",
+                "pynvim",
+            ]
+        )
 
 
 def brew_bin() -> Path:
