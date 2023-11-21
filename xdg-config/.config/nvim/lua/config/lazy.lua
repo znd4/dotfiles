@@ -195,8 +195,6 @@ require("lazy").setup({
   --     end,
   -- },
 
-  "honza/vim-snippets",
-  "rafamadriz/friendly-snippets",
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -402,6 +400,8 @@ require("lazy").setup({
   {
     "VonHeikemen/lsp-zero.nvim",
     dependencies = {
+      "honza/vim-snippets",
+      "rafamadriz/friendly-snippets",
       { "L3MON4D3/LuaSnip", version = "1.*" },
       "hrsh7th/nvim-cmp",
       "onsails/lspkind.nvim",
