@@ -140,7 +140,9 @@ def main():
 
 
 def cargo_install(cargo_packages: list[str]):
-    run_remote(["rustup-init", "-y"])
+    if not host.get_fact(facts.server.Which, "cargo"):
+        run_remote(["rustup-init", "-y"])
+
     _env = {
         "PATH": host.get_fact(facts.server.Path) + ":~/.cargo/bin",
     }

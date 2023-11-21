@@ -13,7 +13,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Iterator
 
-import shlex
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
 INSTALL_KMONAD = (not HEADLESS) and os.getenv(
