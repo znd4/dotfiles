@@ -136,6 +136,11 @@ return {
       delayed("telescope.builtin", "keymaps"),
       desc = "Telescope keymaps",
     },
+    {
+      leader .. "t",
+      ":Telescope<CR>",
+      desc = "telescope builtins",
+    },
   },
   priority = 2,
 }
