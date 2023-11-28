@@ -288,6 +288,7 @@ require("luasnip.loaders.from_vscode").lazy_load()
 require("luasnip.loaders.from_snipmate").lazy_load()
 
 local cmp = require("cmp")
+local cmp_action = require("lsp-zero").cmp_action()
 
 local cmp_config = lsp_zero.defaults.cmp_config({
   completion = {
@@ -299,6 +300,8 @@ local cmp_config = lsp_zero.defaults.cmp_config({
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-u>"] = cmp.mapping.scroll_docs(-4),
     ["<C-d>"] = cmp.mapping.scroll_docs(4),
+    ["<C-f>"] = cmp_action.luasnip_jump_forward(),
+    ["<C-b>"] = cmp_action.luasnip_jump_backward(),
   }),
   sources = cmp.config.sources({
     { name = "nvim_lsp" },
