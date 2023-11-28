@@ -20,18 +20,24 @@ return {
   dependencies = {
     -- Required.
     "nvim-lua/plenary.nvim",
+
+    -- for searching
     "nvim-telescope/telescope.nvim",
+
+    -- for completion
+    "hrsh7th/nvim-cmp",
+
+    -- Optional, alternative to nvim-treesitter for syntax highlighting.
+    "nvim-treesitter/nvim-treesitter",
 
     -- see below for full list of optional dependencies 👇
   },
-  config = {
+  opts = {
     workspaces = {
       {
         name = "personal",
         path = vim.fn.expand("~") .. "/obsidian-vault",
       },
     },
-
-    -- see below for full list of options 👇
   },
 }

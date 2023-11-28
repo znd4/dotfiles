@@ -8,6 +8,7 @@ local ensure_installed = {
   "kotlin",
   "lua",
   "markdown",
+  "markdown_inline",
   "org",
   "python",
   "sql",
