@@ -1,4 +1,5 @@
 -- vim.env.CURL_CA_BUNDLE = "/Library/Application Support/Netskope/STAgent/download/nscacert.pem"
+require("env")
 require("set")
 
 vim.g.mapleader = " "
