@@ -87,6 +87,7 @@ BREW_PACKAGES = [
     "kubernetes-cli",
     "lazygit",
     "neovim",
+    "pandoc",
     "pdm",
     "pipenv",
     "pipx",
