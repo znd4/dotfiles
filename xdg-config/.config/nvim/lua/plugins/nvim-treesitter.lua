@@ -16,6 +16,8 @@ local ensure_installed = {
 }
 local leader = "<leader>"
 
+vim.g.skip_ts_context_commentstring_module = true
+
 return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
@@ -149,9 +151,6 @@ return {
         },
       },
       indent = {
-        enable = true,
-      },
-      context_commentstring = {
         enable = true,
       },
     })
