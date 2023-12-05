@@ -153,7 +153,7 @@ async def run(
 
 
 async def pipx_stuff():
-    pylsp = pipx_install("python-lsp-server[rope]")
+    pylsp = pipx_install("python-lsp-server[rope]", python="python3.11")
 
     rest = pipx_install("pre-commit", "black", "isort", "ruff", "nox")
     await pylsp
@@ -711,7 +711,7 @@ def pipx_cmd(*args: str) -> list[str]:
     return [str(brew_path("pipx")), *args]
 
 
-async def pipx_install(*packages):
+async def pipx_install(*packages, python=None):
     installed = set(
         json.loads(
             (
@@ -725,9 +725,12 @@ async def pipx_install(*packages):
     )
 
     def to_install_cmd(package):
+        cmd = []
+        if python:
+            cmd.extend(["--python", python])
         if isinstance(package, str):
-            return pipx_cmd("install", package)
-        return pipx_cmd("install", *package)
+            return cmd + pipx_cmd("install", package)
+        return cmd + pipx_cmd("install", *package)
 
     await gather(
         *(
