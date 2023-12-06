@@ -725,12 +725,12 @@ async def pipx_install(*packages, python=None):
     )
 
     def to_install_cmd(package):
-        cmd = []
+        cmd = ["install"]
         if python:
             cmd.extend(["--python", python])
         if isinstance(package, str):
-            return cmd + pipx_cmd("install", package)
-        return cmd + pipx_cmd("install", *package)
+            return cmd + pipx_cmd(package)
+        return cmd + pipx_cmd(*package)
 
     await gather(
         *(
