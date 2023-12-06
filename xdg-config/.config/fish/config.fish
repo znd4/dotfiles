@@ -22,6 +22,7 @@ function interactive_setup
 
     set -g fish_function_path $HOME/.config/fish/functions $fish_function_path
 
+    thefuck --alias | source
 
     set -gx EDITOR nvim
 
