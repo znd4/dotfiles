@@ -1,4 +1,4 @@
-local vault_path = vim.fn.expand("$OBSIDIAN_VAULT") or vim.fn.expand("~") .. "/obsidian-vault"
+local vault_path = os.getenv("OBSIDIAN_VAULT") or vim.fn.expand("~") .. "/obsidian-vault"
 return {
   "epwalsh/obsidian.nvim",
   version = "*", -- recommended, use latest release instead of latest commit
