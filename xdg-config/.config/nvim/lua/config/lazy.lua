@@ -452,7 +452,6 @@ require("lazy").setup({
         auto_format = false,
         auto_lint = false,
         notify = true,
-        auto_format = false,
         lint_prompt_style = "vt",
         -- auto_lint = false,
       })
