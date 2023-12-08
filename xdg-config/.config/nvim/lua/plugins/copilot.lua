@@ -3,7 +3,7 @@ return {
   priority = 101,
   config = function()
     -- TODO - run this in the background
-    vim.cmd.Copilot("restart")
+    -- vim.cmd.Copilot("restart")
 
     vim.keymap.set(
       "i",
