@@ -7,6 +7,7 @@ local ensure_installed = {
   "jsonnet_ls",
   "ltex",
   "marksman",
+  "pyright",
   "tsserver",
   "helm_ls",
   "rnix",
@@ -164,16 +165,25 @@ lsp_zero.configure("yamlls", {
 -- code to be profiled
 local enabled = { enabled = true }
 
-lsp_zero.configure("pylsp", {
-  cmd = { "pylsp", "--verbose", "--log-file", "/tmp/pylsp.log" },
+-- lsp_zero.configure("pylsp", {
+--   cmd = { "pylsp", "--verbose", "--log-file", "/tmp/pylsp.log" },
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--         ruff = enabled,
+--         rope = enabled,
+--         rope_autoimport = enabled,
+--         -- isort = enabled,
+--         -- black = enabled,
+--       },
+--     },
+--   },
+-- })
+lsp_zero.configure("pyright", {
   settings = {
-    pylsp = {
-      plugins = {
-        ruff = enabled,
-        rope = enabled,
-        rope_autoimport = enabled,
-        -- isort = enabled,
-        -- black = enabled,
+    python = {
+      analysis = {
+        diagnosticMode = "workspace",
       },
     },
   },
@@ -270,7 +280,7 @@ require("mason-lspconfig").setup({
   handlers = {
     lsp_zero.default_setup,
     ltex = lsp_zero.noop,
-    pyright = lsp_zero.noop,
+    pylsp = lsp_zero.noop,
     gopls = function()
       require("lspconfig").gopls.setup(gopls_settings)
     end,
