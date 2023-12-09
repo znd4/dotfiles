@@ -136,7 +136,7 @@ def main():
     )
     if shutil.which("apt-get"):
         for ppa in APT_PPAS:
-            pyinfra.operations.apt.ppa(ppa)
+            pyinfra.operations.apt.ppa(ppa, _sudo=True)
         pyinfra.operations.apt.packages(packages=apt_pkgs, _sudo=True)
 
     for tap in BREW_TAPS:
