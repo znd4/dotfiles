@@ -51,6 +51,7 @@ if not HEADLESS:
         [
             "fonts-firacode",
             "libgmp-dev",
+            "appimagelauncher",
         ]
     )
 APT_OR_BREW = [
@@ -124,12 +125,18 @@ if not HEADLESS:
         ]
     )
 
+APT_PPAS = []
+if not HEADLESS:
+    APT_PPAS.extend(["ppa:appimagelauncher-team/stable"])
+
 
 def main():
     apt_pkgs, brew_pkgs = process_apt_or_brew(
         APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
     )
     if shutil.which("apt-get"):
+        for ppa in APT_PPAS:
+            pyinfra.operations.apt.ppa(ppa)
         pyinfra.operations.apt.packages(packages=apt_pkgs, _sudo=True)
 
     for tap in BREW_TAPS:
