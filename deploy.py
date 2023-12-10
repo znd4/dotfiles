@@ -116,12 +116,12 @@ if not HEADLESS:
 
     BREW_PACKAGES.extend(
         [
-            "texlive",
+            "doctl",
+            "font-fira-code",
             "font-symbols-only-nerd-font",
             "font-victor-mono",
             "font-victor-mono-nerd-font",
-            "font-fira-code",
-            # "font-fira-code-nerd-font",
+            "texlive",
         ]
     )
 
