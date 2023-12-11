@@ -4,7 +4,6 @@ import shutil
 import site
 from pathlib import Path
 
-from pyinfra.operations import apt
 import pyinfra
 from pyinfra import operations, facts, host
 import shlex
@@ -77,6 +76,7 @@ BREW_PACKAGES = [
     "git-delta",
     "git-lfs",
     "glab",
+    "glow",
     "go",
     "gum",
     "hatch",
