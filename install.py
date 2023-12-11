@@ -19,6 +19,15 @@ INSTALL_KMONAD = (not HEADLESS) and os.getenv(
     "INSTALL_KMONAD", "true"
 ).lower() == "true"
 LOCAL_BIN = Path.home() / ".local" / "bin"
+OPAM_PACKAGES = [
+    "dune",
+    "merlin",
+    "ocaml-lsp-server",
+    "odoc",
+    "ocamlformat",
+    "utop",
+    "dune-release",
+]
 
 
 async def main():
@@ -49,6 +58,12 @@ async def main():
     kmonad()
 
     symlink_fonts()
+    sp.check_call(["opam", "init", "-n"], stdin=sys.stdin)
+    sp.check_call(
+        " ".join(["eval $(opam env) && opam install --yes", *OPAM_PACKAGES]),
+        shell=True,
+        executable=shutil.which("bash"),
+    )
 
 
 async def fisher_update():
