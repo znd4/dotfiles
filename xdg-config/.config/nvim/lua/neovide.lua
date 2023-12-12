@@ -11,11 +11,12 @@ local function get_background_color()
 end
 
 vim.cmd.cd()
-vim.g.neovide_transparency = 0.0
-vim.g.transparency = 0.95
 vim.g.magic = true
-vim.g.neovide_fullscreen = true
 vim.g.neovide_confirm_quit = true
-vim.g.neovide_background_color = get_background_color()
 vim.g.neovide_input_macos_alt_is_meta = true
 vim.g.neovide_input_use_logo = true
+vim.g.neovide_transparency = 0.0
+vim.g.transparency = 0.95
+vim.g.neovide_remember_window_size = true
+
+vim.g.neovide_background_color = get_background_color()
