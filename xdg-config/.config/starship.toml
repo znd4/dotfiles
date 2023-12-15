@@ -43,6 +43,7 @@ format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
 [kubernetes]
 symbol = "󱃾 "
 format = '[[ $symbol ($context $namespace) ](fg:#769ff0 bg:#212736)]($style)'
+detect_files = ["k8s", "overlays", "skaffold.yaml"]
 disabled = false
 
 [python]
