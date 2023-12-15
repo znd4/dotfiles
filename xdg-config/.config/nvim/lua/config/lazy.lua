@@ -488,6 +488,9 @@ require("lazy").setup({
     },
     tag = "nightly", -- optional, updated every week. (see issue #1193)
     config = {
+      view = {
+        side = "right",
+      },
       open_on_setup = false,
       sync_root_with_cwd = true,
       -- respect_buf_cwd = false,

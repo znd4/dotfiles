@@ -301,6 +301,11 @@ require("luasnip.loaders.from_snipmate").lazy_load()
 local cmp = require("cmp")
 local cmp_action = require("lsp-zero").cmp_action()
 
+local fuzzy_path = {
+  name = "fuzzy_path",
+  option = { fd_timeout_msec = 600 },
+}
+
 local cmp_config = lsp_zero.defaults.cmp_config({
   completion = {
     keyword_length = 1,
@@ -315,9 +320,13 @@ local cmp_config = lsp_zero.defaults.cmp_config({
     ["<C-b>"] = cmp_action.luasnip_jump_backward(),
   }),
   sources = cmp.config.sources({
-    { name = "nvim_lsp" },
+    {
+      name = "nvim_lsp",
+    },
     { name = "nvim_lua" },
-    { name = "fuzzy_path" },
+  }, {
+    { name = "path" },
+    fuzzy_path,
     { name = "git" },
     { name = "emoji" },
     { name = "fuzzy_buffer" },
@@ -340,6 +349,7 @@ cmp.setup.cmdline({ "/", "?" }, {
   mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
     { name = "fuzzy_buffer" },
+  }, {
     { name = "cmdline_history" },
   }),
 })
@@ -347,7 +357,8 @@ cmp.setup.cmdline({ "/", "?" }, {
 cmp.setup.cmdline(":", {
   mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
-    { name = "fuzzy_path" },
+    { name = "path" },
+  }, { fuzzy_path }, {
     { name = "cmdline" },
     { name = "cmdline_history" },
   }),

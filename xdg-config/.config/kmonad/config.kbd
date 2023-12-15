@@ -314,6 +314,7 @@
   mvmt (tap-next-release semicolon (layer-toggle movement))
 
   nums (layer-toggle numbers)
+  rais (layer-toggle raise)  ;; Bind raise to a button that switches to a layer
 
   jgui (tap-hold-next-release 400 j lmet)
   kalt (tap-hold-next-release 400 k lalt)
@@ -331,7 +332,7 @@
   tab   q    w     e     r     t    y    u     i     o     p     [    ]    \
   @xcp  a    @sctl @dalt @fgui g    h    @jgui @kalt @lctl @mvmt '    ret
   sft   z    x     c     v     b    n    m     ,     .     /     sft
-  wkup  lctl lmet  @nums           spc          ralt  sys   rctl  pgdn up   pgup
+  wkup  lctl lmet  @nums           spc         @rais sys   rctl  pgdn up   pgup
                                                                  left down rght
 )
 
@@ -380,13 +381,22 @@
 (deflayer numbers
   _    _    _    _    _    _    _    _    _    _     _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _     _    _    _    _
-  _    _    _    _    _    _    _    _    _    _     _    _    _    _
+  _    !    @    #    $    %    ^    &    *    _     _    _    _    _
   _    1    2    3    4    5    6    7    8    9     0    _    _
   _    _    _    _    _    _    _    _    _    _     _    _
   _    _    _    _              _              _    _     _    _    _    _
                                                           _    _    _
 )
 
+(deflayer raise
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  _    _    _
+  _    _    {    [    \(   _    _    \)   ]    }    _    _    _
+  _    _    _    _    _    _    _    _    _    _     _    _
+  _    _    _    _              _              _    _     _    _    _    _
+                                                          _    _    _
+)
 
 #| --------------------------------------------------------------------------
                           Optional: modded buttons

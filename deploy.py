@@ -4,7 +4,6 @@ import shutil
 import site
 from pathlib import Path
 
-from pyinfra.operations import apt
 import pyinfra
 from pyinfra import operations, facts, host
 import shlex
@@ -51,6 +50,7 @@ if not HEADLESS:
         [
             "fonts-firacode",
             "libgmp-dev",
+            "appimagelauncher",
         ]
     )
 APT_OR_BREW = [
@@ -76,6 +76,7 @@ BREW_PACKAGES = [
     "git-delta",
     "git-lfs",
     "glab",
+    "glow",
     "go",
     "gum",
     "hatch",
@@ -87,6 +88,7 @@ BREW_PACKAGES = [
     "kubernetes-cli",
     "lazygit",
     "neovim",
+    "opam",
     "pandoc",
     "pdm",
     "pipenv",
@@ -115,14 +117,18 @@ if not HEADLESS:
 
     BREW_PACKAGES.extend(
         [
-            "texlive",
+            "doctl",
+            "font-fira-code",
             "font-symbols-only-nerd-font",
             "font-victor-mono",
             "font-victor-mono-nerd-font",
-            "font-fira-code",
-            # "font-fira-code-nerd-font",
+            "texlive",
         ]
     )
+
+APT_PPAS = []
+if not HEADLESS:
+    APT_PPAS.extend(["ppa:appimagelauncher-team/stable"])
 
 
 def main():
@@ -130,6 +136,8 @@ def main():
         APT_OR_BREW, UBUNTU_PACKAGES, BREW_PACKAGES
     )
     if shutil.which("apt-get"):
+        for ppa in APT_PPAS:
+            pyinfra.operations.apt.ppa(ppa, _sudo=True)
         pyinfra.operations.apt.packages(packages=apt_pkgs, _sudo=True)
 
     for tap in BREW_TAPS:
