@@ -17,8 +17,6 @@ link: python3
     import subprocess as sp
     import os
     import pathlib
-    HERE = pathlib.Path(__file__).parent
-    print(f"{HERE=}")
 
     if not shutil.which("stow"):
         sp.check_call(["brew", "install", "stow"])
@@ -49,10 +47,17 @@ link: python3
         sp.check_call([*cmd, f"--target={pathlib.Path.home()}", package])
 
     for package, target in [
-        "vendors" / "fzf" / "bin",
-        pathlib.Path.home() / '.local' / 'bin',
+        (
+            pathlib.Path("vendors") / "fzf" / "bin",
+            pathlib.Path.home() / '.local' / 'bin',
+        ),
     ]:
-        sp.check_call([*cmd, f"--target={target}", package])
+        sp.check_call([
+            *cmd,
+            f"--target={target}",
+            package.name,
+            f"--dir={package.parent}",
+        ])
 
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
