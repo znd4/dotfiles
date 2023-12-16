@@ -21,7 +21,7 @@ return {
     -- "BufNewFile path/to/my-vault/**.md",
   },
   keys = {
-    { "<leader>c", ":e " .. vault_path .. "/Capture.md<CR>Go- [ ] " },
+    { "<leader>c", ":e " .. vault_path .. "/Capture.md<CR>Go- TODO " },
     { "<leader>os", vim.cmd.ObsidianSearch },
     { "<leader>on", vim.cmd.ObsidianQuickSwitch },
   },
