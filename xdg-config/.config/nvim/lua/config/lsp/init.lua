@@ -1,6 +1,7 @@
 local ensure_installed = {
   "bashls",
   "bufls",
+  "clojure_lsp",
   "eslint",
   "gopls",
   "helm_ls",
