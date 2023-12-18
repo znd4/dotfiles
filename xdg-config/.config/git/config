@@ -41,7 +41,7 @@ rebase = false
 
 [core]
 	sshCommand = ssh -o StrictHostKeyChecking=no
-	excludesfile = ~/.config/git/ignore
+	excludesfile = ~/.gitignore_global
 	pager = delta
 
 [interactive]
