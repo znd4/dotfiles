@@ -1,0 +1,3 @@
+[submodule "vendors/fzf"]
+	path = vendors/fzf
+	url = https://github.com/junegunn/fzf

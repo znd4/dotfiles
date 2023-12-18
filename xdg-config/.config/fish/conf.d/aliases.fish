@@ -3,6 +3,8 @@ alias g=git
 
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
+alias kyaml="kubectl get -o yaml"
+
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
@@ -64,18 +66,18 @@ alias ipy39="python3.9 -m IPython"
 alias ipy310="python3.10 -m IPython"
 
 # Signal Desktop App
-if test (uname -s) = "Darwin";
+if test (uname -s) = Darwin
     alias signal="/Applications/Signal.app/Contents/MacOS/Signal"
 end
 
 # py3x
-if which py > /dev/null;
+if which py >/dev/null
     alias py3="py -3"
     alias py36="py -3.6"
     alias py37="py -3.7"
     alias py38="py -3.8"
     alias py39="py -3.9"
     alias py310="py -3.10"
-else;
+else
     echo "python-launcher not installed. brew install python-launcher"
 end
