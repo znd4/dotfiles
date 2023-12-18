@@ -1,6 +1,9 @@
 default:
     ./install
 
+submodules:
+    git submodule update --init --recursive
+
 python3:
     just guarantee python3
 
@@ -11,7 +14,7 @@ adopt: python3
 unlink:
     STOW_DELETE=1 just link
 
-link: python3
+link: python3 submodules
     #!/usr/bin/env python
     import shutil
     import subprocess as sp
