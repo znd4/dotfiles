@@ -16,7 +16,8 @@ return {
       json = { prettier },
       jsonnet = { "jsonnetfmt" },
       javascript = { prettier },
-      markdown = { prettier },
+      -- we've got marksman now
+      -- markdown = { prettier },
     },
     formatters = {
       jsonnetfmt = {
