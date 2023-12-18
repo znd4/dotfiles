@@ -104,6 +104,7 @@ BREW_PACKAGES = [
     "tmux",
     "yq",
     "zellij",
+    "zk",
     "zsh",
 ]
 

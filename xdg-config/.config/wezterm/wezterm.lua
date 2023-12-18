@@ -54,12 +54,19 @@ local zellij_prog = {
   "-c",
   "zellij attach --create dotfiles",
 }
-config.default_prog = zellij_prog
+local tmux_prog = {
+  "zsh",
+  "--login",
+  "--interactive",
+  "-c",
+  "SHELL=~/homebrew/bin/fish tmux new -Asdotfiles",
+}
+config.default_prog = tmux_prog
 
 config.launch_menu = {
   {
     label = "tmux",
-    args = { "zsh", "--login", "-c", "tmux new -Asdotfiles" },
+    args = tmux_prog,
   },
   {
     label = "zellij",

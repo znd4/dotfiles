@@ -21,7 +21,7 @@ link: python3
     if not shutil.which("stow"):
         sp.check_call(["brew", "install", "stow"])
 
-    cmd = ["stow", f"--target={pathlib.Path.home()}"]
+    cmd = ["stow"]
     if os.environ.get("STOW_ADOPT", False):
         cmd.append("--adopt")
 
@@ -44,8 +44,20 @@ link: python3
         "zellij",
         "zsh",
     ]:
-        sp.check_call([*cmd, package])
+        sp.check_call([*cmd, f"--target={pathlib.Path.home()}", package])
 
+    for package, target in [
+        (
+            pathlib.Path("vendors") / "fzf" / "bin",
+            pathlib.Path.home() / '.local' / 'bin',
+        ),
+    ]:
+        sp.check_call([
+            *cmd,
+            f"--target={target}",
+            package.name,
+            f"--dir={package.parent}",
+        ])
 
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
