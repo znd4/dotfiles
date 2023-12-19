@@ -11,6 +11,7 @@ export FZF_DEFAULT_OPTS="--cycle"
 export SKIM_CTRL_T_COMMAND="fd --hidden"
 export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND?}"
 export SKIM_DEFAULT_OPTS=${FZF_DEFAULT_OPTS?}
+export PAGER=more
 
 export ZK_NOTEBOOK_DIR="$HOME/Documents/zane"
 

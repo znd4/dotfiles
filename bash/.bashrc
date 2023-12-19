@@ -13,7 +13,6 @@ eval "$(starship init bash)"
 eval "$(fnm env --use-on-cd)"
 
 ###environment variables
-export PAGER=bat
 
 # Aliasrc is where  we put a bunch of our aliases
 . "$HOME/.aliasrc"
