@@ -90,6 +90,7 @@ BREW_PACKAGES = [
     "neovim",
     "opam",
     "pandoc",
+    "parallel",
     "pdm",
     "pipenv",
     "pipx",
