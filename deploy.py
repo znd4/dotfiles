@@ -66,6 +66,7 @@ BREW_PACKAGES = [
     "aws-shell",
     "bat",
     "black",
+    "cheat",
     "clipboard",
     "cookiecutter",
     "copier",
