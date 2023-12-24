@@ -1,3 +1,6 @@
 [submodule "vendors/fzf"]
 	path = vendors/fzf
 	url = https://github.com/junegunn/fzf
+[submodule "vendors/xh"]
+	path = vendors/xh
+	url = https://github.com/ducaale/xh

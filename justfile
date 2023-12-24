@@ -54,6 +54,10 @@ link: python3 submodules
             pathlib.Path("vendors") / "fzf" / "bin",
             pathlib.Path.home() / '.local' / 'bin',
         ),
+        (
+            pathlib.Path("vendors") / "xh" / "completions",
+            pathlib.Path.home() / ".config" / "fish" / "completions",
+        ),
     ]:
         sp.check_call([
             *cmd,
