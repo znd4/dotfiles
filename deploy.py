@@ -102,6 +102,7 @@ BREW_PACKAGES = [
     "rustup-init",
     "starship",
     "stylua",
+    "siderolabs/talos/talosctl",
     "thefuck",
     "tmux",
     "yq",
