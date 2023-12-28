@@ -5,7 +5,7 @@ local ensure_installed = {
   "eslint",
   "gopls",
   "helm_ls",
-  "html-lsp",
+  "html",
   "jsonls",
   "jsonnet_ls",
   "ltex",
