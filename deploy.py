@@ -104,6 +104,7 @@ BREW_PACKAGES = [
     "starship",
     "stylua",
     "siderolabs/talos/talosctl",
+    "task",
     "thefuck",
     "tmux",
     "yq",
