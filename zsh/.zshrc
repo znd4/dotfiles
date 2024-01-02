@@ -220,3 +220,5 @@ add_to_path "$HOME/.local/bin"
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 command -v kompose >/dev/null && eval "$(kompose completion zsh)"
+
+source_if_exists $HOME/.config/broot/launcher/bash/br
