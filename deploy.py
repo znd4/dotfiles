@@ -108,6 +108,7 @@ BREW_PACKAGES = [
     "task",
     "thefuck",
     "tmux",
+    "xh",
     "yq",
     "zellij",
     "zk",
