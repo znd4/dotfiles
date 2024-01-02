@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 /xdg-config/.config/fish/fish_variables
 /xdg-config/.config/fish/functions
+
+/.envrc
