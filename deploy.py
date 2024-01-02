@@ -5,6 +5,7 @@ import shutil
 import site
 from pathlib import Path
 from install import skip_if
+import json
 
 import pyinfra
 from pyinfra import operations, facts, host
@@ -24,7 +25,7 @@ NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
-IS_WORK_LAPTOP = os.getenv("IS_WORK_LAPTOP", "false").lower() == "true"
+IS_WORK_LAPTOP = json.loads(os.getenv("IS_WORK_LAPTOP", "false"))
 
 
 UBUNTU_PACKAGES = [
