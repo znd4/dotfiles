@@ -4,6 +4,7 @@ import platform
 import shutil
 import site
 from pathlib import Path
+from install import skip_if
 
 import pyinfra
 from pyinfra import operations, facts, host
@@ -23,6 +24,7 @@ NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
+IS_WORK_LAPTOP = os.getenv("IS_WORK_LAPTOP", "false").lower() == "true"
 
 
 UBUNTU_PACKAGES = [
@@ -260,6 +262,8 @@ Host {{ hostname }}
 """
 
 
+@skip_if(HEADLESS)
+@skip_if(IS_WORK_LAPTOP)
 def populate_local_ssh_config():
     local_ssh_config = home() / ".ssh" / "config.d" / "local"
     pyinfra.operations.files.template(
@@ -269,6 +273,8 @@ def populate_local_ssh_config():
     )
 
 
+@skip_if(HEADLESS)
+@skip_if(IS_WORK_LAPTOP)
 def populate_ssh_credentials():
     ssh_keys = home() / ".ssh" / "keys"
     ssh_keys.mkdir(parents=True, exist_ok=True)
