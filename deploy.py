@@ -1,3 +1,4 @@
+import io
 import os
 import platform
 import shutil
@@ -66,6 +67,8 @@ BREW_PACKAGES = [
     "aws-shell",
     "bat",
     "black",
+    "broot",
+    "cheat",
     "clipboard",
     "cookiecutter",
     "copier",
@@ -90,6 +93,7 @@ BREW_PACKAGES = [
     "neovim",
     "opam",
     "pandoc",
+    "parallel",
     "pdm",
     "pipenv",
     "pipx",
@@ -100,6 +104,8 @@ BREW_PACKAGES = [
     "rustup-init",
     "starship",
     "stylua",
+    "siderolabs/talos/talosctl",
+    "task",
     "thefuck",
     "tmux",
     "yq",
@@ -147,6 +153,8 @@ def main():
     print("starting the async stuff")
     install_pyenv()
     cargo_install(CARGO_PACKAGES)
+    populate_local_ssh_config()
+    populate_ssh_credentials()
 
 
 def cargo_install(cargo_packages: list[str]):
@@ -166,8 +174,12 @@ def cargo_install(cargo_packages: list[str]):
         run_remote(["cargo", "install", package], _env=_env)
 
 
+def home():
+    return Path(host.get_fact(facts.server.Home))
+
+
 def install_pyenv():
-    pyenv_root = Path.home() / ".pyenv"
+    pyenv_root = home() / ".pyenv"
     if not pyenv_root.is_dir():
         operations.git.repo(
             "https://github.com/pyenv/pyenv.git",
@@ -227,6 +239,55 @@ def process_apt_or_brew(
     else:
         raise RuntimeError("No apt or brew found")
     return apt, brew
+
+
+SERVER_HOSTNAMES = (
+    "rpi4-1",
+    "rpi4-2",
+    "rpi5-1",
+    "desktop",
+)
+
+
+LOCAL_SSH_TEMPLATE = """
+{%- for hostname in hostnames %}
+Host {{ hostname }}
+    HostName {{ hostname }}.local
+    IdentityFile ~/.ssh/keys/{{ hostname }}.local
+    User znd4
+{% endfor %}
+"""
+
+
+def populate_local_ssh_config():
+    local_ssh_config = home() / ".ssh" / "config.d" / "local"
+    pyinfra.operations.files.template(
+        io.StringIO(LOCAL_SSH_TEMPLATE),
+        str(local_ssh_config),
+        hostnames=SERVER_HOSTNAMES,
+    )
+
+
+def populate_ssh_credentials():
+    ssh_keys = home() / ".ssh" / "keys"
+    ssh_keys.mkdir(parents=True, exist_ok=True)
+    for hostname in SERVER_HOSTNAMES:
+        pub_key_file = ssh_keys / f"{hostname}.local"
+
+        pub_key_val = host.get_fact(
+            pyinfra.facts.server.Command,
+            shlex.join(["op", "read", f"op://private/{hostname}.local/public key"]),
+        )
+        pyinfra.operations.files.put(
+            io.StringIO(pub_key_val),
+            str(pub_key_file),
+        )
+        pyinfra.operations.files.file(
+            str(pub_key_file),
+            user="znd4",
+            # group="znd4",
+            mode="0600",
+        )
 
 
 main()
