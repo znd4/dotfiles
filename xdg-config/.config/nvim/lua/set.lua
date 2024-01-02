@@ -16,6 +16,10 @@ vim.g.editorconfig = true
 -- set autoindent
 vim.opt.smartindent = true
 
+-- go away swapfiles
+vim.opt.swapfile = false
+vim.opt.undofile = true
+
 -- line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
