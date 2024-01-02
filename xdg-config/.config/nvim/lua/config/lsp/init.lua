@@ -181,15 +181,6 @@ local enabled = { enabled = true }
 --     },
 --   },
 -- })
-lsp_zero.configure("pyright", {
-  settings = {
-    python = {
-      analysis = {
-        diagnosticMode = "workspace",
-      },
-    },
-  },
-})
 
 lsp_zero.configure("tsserver", {
   on_init = disableFormatting,
@@ -292,6 +283,17 @@ require("mason-lspconfig").setup({
     lua_ls = function()
       local lua_opts = lsp_zero.nvim_lua_ls({ on_init = disableFormatting })
       require("lspconfig").lua_ls.setup(lua_opts)
+    end,
+    pyright = function()
+      require("lspconfig").pyright.setup({
+        settings = {
+          python = {
+            analysis = {
+              diagnosticMode = "workspace",
+            },
+          },
+        },
+      })
     end,
   },
 })
