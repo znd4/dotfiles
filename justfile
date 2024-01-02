@@ -24,7 +24,7 @@ link: python3 submodules
     if not shutil.which("stow"):
         sp.check_call(["brew", "install", "stow"])
 
-    cmd = ["stow"]
+    cmd = ["stow", "--no-folding"]
     if os.environ.get("STOW_ADOPT", False):
         cmd.append("--adopt")
 
@@ -59,12 +59,14 @@ link: python3 submodules
             pathlib.Path.home() / ".config" / "fish" / "completions",
         ),
     ]:
-        sp.check_call([
+        command=[
             *cmd,
             f"--target={target}",
             package.name,
             f"--dir={package.parent}",
-        ])
+        ]
+        print(f"{command=}")
+        sp.check_call(command)
 
     if os.environ.get("STOW_ADOPT", False):
         sp.check_call(["git", "stash"])
