@@ -11,6 +11,8 @@ adopt: python3
     #!/usr/bin/env bash
     STOW_ADOPT=1 just link
 
+alias d := delete
+alias delete := unlink
 unlink:
     STOW_DELETE=1 just link
 
