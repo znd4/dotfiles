@@ -38,6 +38,7 @@ link: python3 submodules
         "asdf",
         "autostart",
         "bash",
+        "fish",
         "git",
         "go",
         "macos",
