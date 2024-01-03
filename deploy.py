@@ -89,6 +89,7 @@ BREW_PACKAGES = [
     "helm",
     "httpie",
     "isort",
+    "jc",
     "just",
     "kpt",
     "kubernetes-cli",
