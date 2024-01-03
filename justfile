@@ -63,7 +63,7 @@ link: python3 submodules
             pathlib.Path.home() / ".config" / "fish" / "completions",
         ),
     ]:
-        shutil.mkdir(target, parents=True, exist_ok=True)
+        os.makedirs(target, exist_ok=True)
         command=[
             *cmd,
             f"--target={target}",
