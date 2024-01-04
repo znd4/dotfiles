@@ -1,3 +1,3 @@
 
 #Auto-Complete function for AWSume
-complete --command awsume --arguments '(awsume-autocomplete)'
+complete -f --command awsume --arguments '(awsume-autocomplete)'
