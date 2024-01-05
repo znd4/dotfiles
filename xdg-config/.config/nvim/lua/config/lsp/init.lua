@@ -157,7 +157,7 @@ local yamlls_settings = {
       ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
     },
     format = {
-      enable = true,
+      enable = false,
     },
   },
 }
