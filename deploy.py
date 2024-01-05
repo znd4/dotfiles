@@ -1,8 +1,11 @@
+import io
 import os
 import platform
 import shutil
 import site
 from pathlib import Path
+from install import skip_if
+import json
 
 import pyinfra
 from pyinfra import operations, facts, host
@@ -22,6 +25,7 @@ NIX_ENV_PACKAGES = ["myPackages"]
 INSTALL_TEXLIVE = os.getenv("INSTALL_TEXLIVE", "true").lower() == "true"
 
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
+IS_WORK_LAPTOP = json.loads(os.getenv("IS_WORK_LAPTOP", "false"))
 
 
 UBUNTU_PACKAGES = [
@@ -85,6 +89,7 @@ BREW_PACKAGES = [
     "helm",
     "httpie",
     "isort",
+    "jc",
     "just",
     "kpt",
     "kubernetes-cli",
@@ -107,6 +112,7 @@ BREW_PACKAGES = [
     "task",
     "thefuck",
     "tmux",
+    "xh",
     "yq",
     "zellij",
     "zk",
@@ -152,6 +158,8 @@ def main():
     print("starting the async stuff")
     install_pyenv()
     cargo_install(CARGO_PACKAGES)
+    populate_local_ssh_config()
+    populate_ssh_credentials()
 
 
 def cargo_install(cargo_packages: list[str]):
@@ -171,8 +179,12 @@ def cargo_install(cargo_packages: list[str]):
         run_remote(["cargo", "install", package], _env=_env)
 
 
+def home():
+    return Path(host.get_fact(facts.server.Home))
+
+
 def install_pyenv():
-    pyenv_root = Path.home() / ".pyenv"
+    pyenv_root = home() / ".pyenv"
     if not pyenv_root.is_dir():
         operations.git.repo(
             "https://github.com/pyenv/pyenv.git",
@@ -232,6 +244,59 @@ def process_apt_or_brew(
     else:
         raise RuntimeError("No apt or brew found")
     return apt, brew
+
+
+SERVER_HOSTNAMES = (
+    "rpi4-1",
+    "rpi4-2",
+    "rpi5-1",
+    "desktop",
+)
+
+
+LOCAL_SSH_TEMPLATE = """
+{%- for hostname in hostnames %}
+Host {{ hostname }}
+    HostName {{ hostname }}.local
+    IdentityFile ~/.ssh/keys/{{ hostname }}.local
+    User znd4
+{% endfor %}
+"""
+
+
+@skip_if(HEADLESS)
+@skip_if(IS_WORK_LAPTOP)
+def populate_local_ssh_config():
+    local_ssh_config = home() / ".ssh" / "config.d" / "local"
+    pyinfra.operations.files.template(
+        io.StringIO(LOCAL_SSH_TEMPLATE),
+        str(local_ssh_config),
+        hostnames=SERVER_HOSTNAMES,
+    )
+
+
+@skip_if(HEADLESS)
+@skip_if(IS_WORK_LAPTOP)
+def populate_ssh_credentials():
+    ssh_keys = home() / ".ssh" / "keys"
+    ssh_keys.mkdir(parents=True, exist_ok=True)
+    for hostname in SERVER_HOSTNAMES:
+        pub_key_file = ssh_keys / f"{hostname}.local"
+
+        pub_key_val = host.get_fact(
+            pyinfra.facts.server.Command,
+            shlex.join(["op", "read", f"op://private/{hostname}.local/public key"]),
+        )
+        pyinfra.operations.files.put(
+            io.StringIO(pub_key_val),
+            str(pub_key_file),
+        )
+        pyinfra.operations.files.file(
+            str(pub_key_file),
+            user="znd4",
+            # group="znd4",
+            mode="0600",
+        )
 
 
 main()

@@ -135,6 +135,9 @@ local yamlls_settings = {
       enabled = true,
     },
   },
+  editor = {
+    tabSize = 2,
+  },
   yaml = {
     customTags = {
       "!Sub",
@@ -144,6 +147,7 @@ local yamlls_settings = {
     },
     schemas = {
       ["Kubernetes"] = "/overlays/**/*",
+      ["https://squidfunk.github.io/mkdocs-material/schema.json"] = { "mkdocs.yml" },
       ["https://json.schemastore.org/kustomization.json"] = { "kustomization.yaml" },
       ["https://json.schemastore.org/circleciconfig.json"] = {
         "/.circleci/config.*",
@@ -153,7 +157,7 @@ local yamlls_settings = {
       ["https://json.schemastore.org/codecov.json"] = "/.codecov.yml",
     },
     format = {
-      enable = true,
+      enable = false,
     },
   },
 }
@@ -182,15 +186,6 @@ local enabled = { enabled = true }
 --     },
 --   },
 -- })
-lsp_zero.configure("pyright", {
-  settings = {
-    python = {
-      analysis = {
-        diagnosticMode = "workspace",
-      },
-    },
-  },
-})
 
 lsp_zero.configure("tsserver", {
   on_init = disableFormatting,
@@ -293,6 +288,17 @@ require("mason-lspconfig").setup({
     lua_ls = function()
       local lua_opts = lsp_zero.nvim_lua_ls({ on_init = disableFormatting })
       require("lspconfig").lua_ls.setup(lua_opts)
+    end,
+    pyright = function()
+      require("lspconfig").pyright.setup({
+        settings = {
+          python = {
+            analysis = {
+              diagnosticMode = "workspace",
+            },
+          },
+        },
+      })
     end,
   },
 })

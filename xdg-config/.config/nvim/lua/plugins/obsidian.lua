@@ -21,7 +21,17 @@ return {
     -- "BufNewFile path/to/my-vault/**.md",
   },
   keys = {
-    { "<leader>c", ":e " .. vault_path .. "/Capture.md<CR>Go- TODO " },
+    {
+      "<leader>c",
+      function()
+        local Path = require("plenary.path")
+        local fp = Path:new(vault_path):joinpath("journals", os.date("%Y_%m_%d.md"))
+        fp:touch()
+        vim.cmd.edit(fp:absolute())
+        -- emit 'Go- TODO ' after opening the file
+        vim.api.nvim_feedkeys("Go- TODO ", "n", true)
+      end,
+    },
     { "<leader>os", vim.cmd.ObsidianSearch },
     { "<leader>on", vim.cmd.ObsidianQuickSwitch },
   },
