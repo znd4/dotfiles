@@ -1,7 +1,7 @@
 (
  (command
    name: (command_name) @_command
-   (#eq? @_command "jq")
+   (#match? @_command "jq|yq")
    argument: (raw_string) @jq
  )
  ;; Don't include the quotes in the capture
