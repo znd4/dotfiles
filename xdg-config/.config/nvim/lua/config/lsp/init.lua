@@ -135,6 +135,9 @@ local yamlls_settings = {
       enabled = true,
     },
   },
+  editor = {
+    tabSize = 2,
+  },
   yaml = {
     customTags = {
       "!Sub",
