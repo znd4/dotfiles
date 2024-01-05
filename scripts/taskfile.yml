@@ -1,0 +1,46 @@
+version: 3
+tasks:
+  set-hostname:
+    vars:
+      HOSTNAME: ""
+    status:
+      - hostname
+      - $(hostname) = {{.HOSTNAME}}
+    cmds:
+      - sudo apt-get update && sudo apt-get install -y avahi-daemon
+      - sudo hostnamectl set-hostname {{.HOSTNAME}}
+    
+  create-ssh-public-key:
+    vars:
+      HOSTNAME: ""
+    cmds:
+      - >
+        op item create 
+        --category ssh-key
+        --title {{.HOSTNAME}}.local
+        --ssh-generate-key
+
+    status:
+      - op read "op://private/{{.HOSTNAME}}.local/public key"
+      
+  set-authorized-keys:
+    vars:
+      HOSTNAME: ""
+    cmds:
+      - task: create-ssh-public-key
+        vars: { HOSTNAME: {{.HOSTNAME}} }
+      - op read
+        
+    preconditions:
+      - sh: op whoami
+        msg: Please install 1password-cli and log in
+      - op item get "op://private/{{.HOSTNAME}}.local/public key"
+
+  ssh-setup:
+    vars:
+      HOSTNAME: ""
+    cmds:
+      - task: set-hostname
+        vars: { HOSTNAME: {{.HOSTNAME}} }
+      - >
+        task -g get-ssh-public-key
