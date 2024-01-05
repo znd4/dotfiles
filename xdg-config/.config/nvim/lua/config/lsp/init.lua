@@ -144,6 +144,7 @@ local yamlls_settings = {
     },
     schemas = {
       ["Kubernetes"] = "/overlays/**/*",
+      ["https://squidfunk.github.io/mkdocs-material/schema.json"] = { "mkdocs.yml" },
       ["https://json.schemastore.org/kustomization.json"] = { "kustomization.yaml" },
       ["https://json.schemastore.org/circleciconfig.json"] = {
         "/.circleci/config.*",
