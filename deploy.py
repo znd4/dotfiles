@@ -294,7 +294,7 @@ def populate_ssh_credentials():
         )
         pyinfra.operations.files.file(
             str(pub_key_file),
-            user="znd4",
+            user=host.get_fact(facts.server.User),
             # group="znd4",
             mode="0600",
         )
