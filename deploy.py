@@ -106,6 +106,7 @@ BREW_PACKAGES = [
     "python-launcher",
     "ripgrep",
     "rustup-init",
+    "sd",
     "starship",
     "stylua",
     "siderolabs/talos/talosctl",
