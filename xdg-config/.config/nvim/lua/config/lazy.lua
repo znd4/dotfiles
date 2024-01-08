@@ -54,6 +54,7 @@ require("lazy").setup({
     end,
   },
 
+  "isobit/vim-caddyfile",
   "norcalli/nvim_utils",
   "fladson/vim-kitty",
   -- split and join treesitter
