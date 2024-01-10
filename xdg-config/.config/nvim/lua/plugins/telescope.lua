@@ -93,7 +93,7 @@ return {
   keys = {
     {
       leader .. "ff",
-      delayed("telescope.builtin", "find_files", { hidden = true }),
+      delayed("telescope.builtin", "find_files"),
       desc = "Telescope find files",
     },
     {
