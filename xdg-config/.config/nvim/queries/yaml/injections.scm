@@ -1,4 +1,19 @@
 (block_mapping_pair
+  key: (flow_node) @_services
+  (#eq? @_services "services")
+  value: (block_node (block_mapping (block_mapping_pair value: (block_node (block_mapping (block_mapping_pair
+    key: (flow_node) @_build
+    (#eq? @_build "build")
+    value: (block_node (block_mapping (block_mapping_pair
+      key: (flow_node) @_dockerfile_inline
+      (#eq? @_dockerfile_inline "dockerfile_inline")
+      value: (block_node) @dockerfile
+      (#offset! @dockerfile 1 0 0 0)
+      (#colzero! @dockerfile)
+    )))
+   ))))))
+)
+(block_mapping_pair
   key: (flow_node) @_run
   (#eq? @_run "run")
   (block_node
