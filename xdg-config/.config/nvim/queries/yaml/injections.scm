@@ -14,6 +14,13 @@
    ))))))
 )
 (block_mapping_pair
+  key: (flow_node) @_script
+  (#match? @_script "script|before_script")
+  value: (block_node (block_scalar) @bash)
+  (#offset! @bash 1 0 0 0)
+  (#colzero! @bash)
+)
+(block_mapping_pair
   key: (flow_node) @_run
   (#eq? @_run "run")
   (block_node
