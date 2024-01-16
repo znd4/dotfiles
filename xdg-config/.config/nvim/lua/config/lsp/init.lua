@@ -11,7 +11,6 @@ local ensure_installed = {
   "ltex",
   "lua_ls",
   "marksman",
-  "ocamllsp",
   "pyright",
   "rnix",
   "rust_analyzer",
