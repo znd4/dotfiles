@@ -59,7 +59,7 @@ local tmux_prog = {
   "--login",
   "--interactive",
   "-c",
-  "SHELL=~/homebrew/bin/fish tmux new -Asdotfiles",
+  "SHELL=$(which fish) tmux new -Asdotfiles",
 }
 config.default_prog = tmux_prog
 
