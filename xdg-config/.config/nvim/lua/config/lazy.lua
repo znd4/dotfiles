@@ -26,7 +26,6 @@ require("lazy").setup({
     config = function()
       require("gitsigns").setup({
         current_line_blame = true,
-        yadm = { enable = true },
       })
       require("scrollbar.handlers.gitsigns").setup()
     end,
@@ -54,6 +53,7 @@ require("lazy").setup({
     end,
   },
 
+  "isobit/vim-caddyfile",
   "norcalli/nvim_utils",
   "fladson/vim-kitty",
   -- split and join treesitter
