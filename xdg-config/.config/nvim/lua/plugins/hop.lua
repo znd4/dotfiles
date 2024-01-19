@@ -5,11 +5,15 @@ return {
     -- you can configure Hop the way you like here; see :h hop-config
     local hop = require("hop")
     hop.setup({})
-    local vimp = require("vimp")
-    vimp.noremap("<ctrl-,>", function()
-      -- hop.hint_char2()
-      hop.hint_words({ multi_windows = true })
-    end)
   end,
+  keys = {
+    {
+      "<A-.>",
+      function()
+        require("hop").hint_words({ multi_windows = true })
+      end,
+      desc = "Hop words",
+    },
+  },
   dependencies = { "svermeulen/vimpeccable" },
 }
