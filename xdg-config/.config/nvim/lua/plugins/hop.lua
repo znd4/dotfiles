@@ -8,7 +8,7 @@ return {
   end,
   keys = {
     {
-      "<A-.>",
+      "<A-j>",
       function()
         require("hop").hint_words({ multi_windows = true })
       end,
