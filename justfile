@@ -18,7 +18,7 @@ unlink:
     STOW_DELETE=1 just link
 
 link: python3 submodules
-    #!/usr/bin/env python
+    #!/usr/bin/env python3
     import shutil
     import subprocess as sp
     import os
