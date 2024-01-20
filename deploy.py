@@ -76,6 +76,7 @@ BREW_PACKAGES = [
     "cookiecutter",
     "copier",
     "devcontainer",
+    "direnv",
     "fd",
     "fnm",
     "fzf",
