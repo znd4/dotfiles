@@ -94,6 +94,7 @@ BREW_PACKAGES = [
     "kpt",
     "kubernetes-cli",
     "lazygit",
+    "moreutils",
     "neovim",
     "opam",
     "pandoc",
