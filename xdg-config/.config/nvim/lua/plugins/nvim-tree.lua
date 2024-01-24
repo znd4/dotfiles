@@ -11,7 +11,6 @@ return {
         max = -1,
       },
     },
-    open_on_setup = false,
     sync_root_with_cwd = true,
     -- respect_buf_cwd = false,
     respect_buf_cwd = true,
