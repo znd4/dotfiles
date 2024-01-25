@@ -54,7 +54,10 @@ function setup_direnv
 end
 
 function setup_starship
-    starship init fish --print-full-init | source
+    # leave silently if starship not installed
+    if command -q starship
+        starship init fish --print-full-init | source
+    end
 end
 
 
