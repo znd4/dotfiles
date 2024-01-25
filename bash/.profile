@@ -58,7 +58,7 @@ if type brew &>/dev/null; then
 fi
 
 
-. "$HOME/.cargo/env"
+source_if_exists "$HOME/.cargo/env"
 
 #AWSume alias to source the AWSume script
 alias awsume="source \$(pyenv which awsume)"
