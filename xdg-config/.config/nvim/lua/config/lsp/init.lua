@@ -12,7 +12,7 @@ local ensure_installed = {
   "lua_ls",
   "marksman",
   "pyright",
-  "nills",
+  "nil_ls",
   "rust_analyzer",
   "sqlls",
   "taplo",
