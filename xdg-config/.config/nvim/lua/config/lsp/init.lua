@@ -278,6 +278,7 @@ require("mason-lspconfig").setup({
     lsp_zero.default_setup,
     ltex = lsp_zero.noop,
     pylsp = lsp_zero.noop,
+    rnix = lsp_zero.noop,
     gopls = function()
       require("lspconfig").gopls.setup(gopls_settings)
     end,
