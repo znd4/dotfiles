@@ -8,7 +8,9 @@ return {
   keys = {
     {
       "-",
-      require("oil").open,
+      function()
+        require("oil").open()
+      end,
       "Open parent directory",
     },
   },
