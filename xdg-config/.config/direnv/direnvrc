@@ -39,11 +39,8 @@ if has thefuck; then
     eval "$(thefuck --alias)"
 fi
 
-if [ "$(uname -s)" != 'Darwin' ]; then
-else
-	PATH_add /opt/local/bin
-	PATH_add /opt/local/sbin
-fi
+PATH_add /opt/local/bin
+PATH_add /opt/local/sbin
 
 setup_pyenv() {
 	# if on windows, do nothing
