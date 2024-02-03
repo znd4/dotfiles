@@ -40,8 +40,6 @@ if has thefuck; then
 fi
 
 if [ "$(uname -s)" != 'Darwin' ]; then
-	# Start all of my after-login systemd services
-	[ -n "$(systemctl --user 2>/dev/null)" ] && systemctl --user start autostart.service
 else
 	PATH_add /opt/local/bin
 	PATH_add /opt/local/sbin
