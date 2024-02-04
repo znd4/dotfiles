@@ -13,7 +13,6 @@ export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND?}"
 export SKIM_DEFAULT_OPTS=${FZF_DEFAULT_OPTS?}
 export PAGER=more
 
-export ZK_NOTEBOOK_DIR="$HOME/Documents/zane"
 
 # use neovim as default pager
 export GIT_PAGER=delta
