@@ -250,6 +250,16 @@ lsp_zero.configure("sqlls", {
   on_init = disableFormatting,
 })
 
+lsp_zero.configure("nil_ls", {
+  settings = {
+    ["nil"] = {
+      formatting = {
+        command = "nixfmt",
+      },
+    },
+  },
+})
+
 local gopls_settings = {
   cmd = { "gopls" },
   settings = {
