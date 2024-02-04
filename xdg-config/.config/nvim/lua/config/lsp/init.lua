@@ -254,7 +254,7 @@ lsp_zero.configure("nil_ls", {
   settings = {
     ["nil"] = {
       formatting = {
-        command = "nixfmt",
+        command = { "nixfmt" },
       },
     },
   },
