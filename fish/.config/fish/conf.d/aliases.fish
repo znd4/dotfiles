@@ -1,6 +1,9 @@
 alias ddgr="BROWSER=firefox command ddgr"
 alias g=git
 
+set -gx OP_PLUGIN_ALIASES_SOURCED
+alias openai="op plugin run -- openai"
+
 alias dotfiles="GIT_WORK_TREE=~ GIT_DIR=~/.cfg"
 
 alias kyaml="kubectl get -o yaml"
