@@ -7,6 +7,7 @@ vim.g.mapleader = " "
 vim.g.python3_host_prog = "python3"
 
 -- set clipboard+=unnamedplus
+vim.o.clipboard = "unnamedplus"
 vim.g.clipboard = {
   name = "custom_clipboard",
   copy = {
