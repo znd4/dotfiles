@@ -2,7 +2,7 @@ return {
   "jackMort/ChatGPT.nvim",
   event = "VeryLazy",
   config = {
-    api_key_cmd = "op read op://private/openai/credential",
+    api_key_cmd = "op read op://private/openai/credential --no-newline",
   },
   dependencies = {
     "MunifTanjim/nui.nvim",
