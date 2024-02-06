@@ -15,7 +15,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  "plugins",
+  {
+    import = "plugins",
+  },
   -- load scrollbar before gitsigns
 
   { "petertriho/nvim-scrollbar", priority = 102, config = true },
