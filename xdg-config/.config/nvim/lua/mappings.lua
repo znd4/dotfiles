@@ -52,14 +52,15 @@ local function escape()
     vim.cmd("lclose")
     return
   end
+  require("notify").dismiss({ pending = true })
   -- check if a quickfix window is open
   vim.cmd("cclose")
 end
+vimp.nnoremap("<esc>", escape)
 
 local leader = "<leader>"
 vimp.nnoremap(leader .. "fo", factory(vim.cmd.Octo, "actions"))
 
-vimp.nnoremap("<esc>", escape)
 -- vimp.nnoremap("<esc>", ":noh<cr>")
 vimp.cnoremap("<C-r>", ":Telescope command_history<cr>")
 
