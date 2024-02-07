@@ -46,13 +46,16 @@ vim.on_key(function(char)
 end, vim.api.nvim_create_namespace("auto_hlsearch"))
 
 local function escape()
+  require("notify").dismiss()
   -- check if location window is open
   if vim.fn.winnr("$") > 1 then
     print("closing location window")
     vim.cmd("lclose")
     return
   end
-  require("notify").dismiss({ pending = true })
+
+  --TODO: check if in command history window, then return
+
   -- check if a quickfix window is open
   vim.cmd("cclose")
 end
