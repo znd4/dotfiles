@@ -190,7 +190,7 @@ lsp_zero.configure("tsserver", {
   on_init = disableFormatting,
 })
 lsp_zero.configure("helm_ls", {
-  filetypes = { "helm.yaml" },
+  filetypes = { "helm.yaml", "gotmpl" },
 })
 
 lsp_zero.configure("jsonls", {
