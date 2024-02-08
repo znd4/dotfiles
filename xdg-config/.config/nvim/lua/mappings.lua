@@ -46,20 +46,24 @@ vim.on_key(function(char)
 end, vim.api.nvim_create_namespace("auto_hlsearch"))
 
 local function escape()
+  require("notify").dismiss()
   -- check if location window is open
   if vim.fn.winnr("$") > 1 then
     print("closing location window")
     vim.cmd("lclose")
     return
   end
+
+  --TODO: check if in command history window, then return
+
   -- check if a quickfix window is open
   vim.cmd("cclose")
 end
+vimp.nnoremap("<esc>", escape)
 
 local leader = "<leader>"
 vimp.nnoremap(leader .. "fo", factory(vim.cmd.Octo, "actions"))
 
-vimp.nnoremap("<esc>", escape)
 -- vimp.nnoremap("<esc>", ":noh<cr>")
 vimp.cnoremap("<C-r>", ":Telescope command_history<cr>")
 
