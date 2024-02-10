@@ -775,9 +775,9 @@ async def asdf_install():
 
 
 async def krew_install(plugin: str):
+    await install_krew()
     if plugin in krew_list():
         return
-    await install_krew()
     await run(["kubectl", "krew", "install", plugin])
 
 
