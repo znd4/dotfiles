@@ -35,8 +35,6 @@ require("lazy").setup({
     "earthly/earthly.vim",
     version = "main",
   },
-  -- smooth scrolling
-  -- { "declancm/cinnamon.nvim",    config = { centered = true } },
   "tpope/vim-dotenv",
   "znd4/vim-dadbod",
   "kristijanhusak/vim-dadbod-ui",
